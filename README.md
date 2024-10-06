@@ -1,5 +1,5 @@
-#Project Abstract
-##Car Management App
+# Project Abstract
+## Car Management App
 This project aims to create a Car Management App that uses information retrieved from the ECU (Eletronics Control Unit) of a car to display real-time warnings and details about it. 
 (More info in /reports/Project_Specification)
 
@@ -16,5 +16,5 @@ This project aims to create a Car Management App that uses information retrieved
 | João Gaspar       | Architect        | 114514      | [Affapple](https://github.com/Affapple)   |
 
 
-#Bookmarks
+# Bookmarks
 -Project Specification Editable: [Project](https://uapt33090-my.sharepoint.com/:w:/g/personal/joaopmgaspar_ua_pt/EfWeM20E1c1Pvg1NwL19GX4B_ldsUfoE5xQnrV-avwj9vw?e=kwRUw9)
