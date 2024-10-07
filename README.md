@@ -1,6 +1,6 @@
 # Project Abstract
 ## Car Management App
-This project aims to create a Car Management App that uses information retrieved from the ECU (Eletronics Control Unit) of a car to display real-time warnings and details about it. 
+This project aims to create a Car Management App that uses information retrieved from the ECU (Electronics Control Unit) of a car to display real-time warnings and details about it. 
 (More info in /reports/Project_Specification)
 
 
