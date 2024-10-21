@@ -3,7 +3,9 @@
 This project aims to create a Car Management App that uses information retrieved from the ECU (Electronics Control Unit) of a car to display real-time warnings and details about it. 
 (More info in /reports/Project_Specification)
 
+## Architecture
 
+![ArquiteturaDetalhado drawio (2)](https://github.com/user-attachments/assets/de448c8b-734f-4548-9b6f-6fdf7f4a9f9e)
 
 
 # Team Members
