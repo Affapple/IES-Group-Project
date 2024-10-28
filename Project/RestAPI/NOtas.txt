@@ -1,0 +1,5 @@
+Car_Satus pode definir o intervalo entre gets do live info
+Caso o car status seja off
+    intervalo = 30 segundos
+Senao
+    intervalo = 5 segundos
