@@ -1,13 +1,17 @@
 package ies.carbox.api.RestAPI.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
 import ies.carbox.api.RestAPI.entity.Car;
 
 /**
- * CarRepository
+ * Repository interface for accessing and managing {@link Car} entities in the MongoDB database.
+ *
+ * <p>This interface extends {@link MongoRepository}, providing CRUD operations and custom query methods
+ * for the {@link Car} entity, which represents car data within the application.</p>
+ * 
+ * <p>The repository uses {@code Long} as the ID type for the {@link Car} entity.</p>
  */
-public interface CarRepository extends JpaRepository<Car, Long> {
-
-
+public interface CarRepository extends MongoRepository<Car, Long> {
+    // Additional custom query methods can be defined here if needed.
 }
