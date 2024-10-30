@@ -9,7 +9,7 @@ import jakarta.validation.constraints.*;
  * Car life info data:
  * car_ID: String
  * Timestamp: date_time (bsontimestamp)
- * 
+ *
  * year: Integer
  * licensePlate: String
  * owner: User
@@ -19,7 +19,6 @@ import jakarta.validation.constraints.*;
 @AllArgsConstructor
 @Entity
 @Table(name = "tbl_car_live_info")
-public class Car_Live_info {
-    
-    
+public class CarLiveInfo {
+
 }
