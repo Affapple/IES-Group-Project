@@ -1,6 +1,11 @@
 from pymongo import MongoClient
 from datetime import datetime
 
+#For an initial setup, while we don't have the components dockerized
+#Use the following command to start the MongoDB server:
+#mongod --dbpath /path/to/data/db
+
+
 if __name__ == "__main__":
 
     mongo_client = MongoClient(f"mongodb://localhost:27017/")
@@ -18,7 +23,8 @@ if __name__ == "__main__":
         db.create_collection("CarTrip")
     CarTrip = db["CarTrip"]
 
-    # Inserção de dados falsos (temporário)
+    # Insertion of fake temporary data for testing purposes
+    # When the data generation stream is implemented, this will be removed
     user_1 = {
     "Email": "johndoe@example.com",
     "Password": "john_secure_123",
@@ -213,6 +219,8 @@ if __name__ == "__main__":
 
     db.CarLive.insert_one(live_info_5)
 
+
+    
 
 
 
