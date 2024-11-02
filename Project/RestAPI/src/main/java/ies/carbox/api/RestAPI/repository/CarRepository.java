@@ -1,6 +1,7 @@
 package ies.carbox.api.RestAPI.repository;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
 import ies.carbox.api.RestAPI.entity.Car;
 
@@ -12,6 +13,7 @@ import ies.carbox.api.RestAPI.entity.Car;
  *
  * <p>The repository uses {@code Long} as the ID type for the {@link Car} entity.</p>
  */
+@Repository
 public interface CarRepository extends MongoRepository<Car, String> {
     // Additional custom query methods can be defined here if needed
 }

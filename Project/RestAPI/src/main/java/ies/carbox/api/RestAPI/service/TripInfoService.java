@@ -3,6 +3,7 @@ package ies.carbox.api.RestAPI.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import ies.carbox.api.RestAPI.entity.TripInfo;
 import ies.carbox.api.RestAPI.repository.TripInfoRepository;
@@ -10,6 +11,7 @@ import ies.carbox.api.RestAPI.repository.TripInfoRepository;
 /**
  * TripInfoService
  */
+@Service
 public class TripInfoService {
     TripInfoRepository tripInfoRepository;
 

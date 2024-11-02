@@ -4,6 +4,7 @@ import lombok.*;
 
 import java.util.List;
 
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import jakarta.persistence.*;
@@ -23,8 +24,7 @@ import jakarta.persistence.*;
  */
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "tbl_users")
+@Document(collection = "Users")
 public class User {
 
     /** Unique identifier for the user. */

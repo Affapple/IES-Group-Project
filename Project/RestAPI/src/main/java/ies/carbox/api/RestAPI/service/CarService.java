@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * Service class for managing {@link Car} entities.
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * <p>Note: The methods are designed to interact with a repository layer
  * to handle data persistence and retrieval.</p>
  */
+@Service
 public class CarService {
     CarRepository carRepository;
     CarLiveInfoRepository carLiveInfoRepository;
@@ -68,7 +70,8 @@ public class CarService {
     }
 
     public CarLiveInfo getLatestCarData(String ecuId) {
-        List<CarLiveInfo> carLiveInfos = carLiveInfoRepository.findByCarLiveInfoId_carId(ecuId);
+        // FIX: Procurar por  o que esta em comentario
+        List<CarLiveInfo> carLiveInfos = new ArrayList<>(); // carLiveInfoRepository.findByCarLiveInfoId_carId(ecuId);
         Date latestDate = new Date(0);
         CarLiveInfo latestInfo = null;
 
