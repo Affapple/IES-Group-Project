@@ -6,6 +6,8 @@ import lombok.*;
 
 import java.util.List;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
 /**
  * Represents live information about a car during a trip.
  *
@@ -33,8 +35,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-@Entity
-@Table(name = "tbl_car_live_info")
+@Document(collection = "CarLiveInfos")
 public class CarLiveInfo {
 
     @EmbeddedId

@@ -1,5 +1,7 @@
 package ies.carbox.api.RestAPI.repository;
 
+import java.util.List;
+
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import ies.carbox.api.RestAPI.entity.CarLiveInfo;
@@ -10,9 +12,11 @@ import ies.carbox.api.RestAPI.entity.CarLiveInfoId;
  *
  * <p>This interface extends {@link MongoRepository}, providing CRUD operations and custom query methods
  * for the {@link CarLiveInfo} entity, which represents real-time information about cars.</p>
- * 
+ *
  * <p>The repository uses {@link CarLiveInfoId} as the ID type for the {@link CarLiveInfo} entity.</p>
  */
 public interface CarLiveInfoRepository extends MongoRepository<CarLiveInfo, CarLiveInfoId> {
     // Additional custom query methods can be defined here if needed.
+
+    public List<CarLiveInfo> findByCarLiveInfoId_carId(String carId);
 }

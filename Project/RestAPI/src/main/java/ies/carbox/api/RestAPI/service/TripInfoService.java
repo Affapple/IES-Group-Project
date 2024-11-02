@@ -1,0 +1,40 @@
+package ies.carbox.api.RestAPI.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import ies.carbox.api.RestAPI.entity.TripInfo;
+import ies.carbox.api.RestAPI.repository.TripInfoRepository;
+
+/**
+ * TripInfoService
+ */
+public class TripInfoService {
+    TripInfoRepository tripInfoRepository;
+
+    @Autowired
+    public TripInfoService(TripInfoRepository tripInfos) {
+        this.tripInfoRepository = tripInfos;
+    }
+
+
+    public List<TripInfo> getTripInfoByCarId(String carId) {
+        return tripInfoRepository.findByTripInfoId_CarId(carId)
+                .orElseThrow(
+                    () -> new IllegalArgumentException (
+                        String.format("No trips found for car %s", carId)
+                    )
+                );
+    }
+
+    public TripInfo getTripInfo(String tripId, String carId) {
+        return tripInfoRepository.findByTripInfoId_CarIdAndTripId(carId, tripId)
+                .orElseThrow(
+                    () -> new IllegalArgumentException (
+                        String.format("Trip of id (tripId=%s, carId=%s) found for car", tripId, carId)
+                    )
+                );
+    }
+
+}

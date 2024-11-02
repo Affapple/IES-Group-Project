@@ -7,7 +7,6 @@ import ies.carbox.api.RestAPI.entity.User;
 /**
  * UserRepository
  */
-public interface UserRepository extends MongoRepository<User, Long> {
-
+public interface UserRepository extends MongoRepository<User, String> {
 
 }

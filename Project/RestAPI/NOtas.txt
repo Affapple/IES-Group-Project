@@ -7,6 +7,11 @@ TimeStamp: Date time ou long? (Timestamp normalmente é Long)
 TripID: Nao será melhor ser Long tmb?
 
 
+[TODO]
+    * Adicionar Auth tokens (jwt)
+    * Refactor ao código para buscar o user pelo auth token
+    * Decidir comportamento padrao dos servicos (Se dão throw para o Controller)
+
 
 
 #############################################################################
