@@ -1,6 +1,7 @@
 package ies.carbox.api.RestAPI.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
@@ -20,6 +21,6 @@ import ies.carbox.api.RestAPI.entity.CarLiveInfoId;
 public interface CarLiveInfoRepository extends MongoRepository<CarLiveInfo, CarLiveInfoId> {
     // Additional custom query methods can be defined here if needed.
 
-    // public List<CarLiveInfo> findByCarLiveInfoId_CarId(String carId);
+    public Optional<List<CarLiveInfo>> findByCarLiveInfoId_CarId(String carId);
 }
 // Could not create query for public abstract java.util.List ies.carbox.api.RestAPI.repository.CarLiveInfoRepository.findByCarLiveInfoId_carId(java.lang.String); Reason: No property 'carLiveInfoId' found for type 'CarLiveInfo'
