@@ -74,6 +74,9 @@
 			<artifactId>reactor-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+
+
 	</dependencies>
     <build>
         <plugins>
@@ -82,9 +85,8 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
              </plugin>
 
-
-            <!-- RestAPI documentation plugin -->
-            <plugin>
+			<!-- REST API Documentation -->
+			<plugin>
                 <groupId>com.ly.smart-doc</groupId>
                 <artifactId>smart-doc-maven-plugin</artifactId>
                 <version>3.0.8</version>
@@ -93,7 +95,7 @@
                   <projectName>${project.description}</projectName>
                 </configuration>
               </plugin>
-            </plugins>
-        </build>
+		</plugins>
+    </build>
 
 </project>

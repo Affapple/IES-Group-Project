@@ -43,6 +43,7 @@ public class User {
     @Getter
     private String password;
 
+    /** List of cars owned by the user */
     @Column(name="CarsList")
     @Getter @Setter
     private List<String> carsList;
