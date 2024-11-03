@@ -38,41 +38,57 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "CarLiveInfos")
 public class CarLiveInfo {
 
+    /** Unique identifier of the vehicle */
     @Id
     private CarLiveInfoId carLiveInfoId;
 
+    /** Current status of the vehicle (true: on; false: off) */
     @Column(name = "car_status")
     private boolean carStatus;
 
+    /** Current oil leve */
     @Column(name = "oil_level")
     private float oilLevel;
 
+    /** Current battery charge */
     @Column(name = "battery_charge")
     private float batteryCharge;
 
+    /** Current car speed */
+    @Column(name = "speed")
     private float speed;
 
+    /** Current car motor rpm */
+    @Column(name = "rpm")
     private int rpm;
 
+    /** Current car gas level (in liters) */
     @Column(name = "gas_level")
     private float gasLevel;
 
+    /** Current car location */
+    @Column(name = "location")
     private String location;
 
+    /** Current motor temperature */
     @Column(name = "motor_temperature")
     private float motorTemperature;
 
+    /** Current status of the abs (true: activated; false: deactivated) */
+    @Column(name = "abs")
     private boolean abs;
 
+    /** Current torque produced by the motor */
+    @Column(name = "torque")
     private float torque;
 
+    /** Current tire pressures */
     @Column(name = "tire_pressure")
-    private Float tirePressure;
+    private Pressure tirePressure;
 
+    /** List of car users */
     @ElementCollection
     @CollectionTable(name = "car_errors", joinColumns = @JoinColumn(name = "car_id")) // Adjust the join column as needed
     @Column(name = "error_message") // Column name in the collection table
     private List<String> errors;
-
-    // You may want to include any necessary validation annotations
 }

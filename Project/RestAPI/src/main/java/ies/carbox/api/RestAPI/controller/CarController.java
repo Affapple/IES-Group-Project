@@ -28,7 +28,12 @@ public class CarController {
         this.tripInfoService = tripInfoService;
     }
 
-    // 1. Get a list of all Cars
+    /**
+     *  Get User owned cars
+     *
+     *  @param user User
+     *  @return List<Car>
+     */
     @GetMapping
     public ResponseEntity<List<Car>> getAllCars(@RequestBody(required = true) User user) {
         String userEmail = user.getEmail();
@@ -42,7 +47,12 @@ public class CarController {
         }
     }
 
-    // 2. Get a single Car by its ID
+    /**
+     * Get data of the car carId
+     *
+     * @param carId String Id of the car
+     * @return Car
+     */
     @GetMapping("/data/")
     public ResponseEntity<Car> getCarById(
         @RequestParam(required = true, value = "carId") String carId
@@ -55,7 +65,12 @@ public class CarController {
         }
     }
 
-    // 4. Delete a Car by its ID
+    /**
+     * Delete association of a user to a car
+     *
+     * @param carId Id of the car to be dissasociated
+     * @return result String with status
+     */
     @DeleteMapping("/{carId}")
     public ResponseEntity<String> deleteCar(
         @PathVariable(required = true) String carId,
@@ -71,14 +86,19 @@ public class CarController {
     }
 
 
-    // 5. Get all trips from a car by a car id
-    // FIX: put carId on body would be cleaner(in both 5. and 6.), but could lead to potential
-    // Issues for the user, if they are not worked out on frontend
+    /**
+     * Gets all trips made by a Car
+     *
+     * @param carId Id of the car
+     * @returns List<TripInfo>
+     */
     @GetMapping("/trips")
     public ResponseEntity<List<TripInfo>> getCarTrips(
         @RequestParam(required = true, name = "carId") String carId
         // @RequestBody(required = true) String carId
     ) {
+        // FIX: put carId on body would be cleaner(in both 5. and 6.), but could lead to potential
+        // Issues for the user, if they are not worked out on frontend
         try {
             List<TripInfo> trips = tripInfoService.getTripInfoByCarId(carId);
             return ResponseEntity.ok(trips);
@@ -87,7 +107,14 @@ public class CarController {
         }
     }
 
-    // 6. Get all trips from a car by a car id
+    /**
+     * Get a trip made by a Car
+     *
+     * @param carId Id of the car
+     * @param tripId Id of the trip
+     *
+     * @returns TripInfo
+     */
     @GetMapping("/trip/{carId}/{tripId}")
     public ResponseEntity<TripInfo> getTrip(
         @PathVariable(required = true, name = "carId") String carId,
