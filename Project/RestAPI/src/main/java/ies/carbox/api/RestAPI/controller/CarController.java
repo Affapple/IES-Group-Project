@@ -45,7 +45,7 @@ public class CarController {
     // 2. Get a single Car by its ID
     @GetMapping("/data/")
     public ResponseEntity<Car> getCarById(
-        @RequestParam(required = true, value = "id") String carId
+        @RequestParam(required = true, value = "carId") String carId
     ) {
         try {
             Car car = carService.getCarById(carId);
@@ -88,9 +88,9 @@ public class CarController {
     }
 
     // 6. Get all trips from a car by a car id
-    @GetMapping("/trip/{tripId}")
+    @GetMapping("/trip/{carId}/{tripId}")
     public ResponseEntity<TripInfo> getTrip(
-        @RequestParam(required = true, name = "carId") String carId,
+        @PathVariable(required = true, name = "carId") String carId,
         // @RequestBody(required = true) String carId
         @PathVariable(required = true, name="tripId") String tripId
     ) {

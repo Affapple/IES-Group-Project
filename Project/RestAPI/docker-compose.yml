@@ -7,9 +7,11 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: carbox
       MONGO_INITDB_ROOT_PASSWORD: mySecretPassword
-  my-application:
-    image: my-application-image
+  restapi:
+    build: .
     depends_on:
       - db
     environment:
       SPRING_DATA_MONGODB_URI: mongodb://carbox:mySecretPassword@db:27017/carboxDB
+    ports:
+      - "8080:8080"

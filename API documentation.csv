@@ -1,0 +1,8 @@
+Base url = /api/v1/vehicles
+Type    url				parameters		bodyParams		Desc
+GET		/				-				User(email) 	Returns all vehicles registered to the user
+DELETE	/{carId}		-				-				Deletes association of user to car with id carId
+GET		/data/			carId			-				Returns basic information of car with id=carId
+GET		/trips			carId			-				Returns all trips associated with car carId
+GET		/trip/			carId/tripId	- 				Returns a specific trip made by carId with tripId
+POST	/createAccount 	-				User			Creates an account with the data retrieved in User
