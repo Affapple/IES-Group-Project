@@ -1,14 +1,14 @@
 package ies.carbox.api.RestAPI.entity;
 
+import java.util.Date;
+
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import ies.carbox.api.RestAPI.validation.YearRange;
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -35,14 +35,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
-@Entity
-@Table(name = "tbl_cars")
+@Document(collection = "Cars")
 public class Car {
-    
+
     /** Unique identifier for the car. */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(nullable = false, name="ecu_id")
+    private String ecuId;
 
     /** Brand of the car (e.g., Toyota, Ford). */
     @Column(nullable = false, name = "brand")
@@ -70,6 +69,32 @@ public class Car {
     @NotNull(message = "Owner is required")
     private User owner;
 
+    @Column(nullable = true, name="last_revision")
+    private Date lastRevision;
+
+    @Column(nullable = false, name = "tires")
+    private String tires;
+
+    @Column(nullable = false, name = "motor")
+    private String motor;
+
+
+    @Column(nullable = false, name = "tank")
+    private String tank;
+
+    @Column(nullable = false, name = "max_speed")
+    private Float maxSpeed;
+
+    @Column(nullable = false, name = "horsepower")
+    private Integer horsepower;
+
+    @Column(nullable = false, name = "autonomy")
+    private Float autonomy;
+
+
+    private String location;
+    private boolean carStatus;
+
     /**
      * Returns a string representation of the car.
      *
@@ -77,7 +102,8 @@ public class Car {
      */
     @Override
     public String toString() {
-        return "Car [id=" + id + ", brand=" + brand + ", model=" + model + ", year=" + year +
+        return "Car [ecuId=" + ecuId + ", brand=" + brand + ", model=" + model + ", year=" + year +
                ", licensePlate=" + licensePlate + ", owner=" + owner + "]";
     }
+
 }

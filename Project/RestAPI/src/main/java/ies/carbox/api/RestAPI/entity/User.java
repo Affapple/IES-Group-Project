@@ -2,6 +2,9 @@ package ies.carbox.api.RestAPI.entity;
 
 import lombok.*;
 
+import java.util.List;
+
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import jakarta.persistence.*;
@@ -21,16 +24,14 @@ import jakarta.persistence.*;
  */
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "tbl_users")
+@Document(collection = "Users")
 public class User {
-    
+
     /** Unique identifier for the user. */
     @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "email")
     @Getter @Setter
-    private Long id;
+    private String email;
 
     /** Username of the user, which must be unique. */
     @Column(nullable = false, name = "username")
@@ -39,14 +40,18 @@ public class User {
 
     /** Encrypted password of the user. */
     @Column(nullable = false, name = "password")
-    @Getter 
+    @Getter
     private String password;
+
+    @Column(name="CarsList")
+    @Getter @Setter
+    private List<String> carsList;
 
     /**
      * Sets the user's password after encrypting it.
      *
      * <p>This method uses BCrypt to encode the provided plain text password
-     * before storing it in the entity. It ensures that the password is not 
+     * before storing it in the entity. It ensures that the password is not
      * stored in plain text for security reasons.</p>
      *
      * @param password The plain text password to be encrypted and set.
@@ -59,13 +64,13 @@ public class User {
     /**
      * Returns a string representation of the user.
      *
-     * <p>This representation includes the user's ID, username, and a masked 
+     * <p>This representation includes the user's ID, username, and a masked
      * password to protect sensitive information.</p>
      *
      * @return A string containing the user's ID, masked password, and username.
      */
     @Override
     public String toString() {
-        return "User [id=" + id + ", password= *********, username=" + username + "]";
+        return "User [email=" + email + ", password= *********, username=" + username + "]";
     }
 }
