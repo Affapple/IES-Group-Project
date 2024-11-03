@@ -76,9 +76,9 @@ public class CarService {
         CarLiveInfo latestInfo = null;
 
         for(CarLiveInfo carInfo : carLiveInfos) {
-            if (0 < carInfo.getId().getTripDate().compareTo(latestDate)) {
+            if (0 < carInfo.getCarLiveInfoId().getTripDate().compareTo(latestDate)) {
                 latestInfo = carInfo;
-                latestDate = carInfo.getId().getTripDate();
+                latestDate = carInfo.getCarLiveInfoId().getTripDate();
             }
         }
         return latestInfo;

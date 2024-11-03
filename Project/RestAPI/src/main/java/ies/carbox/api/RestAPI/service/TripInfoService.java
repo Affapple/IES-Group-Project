@@ -31,7 +31,7 @@ public class TripInfoService {
     }
 
     public TripInfo getTripInfo(String tripId, String carId) {
-        return tripInfoRepository.findByTripInfoId_CarIdAndTripId(carId, tripId)
+        return tripInfoRepository.findByTripInfoId_CarIdAndTripInfoId_TripId(carId, tripId)
                 .orElseThrow(
                     () -> new IllegalArgumentException (
                         String.format("Trip of id (tripId=%s, carId=%s) found for car", tripId, carId)

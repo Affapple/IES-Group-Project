@@ -4,7 +4,7 @@ import java.util.Date;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Id;
 import lombok.*;
 
 /**
@@ -16,8 +16,8 @@ import lombok.*;
 @Setter
 @Document(collection = "TripInfos")
 public class TripInfo {
-    @EmbeddedId
-    TripInfoId tripId;
+    @Id
+    TripInfoId tripInfoId;
     Date Trip_start;
     Date Trip_end;
 }

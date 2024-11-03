@@ -38,8 +38,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "CarLiveInfos")
 public class CarLiveInfo {
 
-    @EmbeddedId
-    private CarLiveInfoId id;
+    @Id
+    private CarLiveInfoId carLiveInfoId;
 
     @Column(name = "car_status")
     private boolean carStatus;
