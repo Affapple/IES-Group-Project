@@ -16,8 +16,13 @@ import lombok.*;
 @Setter
 @Document(collection = "TripInfos")
 public class TripInfo {
+    /** Unique Identifiers of the Trip  */
     @Id
     TripInfoId tripInfoId;
+
+    /** Trip Start Date */
     Date Trip_start;
+
+    /** Trip End Date */
     Date Trip_end;
 }
