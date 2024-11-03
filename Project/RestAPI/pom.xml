@@ -75,13 +75,25 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+             </plugin>
+
+
+            <!-- RestAPI documentation plugin -->
+            <plugin>
+                <groupId>com.ly.smart-doc</groupId>
+                <artifactId>smart-doc-maven-plugin</artifactId>
+                <version>3.0.8</version>
+                <configuration>
+                  <configFile>./src/main/resources/smart-doc.json</configFile>
+                  <projectName>${project.description}</projectName>
+                </configuration>
+              </plugin>
+            </plugins>
+        </build>
 
 </project>

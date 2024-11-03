@@ -69,28 +69,33 @@ public class Car {
     @NotNull(message = "Owner is required")
     private User owner;
 
+    /** Date of the last revision */
     @Column(nullable = true, name="last_revision")
     private Date lastRevision;
 
+    /** Model of the tires */
     @Column(nullable = false, name = "tires")
     private String tires;
 
+    /** Model of the motor */
     @Column(nullable = false, name = "motor")
     private String motor;
 
-
+    /** Model and capacity of the fuel tank */
     @Column(nullable = false, name = "tank")
     private String tank;
 
+    /** Max speed of the vehicle */
     @Column(nullable = false, name = "max_speed")
     private Float maxSpeed;
 
+    /** Top horsepower of the vehicle */
     @Column(nullable = false, name = "horsepower")
     private Integer horsepower;
 
+    /** Remaining predicted fuel autonomy */
     @Column(nullable = false, name = "autonomy")
     private Float autonomy;
-
 
     private String location;
     private boolean carStatus;
