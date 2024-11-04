@@ -65,7 +65,7 @@ public class CarController {
      * @param user User
      * @return operation result
      */
-    @PostMapping
+    @PostMapping("/addVehicle/{carId}")
     public ResponseEntity<Car> associateCarToUser(
         @RequestBody(required = true) User user,
         @PathVariable(required = true, name = "carId") String ecuId
