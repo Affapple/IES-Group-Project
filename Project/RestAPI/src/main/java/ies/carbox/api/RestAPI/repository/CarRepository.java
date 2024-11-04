@@ -1,5 +1,7 @@
 package ies.carbox.api.RestAPI.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,5 +17,5 @@ import ies.carbox.api.RestAPI.entity.Car;
  */
 @Repository
 public interface CarRepository extends MongoRepository<Car, String> {
-    // Additional custom query methods can be defined here if needed
+    Optional<Car> findByEcuId(String ecuId);
 }

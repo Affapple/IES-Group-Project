@@ -1,5 +1,7 @@
 package ies.carbox.api.RestAPI.entity;
 
+import org.springframework.data.mongodb.core.mapping.Field;
+
 import jakarta.persistence.Column;
 import lombok.*;
 
@@ -13,19 +15,19 @@ import lombok.*;
  */
 public class Pressure {
     /** Front Left tire pressure (in psi) */
-    @Column(name = "front_left")
+    @Field("front_left")
     private float frontLeft;
 
     /** Front Right tire pressure (in psi) */
-    @Column(name = "front_right")
+    @Field("front_right")
     private float frontRight;
 
     /** Back Left tire pressure (in psi) */
-    @Column(name = "back_left")
+    @Field("back_left")
     private float backLeft;
 
     /** Back Right tire pressure (in psi) */
-    @Column(name = "back_right")
+    @Field("back_right")
     private float backRight;
 
 }

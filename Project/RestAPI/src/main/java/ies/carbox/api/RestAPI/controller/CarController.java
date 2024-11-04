@@ -40,9 +40,15 @@ public class CarController {
 
         try {
             List<String> ecuIds = userService.getListOfEcuIds(userEmail);
+            if (ecuIds == null) {
+                throw new Exception("User has no cars");
+            }
+            System.out.println(ecuIds);
             List<Car> cars = carService.getAllUserCars(ecuIds);
             return ResponseEntity.ok(cars);
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
             return ResponseEntity.notFound().build();
         }
     }
@@ -113,7 +119,7 @@ public class CarController {
      * @param carId Id of the car
      * @param tripId Id of the trip
      *
-     * @returns TripInfo
+     * @returns CarTrip
      */
     @GetMapping("/trip/{carId}/{tripId}")
     public ResponseEntity<TripInfo> getTrip(

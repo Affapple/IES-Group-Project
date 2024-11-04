@@ -3,14 +3,11 @@ package ies.carbox.api.RestAPI.entity;
 import java.util.Date;
 
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import ies.carbox.api.RestAPI.validation.YearRange;
-import jakarta.persistence.Column;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,61 +37,55 @@ public class Car {
 
     /** Unique identifier for the car. */
     @Id
-    @Column(nullable = false, name="ecu_id")
+    @Field("ecu_id")
     private String ecuId;
 
     /** Brand of the car (e.g., Toyota, Ford). */
-    @Column(nullable = false, name = "brand")
+    @Field("brand")
     @NotBlank(message = "Brand is required")
     private String brand;
 
     /** Model of the car (e.g., Corolla, Focus). */
-    @Column(nullable = false, name = "model")
+    @Field("model")
     @NotBlank(message = "Model is required")
     private String model;
 
     /** Year of manufacture, validated by {@link YearRange}. */
-    @Column(nullable = false, name = "year")
+    @Field("year")
     @YearRange
     private Integer year;
 
     /** License plate number of the car. */
-    @Column(nullable = false, name = "license_plate")
+    @Field("license_plate")
     @NotBlank(message = "License plate is required")
     private String licensePlate;
 
-    /** The user who owns the car. */
-    @ManyToOne
-    @JoinColumn(name = "owner_id", nullable = false)
-    @NotNull(message = "Owner is required")
-    private User owner;
-
     /** Date of the last revision */
-    @Column(nullable = true, name="last_revision")
+    @Field("last_revision")
     private Date lastRevision;
 
     /** Model of the tires */
-    @Column(nullable = false, name = "tires")
+    @Field("tires")
     private String tires;
 
     /** Model of the motor */
-    @Column(nullable = false, name = "motor")
+    @Field("motor")
     private String motor;
 
     /** Model and capacity of the fuel tank */
-    @Column(nullable = false, name = "tank")
+    @Field("tank")
     private String tank;
 
     /** Max speed of the vehicle */
-    @Column(nullable = false, name = "max_speed")
+    @Field("max_speed")
     private Float maxSpeed;
 
     /** Top horsepower of the vehicle */
-    @Column(nullable = false, name = "horsepower")
+    @Field("horsepower")
     private Integer horsepower;
 
     /** Remaining predicted fuel autonomy */
-    @Column(nullable = false, name = "autonomy")
+    @Field("autonomy")
     private Float autonomy;
 
     private String location;
@@ -108,7 +99,7 @@ public class Car {
     @Override
     public String toString() {
         return "Car [ecuId=" + ecuId + ", brand=" + brand + ", model=" + model + ", year=" + year +
-               ", licensePlate=" + licensePlate + ", owner=" + owner + "]";
+               ", licensePlate=" + licensePlate + "]";
     }
 
 }

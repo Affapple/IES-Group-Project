@@ -8,43 +8,48 @@ from datetime import datetime
 
 if __name__ == "__main__":
     print("Connecting to database...")
-    mongo_client = MongoClient(f"mongodb://localhost:27017/",
+    mongo_client = MongoClient("mongodb://localhost:27017/",
                                 username="carbox",
                                 password="mySecretPassword")
     print("Connected to database!")
-     
+
     print("Adding information...")
     db = mongo_client["carbox"]
+
+    for col in db.list_collection_names():
+        print(f"Dropping {col}")
+        db.drop_collection(col)
+    print(db.list_collection_names())
+
     if "Users" not in db.list_collection_names():
         db.create_collection("Users")
-    User = db["Users"]
+
     if "Cars" not in db.list_collection_names():
         db.create_collection("Cars")
-    Car = db["Cars"]
+
     if "CarLiveInfo" not in db.list_collection_names():
         db.create_collection("CarLiveInfo")
-    CarLive = db["CarLiveInfo"]
-    if "CarTrips" not in db.list_collection_names():
-        db.create_collection("CarTrips")
-    CarTrip = db["CarTrips"]
+
+    if "TripInfos" not in db.list_collection_names():
+        db.create_collection("TripInfos")
 
     # Insertion of fake temporary data for testing purposes
     # When the data generation stream is implemented, this will be removed
     user_1 = {
         "email": "johndoe@example.com",
         "password": "john_secure_123",
-        "carList": ["CAR001", "CAR002"]  
+        "carsList": ["ECU001", "ECU002"]
     }
 
-    db.User.insert_one(user_1)
+    db.Users.insert_one(user_1)
 
     user_2 = {
     "email": "janesmith@example.com",
     "password": "jane_secure_456",
-    "carList": ["CAR003"]  
+    "carsList": ["ECU003"]
     }
 
-    db.User.insert_one(user_2)
+    db.Users.insert_one(user_2)
 
     car_1 = {
     "ecu_id": "ECU001",
@@ -58,10 +63,10 @@ if __name__ == "__main__":
     "Tank": "N/A",
     "max_speed": 250.0,
     "horsepower": 670,
-    "autonomy": 560.0 
+    "autonomy": 560.0
     }
 
-    db.Car.insert_one(car_1)
+    db.Cars.insert_one(car_1)
 
     car_2 = {
     "ecu_id": "ECU002",
@@ -78,7 +83,7 @@ if __name__ == "__main__":
     "autonomy": 500.0
     }
 
-    db.Car.insert_one(car_2)
+    db.Cars.insert_one(car_2)
 
     car_3 = {
     "ecu_id": "ECU003",
@@ -95,7 +100,7 @@ if __name__ == "__main__":
     "autonomy": 700.0
     }
 
-    db.Car.insert_one(car_3)
+    db.Cars.insert_one(car_3)
 
     trip_1 = {
     "trip_id": "TRIP001",
@@ -104,7 +109,7 @@ if __name__ == "__main__":
     "trip_end": datetime(2023, 10, 30, 9, 30, 0)
     }
 
-    db.CarTrip.insert_one(trip_1)
+    db.TripInfos.insert_one(trip_1)
 
     trip_2 = {
     "trip_id": "TRIP002",
@@ -113,7 +118,7 @@ if __name__ == "__main__":
     "trip_end": datetime(2023, 10, 29, 16, 45, 0)
     }
 
-    db.CarTrip.insert_one(trip_2)
+    db.TripInfos.insert_one(trip_2)
 
     trip_3 = {
     "trip_id": "TRIP003",
@@ -122,7 +127,7 @@ if __name__ == "__main__":
     "trip_end": datetime(2023, 10, 31, 11, 0, 0)
     }
 
-    db.CarTrip.insert_one(trip_3)
+    db.TripInfos.insert_one(trip_3)
 
     live_info_1 = {
     "car_id": "CAR001",
@@ -133,7 +138,7 @@ if __name__ == "__main__":
     "car_status": True,
     "Speed": 100.0,
     "rpm": 3000,
-    "gas_level": 100.0,  
+    "gas_level": 100.0,
     "location": "34.0522° N, 118.2437° W",
     "motor_Temperature": 80.0,
     "abs": True,
@@ -142,7 +147,7 @@ if __name__ == "__main__":
     "errors": []
     }
 
-    db.CarLive.insert_one(live_info_1)
+    db.CarLiveInfo.insert_one(live_info_1)
 
     live_info_2 = {
     "car_id": "CAR001",
@@ -162,7 +167,7 @@ if __name__ == "__main__":
     "errors": []
     }
 
-    db.CarLive.insert_one(live_info_2)
+    db.CarLiveInfo.insert_one(live_info_2)
 
     live_info_3 = {
     "car_id": "CAR002",
@@ -178,11 +183,11 @@ if __name__ == "__main__":
     "motor_Temperature": 90.0,
     "abs": True,
     "torque": 500.0,
-    "tire_pressure": 31.5,
+    "tire_pressure": [ 31.5, 31.5, 31.5, 31.5 ],
     "errors": []
     }
 
-    db.CarLive.insert_one(live_info_3)
+    db.CarLiveInfo.insert_one(live_info_3)
 
     live_info_4 = {
     "car_id": "CAR003",
@@ -198,11 +203,11 @@ if __name__ == "__main__":
     "motor_Temperature": 70.0,
     "abs": True,
     "torque": 350.0,
-    "tire_pressure": 33.0,
+    "tire_pressure": [ 33.0, 33.0, 33.0, 33.0 ],
     "errors": []
     }
 
-    db.CarLive.insert_one(live_info_4)
+    db.CarLiveInfo.insert_one(live_info_4)
 
     live_info_5 = {
     "car_id": "CAR003",
@@ -218,10 +223,10 @@ if __name__ == "__main__":
     "motor_Temperature": 72.0,
     "abs": True,
     "torque": 360.0,
-    "tire_pressure": 32.8,
+    "tire_pressure": [ 32.8, 32.8, 32.8, 32.8 ],
     "errors": []
     }
 
-    db.CarLive.insert_one(live_info_5)
+    db.CarLiveInfo.insert_one(live_info_5)
     print("Done!")
 

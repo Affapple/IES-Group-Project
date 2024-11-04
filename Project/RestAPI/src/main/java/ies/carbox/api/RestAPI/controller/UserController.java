@@ -16,7 +16,7 @@ import java.util.Optional;
  * retrieving account details, and logging out.</p>
  */
 @RestController
-@RequestMapping("/user") // Base path for all user-related requests
+@RequestMapping("/api/v1/user") // Base path for all user-related requests
 public class UserController {
 
     @Autowired
@@ -33,6 +33,7 @@ public class UserController {
      */
     @PostMapping("/createAccount")
     public ResponseEntity<User> createAccount(@Valid @RequestBody User user) {
+        /* TODO: Mandatory arguments (email, username, password) */
         try {
             User createdUser = userService.createAccount(user);
             return ResponseEntity.status(201).body(createdUser);

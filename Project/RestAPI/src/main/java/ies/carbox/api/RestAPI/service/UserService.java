@@ -23,7 +23,7 @@ public class UserService {
     }
 
     public List<String> getListOfEcuIds(String userEmail) {
-        User user = userRepository.findById(userEmail)
+        User user = userRepository.findByEmail(userEmail)
                     .orElseThrow( () -> new IllegalArgumentException(
            String.format("User with userId=\"%s\" not found", userEmail)
         ));
@@ -32,7 +32,7 @@ public class UserService {
     }
 
     public void removeUserCar(String userEmail, String carId) {
-        User user = userRepository.findById(userEmail)
+        User user = userRepository.findByEmail(userEmail)
                     .orElseThrow( () -> new IllegalArgumentException(
            String.format("User with userId=\"%s\" not found", userEmail)
         ));
@@ -47,11 +47,11 @@ public class UserService {
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             throw new Exception("Username already exists");
         }
-        return userRepository.save(user); 
+        return userRepository.save(user);
     }
 
    //  @Autowired
-// private BCryptPasswordEncoder passwordEncoder; 
+// private BCryptPasswordEncoder passwordEncoder;
 
 public String login(String username, String password) throws Exception {
     // Optional<User> userOptional = userRepository.findByUsername(username);
@@ -66,7 +66,8 @@ public String login(String username, String password) throws Exception {
 }
 
 public User updateAccount(User updatedUser) throws Exception {
-    Optional<User> existingUser = userRepository.findById(updatedUser.getEmail()); // The email corresponds to the user's ID
+    /* TODO: Mail tem de ser obtido de outra forma */
+    Optional<User> existingUser = userRepository.findByEmail(updatedUser.getEmail()); // The email corresponds to the user's ID
     if (existingUser.isPresent()) {
         return userRepository.save(updatedUser);
     }

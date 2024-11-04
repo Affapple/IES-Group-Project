@@ -1,4 +1,5 @@
 version: '3.8'
+
 services:
   db:
     image: mongo
@@ -10,8 +11,11 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: mySecretPassword
     volumes:
       - ./mongo-init:/docker-entrypoint-initdb.d
+
   restapi:
     build: .
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://carbox:mySecretPassword@db:27017/carbox?authSource=admin
     depends_on:
       - db
     ports:

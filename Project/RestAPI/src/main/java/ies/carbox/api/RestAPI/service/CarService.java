@@ -49,7 +49,7 @@ public class CarService {
         for (String ecuId : ecuIds) {
             // They MUST exist, otherwise something is very wrong
             try {
-                Car car = carRepository.findById(ecuId).get();
+                Car car = carRepository.findByEcuId(ecuId).get();
                 carList.add(car);
 
                 // FIX: Dar improve a esta parte para guardar os dados no CarInfo?
