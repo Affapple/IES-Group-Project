@@ -1,12 +1,12 @@
 package ies.carbox.api.RestAPI.entity;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.*;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 /**
  * Represents live information about a car during a trip.
@@ -38,56 +38,63 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "CarLiveInfo")
 public class CarLiveInfo {
 
-    /** Unique identifier of the vehicle */
-    @Id
-    private CarLiveInfoId carLiveInfoId;
+    /** ID of the car associated with live info */
+    @Field("car_id")
+    String carId;
+
+    /** Id of the trip whose this live info belongs */
+    @Field("trip_id")
+    String tripId;
+
+    /** Timestamp of the gathered data */
+    @Field("")
+    Date timestamp;
 
     /** Current status of the vehicle (true: on; false: off) */
-    @Column(name = "car_status")
+    @Field("car_status")
     private boolean carStatus;
 
     /** Current oil leve */
-    @Column(name = "oil_level")
+    @Field("oil_level")
     private float oilLevel;
 
     /** Current battery charge */
-    @Column(name = "battery_charge")
+    @Field("battery_charge")
     private float batteryCharge;
 
     /** Current car speed */
-    @Column(name = "speed")
+    @Field("speed")
     private float speed;
 
     /** Current car motor rpm */
-    @Column(name = "rpm")
+    @Field("rpm")
     private int rpm;
 
     /** Current car gas level (in liters) */
-    @Column(name = "gas_level")
+    @Field("gas_level")
     private float gasLevel;
 
     /** Current car location */
-    @Column(name = "location")
+    @Field("location")
     private String location;
 
     /** Current motor temperature */
-    @Column(name = "motor_temperature")
+    @Field("motor_temperature")
     private float motorTemperature;
 
     /** Current status of the abs (true: activated; false: deactivated) */
-    @Column(name = "abs")
+    @Field("abs")
     private boolean abs;
 
     /** Current torque produced by the motor */
-    @Column(name = "torque")
+    @Field("torque")
     private float torque;
 
     /** Current tire pressures */
-    @Column(name = "tire_pressure")
-    private Pressure tirePressure;
+    @Field("tire_pressure")
+    private List<Float> tirePressure;
 
     /** List of car users */
-    @ElementCollection
-    @Column(name = "errors") // Column name in the collection table
+    @Field("errors") // Column name in the collection table
     private List<String> errors;
 }

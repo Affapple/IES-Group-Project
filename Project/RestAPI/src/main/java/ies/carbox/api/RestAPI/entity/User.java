@@ -5,10 +5,10 @@ import lombok.*;
 import java.util.List;
 
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import jakarta.persistence.*;
-
+import org.springframework.data.annotation.Id;
 /**
  * Represents a user entity in the system.
  *
@@ -27,23 +27,28 @@ import jakarta.persistence.*;
 @Document(collection = "Users")
 public class User {
 
-    /** Unique identifier for the user. */
     @Id
-    @Column(name = "email")
+    @Field("_id")
+    @Getter @Setter
+    private String _id;
+
+    /** Unique identifier for the user. */
+    @Field("email")
     @Getter @Setter
     private String email;
 
     /** Username of the user, which must be unique. */
-    @Column(nullable = false, name = "username")
+    @Field("username")
     @Getter @Setter
     private String username;
 
     /** Encrypted password of the user. */
-    @Column(nullable = false, name = "password")
+    @Field("password")
     @Getter
     private String password;
 
-    @Column(name="cars_list")
+    /** List of cars owned by the user */
+    @Field("carsList")
     @Getter @Setter
     private List<String> carsList;
 
@@ -57,8 +62,9 @@ public class User {
      * @param password The plain text password to be encrypted and set.
      */
     public void setPassword(String password) {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        this.password = encoder.encode(password);
+        // BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        // this.password = encoder.encode(password);
+        this.password = password;
     }
 
     /**
@@ -71,6 +77,6 @@ public class User {
      */
     @Override
     public String toString() {
-        return "User [email=" + email + ", password= *********, username=" + username + "]";
+        return "User [email=" + email + ", password= "+password + ", username=" + username + ", carlist=" + carsList + "]";
     }
 }

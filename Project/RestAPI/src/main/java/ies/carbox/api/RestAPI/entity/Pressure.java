@@ -1,25 +1,32 @@
 package ies.carbox.api.RestAPI.entity;
 
-import jakarta.persistence.Column;
+import org.springframework.data.mongodb.core.mapping.Field;
+
 import lombok.*;
 
 
 @Getter @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+/**
+ * Pressure
+ *  Represents the tire pressure's of the car (in psi)
+ */
 public class Pressure {
-
-    @Column(name = "front_left")
+    /** Front Left tire pressure (in psi) */
+    @Field("front_left")
     private float frontLeft;
 
-    @Column(name = "front_right")
+    /** Front Right tire pressure (in psi) */
+    @Field("front_right")
     private float frontRight;
 
-    @Column(name = "back_left")
+    /** Back Left tire pressure (in psi) */
+    @Field("back_left")
     private float backLeft;
 
-    @Column(name = "back_right")
+    /** Back Right tire pressure (in psi) */
+    @Field("back_right")
     private float backRight;
-
 }
 

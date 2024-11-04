@@ -49,7 +49,7 @@ public class CarService {
         for (String ecuId : ecuIds) {
             // They MUST exist, otherwise something is very wrong
             try {
-                Car car = carRepository.findById(ecuId).get();
+                Car car = carRepository.findByEcuId(ecuId).get();
                 carList.add(car);
 
                 // FIX: Dar improve a esta parte para guardar os dados no CarInfo?
@@ -71,16 +71,21 @@ public class CarService {
 
     public CarLiveInfo getLatestCarData(String ecuId) {
         // FIX: Procurar por  o que esta em comentario
-        List<CarLiveInfo> carLiveInfos = new ArrayList<>(); // carLiveInfoRepository.findByCarLiveInfoId_carId(ecuId);
+        List<CarLiveInfo> carLiveInfos = carLiveInfoRepository.findByCarId(ecuId)
+                                            .orElseThrow(
+                                                () -> new IllegalArgumentException("Car has no info!")
+                                            );
         Date latestDate = new Date(0);
         CarLiveInfo latestInfo = null;
 
         for(CarLiveInfo carInfo : carLiveInfos) {
-            if (0 < carInfo.getCarLiveInfoId().getTripDate().compareTo(latestDate)) {
+            System.out.println("X iteration");
+            if (0 < carInfo.getTimestamp().compareTo(latestDate)) {
                 latestInfo = carInfo;
-                latestDate = carInfo.getCarLiveInfoId().getTripDate();
+                latestDate = carInfo.getTimestamp();
             }
         }
+        System.out.println(latestInfo);
         return latestInfo;
     }
 
@@ -93,7 +98,7 @@ public class CarService {
     public Car getCarById(String carId) {
         // Implementation to retrieve a car by ID
         return carRepository
-                .findById(carId)
+                .findByEcuId(carId)
                 .orElseThrow(() -> new IllegalArgumentException("Car with carId \""+carId+"\" does not exist!"));
     }
 
