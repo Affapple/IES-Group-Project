@@ -76,6 +76,7 @@ public class UserController {
             User user = userService.updateAccount(updatedUser);
             return ResponseEntity.ok(user);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().body(null);
         }
     }

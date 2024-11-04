@@ -8,8 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import jakarta.persistence.*;
-
+import org.springframework.data.annotation.Id;
 /**
  * Represents a user entity in the system.
  *
@@ -28,8 +27,12 @@ import jakarta.persistence.*;
 @Document(collection = "Users")
 public class User {
 
-    /** Unique identifier for the user. */
     @Id
+    @Field("_id")
+    @Getter @Setter
+    private String _id;
+
+    /** Unique identifier for the user. */
     @Field("email")
     @Getter @Setter
     private String email;
