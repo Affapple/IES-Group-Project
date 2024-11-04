@@ -12,6 +12,6 @@ services:
     depends_on:
       - db
     environment:
-      SPRING_DATA_MONGODB_URI: mongodb://carbox:mySecretPassword@db:27017/carboxDB
+      SPRING_DATA_MONGODB_URI: mongodb://carbox:mySecretPassword@db:27017/carbox
     ports:
       - "8080:8080"
