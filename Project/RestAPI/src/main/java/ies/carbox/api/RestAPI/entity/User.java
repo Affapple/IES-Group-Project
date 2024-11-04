@@ -45,7 +45,7 @@ public class User {
     private String password;
 
     /** List of cars owned by the user */
-    @Field("carList")
+    @Field("carsList")
     @Getter @Setter
     private List<String> carsList;
 

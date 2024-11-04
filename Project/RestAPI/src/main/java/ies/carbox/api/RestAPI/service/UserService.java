@@ -27,7 +27,6 @@ public class UserService {
                     .orElseThrow( () -> new IllegalArgumentException(
            String.format("User with userId=\"%s\" not found", userEmail)
         ));
-
         return user.getCarsList();
     }
 
@@ -37,9 +36,9 @@ public class UserService {
            String.format("User with userId=\"%s\" not found", userEmail)
         ));
 
+        userRepository.delete(user);
         List<String> carList = user.getCarsList();
         carList.remove(carId);
-
         userRepository.save(user);
     }
 
@@ -66,9 +65,11 @@ public String login(String username, String password) throws Exception {
 }
 
 public User updateAccount(User updatedUser) throws Exception {
-    /* TODO: Mail tem de ser obtido de outra forma */
+    /* TODO: - Mail tem de ser obtido de outra forma */
+    /*       - Encontrar maneira de dar update só ao que é mudado */
     Optional<User> existingUser = userRepository.findByEmail(updatedUser.getEmail()); // The email corresponds to the user's ID
     if (existingUser.isPresent()) {
+        userRepository.delete(existingUser.get());
         return userRepository.save(updatedUser);
     }
     throw new Exception("User not found");

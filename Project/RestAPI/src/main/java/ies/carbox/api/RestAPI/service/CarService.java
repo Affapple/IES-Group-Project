@@ -76,9 +76,9 @@ public class CarService {
         CarLiveInfo latestInfo = null;
 
         for(CarLiveInfo carInfo : carLiveInfos) {
-            if (0 < carInfo.getCarLiveInfoId().getTripDate().compareTo(latestDate)) {
+            if (0 < carInfo.getTimestamp().compareTo(latestDate)) {
                 latestInfo = carInfo;
-                latestDate = carInfo.getCarLiveInfoId().getTripDate();
+                latestDate = carInfo.getTimestamp();
             }
         }
         return latestInfo;
@@ -93,7 +93,7 @@ public class CarService {
     public Car getCarById(String carId) {
         // Implementation to retrieve a car by ID
         return carRepository
-                .findById(carId)
+                .findByEcuId(carId)
                 .orElseThrow(() -> new IllegalArgumentException("Car with carId \""+carId+"\" does not exist!"));
     }
 

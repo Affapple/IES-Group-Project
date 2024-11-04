@@ -1,17 +1,24 @@
 package ies.carbox.api.RestAPI.controller;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import ies.carbox.api.RestAPI.entity.Car;
 import ies.carbox.api.RestAPI.entity.TripInfo;
 import ies.carbox.api.RestAPI.entity.User;
 import ies.carbox.api.RestAPI.service.CarService;
 import ies.carbox.api.RestAPI.service.TripInfoService;
 import ies.carbox.api.RestAPI.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.method.P;
-import org.springframework.web.bind.annotation.*;
-import java.util.List;
-import jakarta.validation.*;
 
 @RestController
 @RequestMapping("api/v1/vehicles")  // Base path for Car-related requests
@@ -29,10 +36,12 @@ public class CarController {
     }
 
     /**
-     *  Get User owned cars
+     * GET /api/v1/vehicles
      *
-     *  @param user User
-     *  @return List<Car>
+     * Get User owned cars
+     *
+     * @param user User
+     * @return List<Car>
      */
     @GetMapping
     public ResponseEntity<List<Car>> getAllCars(@RequestBody(required = true) User user) {
@@ -40,38 +49,57 @@ public class CarController {
 
         try {
             List<String> ecuIds = userService.getListOfEcuIds(userEmail);
-            if (ecuIds == null) {
-                throw new Exception("User has no cars");
-            }
-            System.out.println(ecuIds);
             List<Car> cars = carService.getAllUserCars(ecuIds);
             return ResponseEntity.ok(cars);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println(e.getMessage());
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    /**
-     * Get data of the car carId
-     *
-     * @param carId String Id of the car
-     * @return Car
-     */
-    @GetMapping("/data/")
-    public ResponseEntity<Car> getCarById(
-        @RequestParam(required = true, value = "carId") String carId
-    ) {
-        try {
-            Car car = carService.getCarById(carId);
-            return ResponseEntity.ok(car);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
     /**
+     * GET /api/v1/vehicles/addVehicle/{carId}
+     *
+     * Associate a car to a User
+     *
+     * @param user User
+     * @return operation result
+     */
+    @PostMapping
+    public ResponseEntity<Car> associateCarToUser(
+        @RequestBody(required = true) User user,
+        @PathVariable(required = true, name = "carId") String ecuId
+    ) {
+        String userEmail = user.getEmail();
+
+        try {
+            return ResponseEntity.status(500).build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    /**
+     * GET /api/v1/vehicles/data
+     * Get data of the car carId
+     *
+     * @param carId String Id of the car
+     * @return Car
+     */
+    @GetMapping("/data")
+    public ResponseEntity<Car> getCarById(
+        @RequestParam(required = true, value = "carId") String carId
+    ) {
+        try {
+            Car car = carService.getCarById(carId);
+            return ResponseEntity.ok(car);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    /**
+     * GET /api/v1/vehicles/{carId}
      * Delete association of a user to a car
      *
      * @param carId Id of the car to be dissasociated
@@ -93,6 +121,7 @@ public class CarController {
 
 
     /**
+     * GET /api/v1/vehicles/trips
      * Gets all trips made by a Car
      *
      * @param carId Id of the car
@@ -100,13 +129,16 @@ public class CarController {
      */
     @GetMapping("/trips")
     public ResponseEntity<List<TripInfo>> getCarTrips(
+        // FIX: If necessary, make consistent with get /trip
         @RequestParam(required = true, name = "carId") String carId
         // @RequestBody(required = true) String carId
     ) {
         // FIX: put carId on body would be cleaner(in both 5. and 6.), but could lead to potential
         // Issues for the user, if they are not worked out on frontend
         try {
+            System.out.println("Getting trips");
             List<TripInfo> trips = tripInfoService.getTripInfoByCarId(carId);
+            System.out.println("Got " + trips);
             return ResponseEntity.ok(trips);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
@@ -114,6 +146,7 @@ public class CarController {
     }
 
     /**
+     * GET /api/v1/vehicles/trip/{carId}/{tripId}
      * Get a trip made by a Car
      *
      * @param carId Id of the car

@@ -3,8 +3,8 @@ package ies.carbox.api.RestAPI.entity;
 import java.util.Date;
 
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-import jakarta.persistence.Id;
 import lombok.*;
 
 /**
@@ -16,13 +16,20 @@ import lombok.*;
 @Setter
 @Document(collection = "TripInfos")
 public class TripInfo {
-    /** Unique Identifiers of the Trip  */
-    @Id
-    TripInfoId tripInfoId;
+    /** Car Id */
+    @Field("car_id")
+    String carId;
+
+    @Field("trip_id")
+    /** Trip Id */
+    String tripId;
+
 
     /** Trip Start Date */
+    @Field("trip_start")
     Date Trip_start;
 
+    @Field("trip_end")
     /** Trip End Date */
     Date Trip_end;
 }

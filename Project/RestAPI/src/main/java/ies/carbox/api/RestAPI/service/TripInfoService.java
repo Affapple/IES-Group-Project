@@ -22,7 +22,7 @@ public class TripInfoService {
 
 
     public List<TripInfo> getTripInfoByCarId(String carId) {
-        return tripInfoRepository.findByTripInfoId_CarId(carId)
+        return tripInfoRepository.findByCarId(carId)
                 .orElseThrow(
                     () -> new IllegalArgumentException (
                         String.format("No trips found for car %s", carId)
@@ -31,7 +31,7 @@ public class TripInfoService {
     }
 
     public TripInfo getTripInfo(String tripId, String carId) {
-        return tripInfoRepository.findByTripInfoId_CarIdAndTripInfoId_TripId(carId, tripId)
+        return tripInfoRepository.findByCarIdAndTripId(carId, tripId)
                 .orElseThrow(
                     () -> new IllegalArgumentException (
                         String.format("Trip of id (tripId=%s, carId=%s) found for car", tripId, carId)

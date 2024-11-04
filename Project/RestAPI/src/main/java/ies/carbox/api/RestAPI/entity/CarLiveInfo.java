@@ -1,9 +1,8 @@
 package ies.carbox.api.RestAPI.entity;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.*;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -39,9 +38,17 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @Document(collection = "CarLiveInfo")
 public class CarLiveInfo {
 
-    /** Unique identifier of the vehicle */
-    @Id
-    private CarLiveInfoId carLiveInfoId;
+    /** ID of the car associated with live info */
+    @Field("car_id")
+    String carId;
+
+    /** Id of the trip whose this live info belongs */
+    @Field("trip_id")
+    String tripId;
+
+    /** Timestamp of the gathered data */
+    @Field("")
+    Date timestamp;
 
     /** Current status of the vehicle (true: on; false: off) */
     @Field("car_status")
