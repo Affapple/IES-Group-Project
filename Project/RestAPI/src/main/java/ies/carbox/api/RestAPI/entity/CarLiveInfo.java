@@ -36,7 +36,6 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @Getter
 @Setter
 @Document(collection = "CarLiveInfo")
-@Document(collection = "CarLiveInfo")
 public class CarLiveInfo {
 
     /** ID of the car associated with live info */
