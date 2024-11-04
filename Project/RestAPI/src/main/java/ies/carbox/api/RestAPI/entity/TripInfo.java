@@ -14,7 +14,7 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Setter
-@Document(collection = "TripInfos")
+@Document(collection = "CarTrips")
 public class TripInfo {
     /** Car Id */
     @Field("car_id")

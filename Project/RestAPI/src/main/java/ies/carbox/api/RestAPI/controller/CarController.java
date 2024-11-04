@@ -45,7 +45,9 @@ public class CarController {
      * @return List<Car>
      */
     @GetMapping
-    public ResponseEntity<List<Car>> getAllCars(@RequestBody(required = true) User user) {
+    public ResponseEntity<List<Car>> getAllCars(
+        @RequestBody(required = true) User user
+    ) {
         String userEmail = user.getEmail();
 
         try {
