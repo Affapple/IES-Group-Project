@@ -104,7 +104,7 @@ if __name__ == "__main__":
 
     trip_1 = {
     "trip_id": "TRIP001",
-    "car_id": "CAR001",
+    "car_id": "ECU001",
     "trip_start": datetime(2023, 10, 30, 8, 0, 0),
     "trip_end": datetime(2023, 10, 30, 9, 30, 0)
     }
@@ -113,7 +113,7 @@ if __name__ == "__main__":
 
     trip_2 = {
     "trip_id": "TRIP002",
-    "car_id": "CAR002",
+    "car_id": "ECU002",
     "trip_start": datetime(2023, 10, 29, 15, 0, 0),
     "trip_end": datetime(2023, 10, 29, 16, 45, 0)
     }
@@ -122,7 +122,7 @@ if __name__ == "__main__":
 
     trip_3 = {
     "trip_id": "TRIP003",
-    "car_id": "CAR003",
+    "car_id": "ECU003",
     "trip_start": datetime(2023, 10, 31, 10, 0, 0),
     "trip_end": datetime(2023, 10, 31, 11, 0, 0)
     }
@@ -130,7 +130,7 @@ if __name__ == "__main__":
     db.TripInfos.insert_one(trip_3)
 
     live_info_1 = {
-    "car_id": "CAR001",
+    "car_id": "ECU001",
     "timestamp": datetime(2023, 10, 30, 8, 15, 0),
     "trip_id": "TRIP001",
     "oil_level": 100.0,
@@ -150,7 +150,7 @@ if __name__ == "__main__":
     db.CarLiveInfo.insert_one(live_info_1)
 
     live_info_2 = {
-    "car_id": "CAR001",
+    "car_id": "ECU001",
     "timestamp": datetime(2023, 10, 30, 9, 0, 0),
     "trip_id": "TRIP001",
     "oil_level": 100.0,
@@ -170,7 +170,7 @@ if __name__ == "__main__":
     db.CarLiveInfo.insert_one(live_info_2)
 
     live_info_3 = {
-    "car_id": "CAR002",
+    "car_id": "ECU002",
     "timestamp": datetime(2023, 10, 29, 15, 30, 0),
     "trip_id": "TRIP002",
     "oil_level": 80.0,
@@ -190,7 +190,7 @@ if __name__ == "__main__":
     db.CarLiveInfo.insert_one(live_info_3)
 
     live_info_4 = {
-    "car_id": "CAR003",
+    "car_id": "ECU003",
     "timestamp": datetime(2023, 10, 31, 10, 30, 0),
     "trip_id": "TRIP003",
     "oil_level": 90.0,
@@ -210,7 +210,7 @@ if __name__ == "__main__":
     db.CarLiveInfo.insert_one(live_info_4)
 
     live_info_5 = {
-    "car_id": "CAR003",
+    "car_id": "ECU003",
     "timestamp": datetime(2023, 10, 31, 10, 45, 0),
     "trip_id": "TRIP003",
     "oil_level": 88.0,
