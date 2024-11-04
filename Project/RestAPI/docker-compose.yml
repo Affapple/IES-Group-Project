@@ -5,13 +5,14 @@ services:
     ports:
       - "27017:27017"
     environment:
+      MONGO_INITDB_DATABASE: carbox
       MONGO_INITDB_ROOT_USERNAME: carbox
       MONGO_INITDB_ROOT_PASSWORD: mySecretPassword
+    volumes:
+      - ./mongo-init:/docker-entrypoint-initdb.d
   restapi:
     build: .
     depends_on:
       - db
-    environment:
-      SPRING_DATA_MONGODB_URI: mongodb://carbox:mySecretPassword@db:27017/carbox
     ports:
       - "8080:8080"
