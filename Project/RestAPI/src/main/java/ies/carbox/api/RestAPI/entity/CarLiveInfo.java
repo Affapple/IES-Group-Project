@@ -35,7 +35,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 @Getter
 @Setter
-@Document(collection = "CarLiveInfos")
+@Document(collection = "CarLiveInfo")
 public class CarLiveInfo {
 
     /** Unique identifier of the vehicle */
@@ -88,7 +88,6 @@ public class CarLiveInfo {
 
     /** List of car users */
     @ElementCollection
-    @CollectionTable(name = "car_errors", joinColumns = @JoinColumn(name = "car_id")) // Adjust the join column as needed
-    @Column(name = "error_message") // Column name in the collection table
+    @Column(name = "errors") // Column name in the collection table
     private List<String> errors;
 }

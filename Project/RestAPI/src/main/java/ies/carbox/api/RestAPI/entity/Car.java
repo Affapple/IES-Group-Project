@@ -63,12 +63,6 @@ public class Car {
     @NotBlank(message = "License plate is required")
     private String licensePlate;
 
-    /** The user who owns the car. */
-    @ManyToOne
-    @JoinColumn(name = "owner_id", nullable = false)
-    @NotNull(message = "Owner is required")
-    private User owner;
-
     /** Date of the last revision */
     @Column(nullable = true, name="last_revision")
     private Date lastRevision;

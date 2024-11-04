@@ -7,217 +7,221 @@ from datetime import datetime
 
 
 if __name__ == "__main__":
-
-    mongo_client = MongoClient(f"mongodb://localhost:27017/")
-    db = mongo_client["ProjectDatabase"]
-    if "User" not in db.list_collection_names():
-        db.create_collection("User")
-    User = db["User"]
-    if "Car" not in db.list_collection_names():
-        db.create_collection("Car")
-    Car = db["Car"]
-    if "CarLive" not in db.list_collection_names():
-        db.create_collection("CarLive")
-    CarLive = db["CarLive"]
-    if "CarTrip" not in db.list_collection_names():
-        db.create_collection("CarTrip")
-    CarTrip = db["CarTrip"]
+    print("Connecting to database...")
+    mongo_client = MongoClient(f"mongodb://carbox:mySecretPassword@db:27017/carboxDB")
+    print("Connected to database!")
+     
+    print("Adding information...")
+    db = mongo_client["carbox"]
+    if "Users" not in db.list_collection_names():
+        db.create_collection("Users")
+    User = db["Users"]
+    if "Cars" not in db.list_collection_names():
+        db.create_collection("Cars")
+    Car = db["Cars"]
+    if "CarLiveInfo" not in db.list_collection_names():
+        db.create_collection("CarLiveInfo")
+    CarLive = db["CarLiveInfo"]
+    if "CarTrips" not in db.list_collection_names():
+        db.create_collection("CarTrips")
+    CarTrip = db["CarTrips"]
 
     # Insertion of fake temporary data for testing purposes
     # When the data generation stream is implemented, this will be removed
     user_1 = {
-    "Email": "johndoe@example.com",
-    "Password": "john_secure_123",
-    "CarsList": ["CAR001", "CAR002"]  
+        "email": "johndoe@example.com",
+        "password": "john_secure_123",
+        "carList": ["CAR001", "CAR002"]  
     }
 
     db.User.insert_one(user_1)
 
     user_2 = {
-    "Email": "janesmith@example.com",
-    "Password": "jane_secure_456",
-    "CarsList": ["CAR003"]  
+    "email": "janesmith@example.com",
+    "password": "jane_secure_456",
+    "carList": ["CAR003"]  
     }
 
     db.User.insert_one(user_2)
 
     car_1 = {
-    "ECU_ID": "ECU001",
-    "Last_Revision": datetime(2023, 5, 10),
-    "Brand": "Tesla",
-    "L_Plate": "ABC1234",
-    "Model": "Model S",
-    "Year": 2021,
-    "Tires": "Goodyear",
-    "Motor": "Electric",
+    "ecu_id": "ECU001",
+    "last_revision": datetime(2023, 5, 10),
+    "brand": "Tesla",
+    "license_plate": "ABC1234",
+    "model": "model S",
+    "year": 2021,
+    "tires": "Goodyear",
+    "motor": "Electric",
     "Tank": "N/A",
-    "Max_Speed": 250.0,
-    "Horse_Power": 670,
-    "Autonomy": 560.0 
+    "max_speed": 250.0,
+    "horsepower": 670,
+    "autonomy": 560.0 
     }
 
     db.Car.insert_one(car_1)
 
     car_2 = {
-    "ECU_ID": "ECU002",
-    "Last_Revision": datetime(2023, 3, 15),
-    "Brand": "Ford",
-    "L_Plate": "XYZ5678",
-    "Model": "Mustang",
-    "Year": 2018,
-    "Tires": "Michelin",
-    "Motor": "V8",
-    "Tank": "60L",
-    "Max_Speed": 240.0,
-    "Horse_Power": 450,
-    "Autonomy": 500.0
+    "ecu_id": "ECU002",
+    "last_revision": datetime(2023, 3, 15),
+    "brand": "Ford",
+    "license_plate": "XYZ5678",
+    "model": "Mustang",
+    "year": 2018,
+    "tires": "Michelin",
+    "motor": "V8",
+    "tank": "60L",
+    "max_speed": 240.0,
+    "horsepower": 450,
+    "autonomy": 500.0
     }
 
     db.Car.insert_one(car_2)
 
     car_3 = {
-    "ECU_ID": "ECU003",
-    "Last_Revision": datetime(2024, 1, 25),
-    "Brand": "Toyota",
-    "L_Plate": "JKL7890",
-    "Model": "Camry",
-    "Year": 2020,
-    "Tires": "Bridgestone",
-    "Motor": "Hybrid",
+    "ecu_id": "ECU003",
+    "last_revision": datetime(2024, 1, 25),
+    "brand": "Toyota",
+    "license_plate": "JKL7890",
+    "model": "Camry",
+    "year": 2020,
+    "tires": "Bridgestone",
+    "motor": "Hybrid",
     "Tank": "50L",
-    "Max_Speed": 210.0,
-    "Horse_Power": 300,
-    "Autonomy": 700.0
+    "max_speed": 210.0,
+    "horsepower": 300,
+    "autonomy": 700.0
     }
 
     db.Car.insert_one(car_3)
 
     trip_1 = {
-    "Trip_ID": "TRIP001",
-    "Car_ID": "CAR001",
-    "Trip_Start": datetime(2023, 10, 30, 8, 0, 0),
-    "Trip_End": datetime(2023, 10, 30, 9, 30, 0)
+    "trip_id": "TRIP001",
+    "car_id": "CAR001",
+    "trip_start": datetime(2023, 10, 30, 8, 0, 0),
+    "trip_end": datetime(2023, 10, 30, 9, 30, 0)
     }
 
     db.CarTrip.insert_one(trip_1)
 
     trip_2 = {
-    "Trip_ID": "TRIP002",
-    "Car_ID": "CAR002",
-    "Trip_Start": datetime(2023, 10, 29, 15, 0, 0),
-    "Trip_End": datetime(2023, 10, 29, 16, 45, 0)
+    "trip_id": "TRIP002",
+    "car_id": "CAR002",
+    "trip_start": datetime(2023, 10, 29, 15, 0, 0),
+    "trip_end": datetime(2023, 10, 29, 16, 45, 0)
     }
 
     db.CarTrip.insert_one(trip_2)
 
     trip_3 = {
-    "Trip_ID": "TRIP003",
-    "Car_ID": "CAR003",
-    "Trip_Start": datetime(2023, 10, 31, 10, 0, 0),
-    "Trip_End": datetime(2023, 10, 31, 11, 0, 0)
+    "trip_id": "TRIP003",
+    "car_id": "CAR003",
+    "trip_start": datetime(2023, 10, 31, 10, 0, 0),
+    "trip_end": datetime(2023, 10, 31, 11, 0, 0)
     }
 
     db.CarTrip.insert_one(trip_3)
 
     live_info_1 = {
-    "Car_ID": "CAR001",
-    "TimeStamp": datetime(2023, 10, 30, 8, 15, 0),
-    "Trip_ID": "TRIP001",
-    "Oil_Level": 100.0,
-    "Battery_Charge": 90.0,
-    "Car_Status": True,
+    "car_id": "CAR001",
+    "timestamp": datetime(2023, 10, 30, 8, 15, 0),
+    "trip_id": "TRIP001",
+    "oil_level": 100.0,
+    "battery_charge": 90.0,
+    "car_status": True,
     "Speed": 100.0,
-    "Rotations_PM": 3000,
-    "Gas_Level": 100.0,  
-    "Location": "34.0522° N, 118.2437° W",
-    "Motor_Temperature": 80.0,
-    "ABS": True,
-    "Torque": 400.0,
-    "Tire_Pressure": 32.0,
-    "Errors": []
+    "rpm": 3000,
+    "gas_level": 100.0,  
+    "location": "34.0522° N, 118.2437° W",
+    "motor_Temperature": 80.0,
+    "abs": True,
+    "torque": 400.0,
+    "tire_pressure": 32.0,
+    "errors": []
     }
 
     db.CarLive.insert_one(live_info_1)
 
     live_info_2 = {
-    "Car_ID": "CAR001",
-    "TimeStamp": datetime(2023, 10, 30, 9, 0, 0),
-    "Trip_ID": "TRIP001",
-    "Oil_Level": 100.0,
-    "Battery_Charge": 80.0,
-    "Car_Status": True,
+    "car_id": "CAR001",
+    "timestamp": datetime(2023, 10, 30, 9, 0, 0),
+    "trip_id": "TRIP001",
+    "oil_level": 100.0,
+    "battery_charge": 80.0,
+    "car_status": True,
     "Speed": 120.0,
-    "Rotations_PM": 3200,
-    "Gas_Level": 100.0,
-    "Location": "34.0722° N, 118.2537° W",
-    "Motor_Temperature": 85.0,
-    "ABS": True,
-    "Torque": 450.0,
-    "Tire_Pressure": 32.5,
-    "Errors": []
+    "rpm": 3200,
+    "gas_level": 100.0,
+    "location": "34.0722° N, 118.2537° W",
+    "motor_Temperature": 85.0,
+    "abs": True,
+    "torque": 450.0,
+    "tire_pressure": 32.5,
+    "errors": []
     }
 
     db.CarLive.insert_one(live_info_2)
 
     live_info_3 = {
-    "Car_ID": "CAR002",
-    "TimeStamp": datetime(2023, 10, 29, 15, 30, 0),
-    "Trip_ID": "TRIP002",
-    "Oil_Level": 80.0,
-    "Battery_Charge": 75.0,
-    "Car_Status": True,
+    "car_id": "CAR002",
+    "timestamp": datetime(2023, 10, 29, 15, 30, 0),
+    "trip_id": "TRIP002",
+    "oil_level": 80.0,
+    "battery_charge": 75.0,
+    "car_status": True,
     "Speed": 140.0,
-    "Rotations_PM": 4000,
-    "Gas_Level": 60.0,
-    "Location": "34.0622° N, 118.2437° W",
-    "Motor_Temperature": 90.0,
-    "ABS": True,
-    "Torque": 500.0,
-    "Tire_Pressure": 31.5,
-    "Errors": []
+    "rpm": 4000,
+    "gas_level": 60.0,
+    "location": "34.0622° N, 118.2437° W",
+    "motor_Temperature": 90.0,
+    "abs": True,
+    "torque": 500.0,
+    "tire_pressure": 31.5,
+    "errors": []
     }
 
     db.CarLive.insert_one(live_info_3)
 
     live_info_4 = {
-    "Car_ID": "CAR003",
-    "TimeStamp": datetime(2023, 10, 31, 10, 30, 0),
-    "Trip_ID": "TRIP003",
-    "Oil_Level": 90.0,
-    "Battery_Charge": 95.0,
-    "Car_Status": True,
+    "car_id": "CAR003",
+    "timestamp": datetime(2023, 10, 31, 10, 30, 0),
+    "trip_id": "TRIP003",
+    "oil_level": 90.0,
+    "battery_charge": 95.0,
+    "car_status": True,
     "Speed": 90.0,
-    "Rotations_PM": 2500,
-    "Gas_Level": 75.0,
-    "Location": "34.0222° N, 118.2837° W",
-    "Motor_Temperature": 70.0,
-    "ABS": True,
-    "Torque": 350.0,
-    "Tire_Pressure": 33.0,
-    "Errors": []
+    "rpm": 2500,
+    "gas_level": 75.0,
+    "location": "34.0222° N, 118.2837° W",
+    "motor_Temperature": 70.0,
+    "abs": True,
+    "torque": 350.0,
+    "tire_pressure": 33.0,
+    "errors": []
     }
 
     db.CarLive.insert_one(live_info_4)
 
     live_info_5 = {
-    "Car_ID": "CAR003",
-    "TimeStamp": datetime(2023, 10, 31, 10, 45, 0),
-    "Trip_ID": "TRIP003",
-    "Oil_Level": 88.0,
-    "Battery_Charge": 92.0,
-    "Car_Status": True,
+    "car_id": "CAR003",
+    "timestamp": datetime(2023, 10, 31, 10, 45, 0),
+    "trip_id": "TRIP003",
+    "oil_level": 88.0,
+    "battery_charge": 92.0,
+    "car_status": True,
     "Speed": 110.0,
-    "Rotations_PM": 2800,
-    "Gas_Level": 70.0,
-    "Location": "34.0322° N, 118.2937° W",
-    "Motor_Temperature": 72.0,
-    "ABS": True,
-    "Torque": 360.0,
-    "Tire_Pressure": 32.8,
-    "Errors": []
+    "rpm": 2800,
+    "gas_level": 70.0,
+    "location": "34.0322° N, 118.2937° W",
+    "motor_Temperature": 72.0,
+    "abs": True,
+    "torque": 360.0,
+    "tire_pressure": 32.8,
+    "errors": []
     }
 
     db.CarLive.insert_one(live_info_5)
+    print("Done!")
 
 
     

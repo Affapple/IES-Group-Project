@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import lombok.*;
 
@@ -14,10 +15,12 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Setter
-@Document(collection = "TripInfos")
+@Document(collection = "CarTrips")
 public class TripInfo {
     @Id
     TripInfoId tripInfoId;
-    Date Trip_start;
-    Date Trip_end;
+    @Column(name="trip_start")
+    Date tripStart;
+    @Column(name="trip_end")
+    Date tripEnd;
 }

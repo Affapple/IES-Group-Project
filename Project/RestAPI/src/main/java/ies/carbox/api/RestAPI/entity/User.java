@@ -43,7 +43,7 @@ public class User {
     @Getter
     private String password;
 
-    @Column(name="CarsList")
+    @Column(name="cars_list")
     @Getter @Setter
     private List<String> carsList;
 
