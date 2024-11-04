@@ -6,8 +6,8 @@ import lombok.*;
 
 
 @Getter @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 /**
  * Pressure
  *  Represents the tire pressure's of the car (in psi)

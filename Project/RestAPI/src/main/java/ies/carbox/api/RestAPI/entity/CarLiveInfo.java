@@ -92,7 +92,7 @@ public class CarLiveInfo {
 
     /** Current tire pressures */
     @Field("tire_pressure")
-    private Pressure tirePressure;
+    private List<Float> tirePressure;
 
     /** List of car users */
     @Field("errors") // Column name in the collection table

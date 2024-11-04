@@ -71,16 +71,21 @@ public class CarService {
 
     public CarLiveInfo getLatestCarData(String ecuId) {
         // FIX: Procurar por  o que esta em comentario
-        List<CarLiveInfo> carLiveInfos = new ArrayList<>(); // carLiveInfoRepository.findByCarLiveInfoId_carId(ecuId);
+        List<CarLiveInfo> carLiveInfos = carLiveInfoRepository.findByCarId(ecuId)
+                                            .orElseThrow(
+                                                () -> new IllegalArgumentException("Car has no info!")
+                                            );
         Date latestDate = new Date(0);
         CarLiveInfo latestInfo = null;
 
         for(CarLiveInfo carInfo : carLiveInfos) {
+            System.out.println("X iteration");
             if (0 < carInfo.getTimestamp().compareTo(latestDate)) {
                 latestInfo = carInfo;
                 latestDate = carInfo.getTimestamp();
             }
         }
+        System.out.println(latestInfo);
         return latestInfo;
     }
 

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ies.carbox.api.RestAPI.entity.Car;
+import ies.carbox.api.RestAPI.entity.CarLiveInfo;
 import ies.carbox.api.RestAPI.entity.TripInfo;
 import ies.carbox.api.RestAPI.entity.User;
 import ies.carbox.api.RestAPI.service.CarService;
@@ -91,6 +92,26 @@ public class CarController {
     ) {
         try {
             Car car = carService.getCarById(carId);
+            return ResponseEntity.ok(car);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    /**
+     * GET /api/v1/vehicles/{carId}
+     * Get latest data of car
+     *
+     * @param carId String Id of the car
+     * @return CarLiveInfo
+     */
+    @GetMapping("/{carId}")
+    public ResponseEntity<CarLiveInfo> getCarLatestInfo(
+        @PathVariable(required = true, value = "carId") String carId
+    ) {
+        try {
+            CarLiveInfo car = carService.getLatestCarData(carId);
             return ResponseEntity.ok(car);
         } catch (Exception e) {
             e.printStackTrace();
