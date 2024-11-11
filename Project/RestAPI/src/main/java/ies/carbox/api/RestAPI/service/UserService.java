@@ -13,6 +13,9 @@ import ies.carbox.api.RestAPI.repository.UserRepository;
 /**
  * userService
  */
+/*
+ * TODO: Dar update para retornar tudo UserDetails
+ */
 @Service
 public class UserService {
     UserRepository userRepository;

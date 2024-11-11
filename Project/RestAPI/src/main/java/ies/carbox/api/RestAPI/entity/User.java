@@ -52,20 +52,6 @@ public class User {
     @Getter @Setter
     private List<String> carsList;
 
-    /**
-     * Sets the user's password after encrypting it.
-     *
-     * <p>This method uses BCrypt to encode the provided plain text password
-     * before storing it in the entity. It ensures that the password is not
-     * stored in plain text for security reasons.</p>
-     *
-     * @param password The plain text password to be encrypted and set.
-     */
-    public void setPassword(String password) {
-        // BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        // this.password = encoder.encode(password);
-        this.password = password;
-    }
 
     /**
      * Returns a string representation of the user.
