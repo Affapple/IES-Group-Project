@@ -47,7 +47,7 @@ public class User implements UserDetails {
 
     /** Encrypted password of the user. */
     @Field("password")
-    @Getter
+    @Getter @Setter
     private String password;
 
     /** List of cars owned by the user */
