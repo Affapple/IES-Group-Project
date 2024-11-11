@@ -2,10 +2,13 @@ package ies.carbox.api.RestAPI.entity;
 
 import lombok.*;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import org.springframework.data.annotation.Id;
@@ -25,7 +28,7 @@ import org.springframework.data.annotation.Id;
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection = "Users")
-public class User {
+public class User implements UserDetails {
 
     @Id
     @Field("_id")
@@ -52,7 +55,6 @@ public class User {
     @Getter @Setter
     private List<String> carsList;
 
-
     /**
      * Returns a string representation of the user.
      *
@@ -64,5 +66,32 @@ public class User {
     @Override
     public String toString() {
         return "User [email=" + email + ", password= "+password + ", username=" + username + ", carlist=" + carsList + "]";
+    }
+
+    /**
+    */
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

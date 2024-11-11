@@ -22,7 +22,7 @@ import ies.carbox.api.RestAPI.service.TripInfoService;
 import ies.carbox.api.RestAPI.service.UserService;
 
 @RestController
-@RequestMapping("api/v1/vehicles")  // Base path for Car-related requests
+@RequestMapping("api/v2/vehicles")  // Base path for Car-related requests
 public class CarController {
 
     private final CarService carService;

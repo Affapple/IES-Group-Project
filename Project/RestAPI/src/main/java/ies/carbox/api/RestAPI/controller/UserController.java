@@ -16,7 +16,7 @@ import java.util.Optional;
  * retrieving account details, and logging out.</p>
  */
 @RestController
-@RequestMapping("/api/v1/user") // Base path for all user-related requests
+@RequestMapping("/api/v2/user") // Base path for all user-related requests
 public class UserController {
 
     @Autowired
