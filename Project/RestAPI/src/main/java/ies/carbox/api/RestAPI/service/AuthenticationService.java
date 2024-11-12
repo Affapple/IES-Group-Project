@@ -13,9 +13,9 @@ import ies.carbox.api.RestAPI.repository.UserRepository;
 @Service
 public class AuthenticationService {
     private final UserRepository userRepository;
-    
+
     private final PasswordEncoder passwordEncoder;
-    
+
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationService(
@@ -31,7 +31,7 @@ public class AuthenticationService {
     public User signup(RegisterUserDto input) {
         User user = new User();
 
-        user.setUsername(input.getFullName());
+        user.setName(input.getUsername());
         user.setEmail(input.getEmail());
         user.setPassword(passwordEncoder.encode(input.getPassword()));
 

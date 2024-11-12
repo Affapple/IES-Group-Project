@@ -20,9 +20,11 @@ import ies.carbox.api.RestAPI.entity.User;
 import ies.carbox.api.RestAPI.service.CarService;
 import ies.carbox.api.RestAPI.service.TripInfoService;
 import ies.carbox.api.RestAPI.service.UserService;
+import ies.carbox.api.RestAPI.CONSTANTS;
 
 @RestController
-@RequestMapping("api/v2/vehicles")  // Base path for Car-related requests
+@RequestMapping(CONSTANTS.baseUrl + "/vehicles")  // Base path for Car-related requests
+
 public class CarController {
 
     private final CarService carService;

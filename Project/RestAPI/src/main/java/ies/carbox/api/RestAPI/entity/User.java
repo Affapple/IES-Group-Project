@@ -9,7 +9,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import org.springframework.data.annotation.Id;
 /**
@@ -39,11 +38,13 @@ public class User implements UserDetails {
     @Field("email")
     @Getter @Setter
     private String email;
+    public String getUsername(){ return email; }
 
     /** Username of the user, which must be unique. */
     @Field("username")
-    @Getter @Setter
     private String username;
+    public String getName() { return username; }
+    public void setName(String name) { username = name; }
 
     /** Encrypted password of the user. */
     @Field("password")

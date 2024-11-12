@@ -1,9 +1,18 @@
 package ies.carbox.api.RestAPI.controller;
 
+import ies.carbox.api.RestAPI.CONSTANTS;
+import ies.carbox.api.RestAPI.dtos.LoginUserDto;
+import ies.carbox.api.RestAPI.dtos.RegisterUserDto;
 import ies.carbox.api.RestAPI.entity.User;
+import ies.carbox.api.RestAPI.service.AuthenticationService;
+import ies.carbox.api.RestAPI.service.JwtService;
 import ies.carbox.api.RestAPI.service.UserService;
+import ies.carbox.api.RestAPI.token.AuthToken;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
@@ -16,11 +25,15 @@ import java.util.Optional;
  * retrieving account details, and logging out.</p>
  */
 @RestController
-@RequestMapping("/api/v2/user") // Base path for all user-related requests
+@RequestMapping(CONSTANTS.apiBase + "/user") // Base path for all user-related requests
 public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private JwtService jwtService;
+    @Autowired
+    private AuthenticationService authenticationService;
 
     /**
      * Creates a new user account.
@@ -32,10 +45,9 @@ public class UserController {
      * @return ResponseEntity containing the created User and HTTP status 201, or 400 if creation fails.
      */
     @PostMapping("/createAccount")
-    public ResponseEntity<User> createAccount(@Valid @RequestBody User user) {
-        /* TODO: Mandatory arguments (email, username, password) */
+    public ResponseEntity<User> createAccount(@Valid @RequestBody RegisterUserDto user) {
         try {
-            User createdUser = userService.createAccount(user);
+            User createdUser = authenticationService.signup(user);
             return ResponseEntity.status(201).body(createdUser);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(null);
@@ -52,12 +64,18 @@ public class UserController {
      * @return ResponseEntity with a token (String) and HTTP status 200, or 401 if authentication fails.
      */
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User loginRequest) {
+    public ResponseEntity<AuthToken> login(@RequestBody LoginUserDto loginRequest) {
         try {
-            String token = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
-            return ResponseEntity.ok(token);
+            User authenticatedUser = authenticationService.authenticate(loginRequest);
+            String jwtToken = jwtService.generateToken(authenticatedUser);
+
+            AuthToken authToken = new AuthToken();
+            authToken.setToken(jwtToken);
+            authToken.setExpiresIn(jwtService.getExpirationTime());
+
+            return ResponseEntity.ok(authToken);
         } catch (Exception e) {
-            return ResponseEntity.status(401).body("Invalid username or password");
+            return ResponseEntity.status(401).body(null);
         }
     }
 
@@ -91,6 +109,10 @@ public class UserController {
      */
     @GetMapping("/account")
     public ResponseEntity<User> getAccount(@RequestParam String userId) {
+        // WARN: BIrras vê isto: serve para obter o token dos headers
+        // faz ctrl+f e pesquisa SecurityContextHolder
+        // https://medium.com/@tericcabrel/implement-jwt-authentication-in-a-spring-boot-3-application-5839e4fd8fac
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Optional<User> user = userService.getAccount(userId);
         return user.map(ResponseEntity::ok)
                    .orElseGet(() -> ResponseEntity.status(404).body(null));

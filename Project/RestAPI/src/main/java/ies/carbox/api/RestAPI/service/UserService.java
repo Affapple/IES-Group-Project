@@ -56,7 +56,7 @@ public class UserService implements UserDetailsService {
     }
 
     public User createAccount(User user) throws Exception {
-        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+        if (userRepository.findByUsername(user.getName()).isPresent()) {
             throw new Exception("Username already exists");
         }
         return userRepository.save(user);
