@@ -1,0 +1,32 @@
+
+.info {
+    display: flex;
+    justify-content: left;
+    margin: 10px 0;
+    margin-top: 0;
+    text-align: left;
+    text-decoration: black;
+    font-weight: bold;
+    
+
+}
+
+.Main{
+    display: flex;
+    justify-content: left;
+    margin-left: 0px;
+    font-weight: bold;
+    margin: 10px;
+    padding: 10px;
+    width: 100%;
+    height: fit-content;
+    border-bottom: 1px solid gray;
+
+}
+
+.info2{
+    display: flex;
+    justify-content: left;
+    margin-left: 10px;
+    font-weight: normal;
+}

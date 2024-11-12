@@ -4,6 +4,7 @@ import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import RegisterPage from "./pages/Register";
 import MainPage from "./pages/MainPage";
+import CarInfo from "./pages/CarInfo";
 
 const App: React.FC = () => {
   return (
@@ -13,6 +14,7 @@ const App: React.FC = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<RegisterPage />}/>
         <Route path="/home" element={<MainPage />}/>
+        <Route path="/carinfo" element={<CarInfo />}/>
 
         {/* Adicionar rotas */}
       </Routes>
