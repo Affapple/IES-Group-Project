@@ -1,4 +1,4 @@
-package ies.carbox.api.RestAPI.configs;
+package ies.carbox.api.RestAPI.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,12 +32,15 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        System.out.println("running filter");
         http.csrf()
                 .disable()
                 .authorizeHttpRequests()
                 .requestMatchers(
                     CONSTANTS.apiBase + "/user/login",
-                    CONSTANTS.apiBase + "/user/createAccount"
+                    CONSTANTS.apiBase + "/user/createAccount",
+                    "swagger-ui/**",
+                    "/v3/api-docs/**"
                 )
                 .permitAll()
                 .anyRequest()

@@ -1,4 +1,4 @@
-package ies.carbox.api.RestAPI.configs;
+package ies.carbox.api.RestAPI.config;
 
 import ies.carbox.api.RestAPI.repository.UserRepository;
 

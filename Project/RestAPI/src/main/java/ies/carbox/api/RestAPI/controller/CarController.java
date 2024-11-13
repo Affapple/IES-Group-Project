@@ -26,7 +26,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
  * retrieving car data and trips, and removing car associations.
  */
 @RestController
-@RequestMapping(CONSTANTS.baseUrl + "/vehicles")  // Base path for Car-related requests
+@RequestMapping(CONSTANTS.apiBase + "/vehicles")  // Base path for Car-related requests
 
 public class CarController {
 
@@ -54,14 +54,16 @@ public class CarController {
     public ResponseEntity<List<Car>> getAllCars(
         @Parameter(description = "User object containing user's email") @RequestBody(required = true) User user
     ) {
-        System.out.println("Hello");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("Hello2 ");
         String userEmail = user.getEmail();
         System.err.println("Getting user cars");
 
         try {
             List<String> ecuIds = userService.getListOfEcuIds(userEmail);
+            if (ecuIds == null) {
+                return ResponseEntity.noContent().build();
+            }
+
             List<Car> cars = carService.getAllUserCars(ecuIds);
             return ResponseEntity.ok(cars);
         } catch (IllegalArgumentException e) {

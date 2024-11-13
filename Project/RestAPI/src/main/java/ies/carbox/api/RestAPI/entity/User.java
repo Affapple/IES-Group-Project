@@ -38,12 +38,23 @@ public class User implements UserDetails {
     @Field("email")
     @Getter @Setter
     private String email;
+    /**
+     * @return email (must be like this because of JWT authentication)
+     */
     public String getUsername(){ return email; }
 
     /** Username of the user, which must be unique. */
     @Field("username")
     private String username;
+    
+    /**
+     * @return Username
+     */
     public String getName() { return username; }
+    /**
+     * Sets username
+     * @param name 
+     */
     public void setName(String name) { username = name; }
 
     /** Encrypted password of the user. */

@@ -1,4 +1,4 @@
-package ies.carbox.api.RestAPI.configs;
+package ies.carbox.api.RestAPI.config;
 
 import ies.carbox.api.RestAPI.service.JwtService;
 import jakarta.servlet.FilterChain;
@@ -53,8 +53,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             final String jwt = authHeader.substring(7);
             final String userEmail = jwtService.extractUsername(jwt);
-            System.out.println("Got call jwt and email");
-                System.out.println(request.toString());
 
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
