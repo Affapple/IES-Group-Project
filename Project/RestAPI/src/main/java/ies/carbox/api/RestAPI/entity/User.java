@@ -66,7 +66,7 @@ public class User implements UserDetails {
      */
     @Override
     public String toString() {
-        return "User [email=" + email + ", password= "+password + ", username=" + username + ", carlist=" + carsList + "]";
+        return "User [email=" + email + ", password=***** , username=" + username + ", carlist=" + carsList + "]";
     }
 
     /**
@@ -94,5 +94,9 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+    @Override
+    public int hashCode() {
+        return toString().hashCode();
     }
 }

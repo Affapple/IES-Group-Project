@@ -36,8 +36,8 @@ public class SecurityConfiguration {
                 .disable()
                 .authorizeHttpRequests()
                 .requestMatchers(
-                    CONSTANTS.apiBase + "/account/login",
-                    CONSTANTS.apiBase + "/createAccount"
+                    CONSTANTS.apiBase + "/user/login",
+                    CONSTANTS.apiBase + "/user/createAccount"
                 )
                 .permitAll()
                 .anyRequest()

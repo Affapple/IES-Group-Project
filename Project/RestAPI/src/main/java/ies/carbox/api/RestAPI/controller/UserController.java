@@ -75,6 +75,7 @@ public class UserController {
 
             return ResponseEntity.ok(authToken);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(401).body(null);
         }
     }

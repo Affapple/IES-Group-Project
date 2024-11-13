@@ -22,6 +22,10 @@ import ies.carbox.api.RestAPI.service.TripInfoService;
 import ies.carbox.api.RestAPI.service.UserService;
 import ies.carbox.api.RestAPI.CONSTANTS;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+
 @RestController
 @RequestMapping(CONSTANTS.baseUrl + "/vehicles")  // Base path for Car-related requests
 
@@ -50,13 +54,18 @@ public class CarController {
     public ResponseEntity<List<Car>> getAllCars(
         @RequestBody(required = true) User user
     ) {
+        System.out.println("Hello");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("Hello2 ");
         String userEmail = user.getEmail();
+        System.err.println("Getting user cars");
 
         try {
             List<String> ecuIds = userService.getListOfEcuIds(userEmail);
             List<Car> cars = carService.getAllUserCars(ecuIds);
             return ResponseEntity.ok(cars);
         } catch (IllegalArgumentException e) {
+            e.printStackTrace();
             return ResponseEntity.notFound().build();
         }
     }
