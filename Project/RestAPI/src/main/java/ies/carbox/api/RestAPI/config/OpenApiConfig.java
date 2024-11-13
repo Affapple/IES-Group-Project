@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.info.Info;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@OpenAPIDefinition(info = @Info(title = "Carbox API", version = "1.0", description = "Car Management API Documentation"))
+@OpenAPIDefinition(info = @Info(title = "Carbox API", version = "v1", description = "API for carbox app"))
 public class OpenApiConfig {
-    // Optional: Custom configuration for OpenAPI
+    // Configuration for OpenAPI goes here
 }
