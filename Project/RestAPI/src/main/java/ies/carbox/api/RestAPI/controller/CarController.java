@@ -55,8 +55,7 @@ public class CarController {
         @Parameter(description = "User object containing user's email") @RequestBody(required = true) User user
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = user.getEmail();
-        System.err.println("Getting user cars");
+        String userEmail = authentication.getName(); // Gets the email of the user, no need for Body User user
 
         try {
             List<String> ecuIds = userService.getListOfEcuIds(userEmail);
