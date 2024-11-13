@@ -17,16 +17,21 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import java.util.Optional;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * UserController provides endpoints for user-related operations.
- *
- * <p>Endpoints include creating an account, logging in, updating account information,
- * retrieving account details, and logging out.</p>
+ * UserController provides endpoints for managing user accounts, including registration, login, 
+ * updating account details, retrieving user information, and logout.
  */
 @RestController
-@RequestMapping(CONSTANTS.apiBase + "/user") // Base path for all user-related requests
+@RequestMapping(CONSTANTS.apiBase + "/user")
+@io.swagger.v3.oas.annotations.tags.Tag(name = "User Management", description = "Endpoints for user account operations")
 public class UserController {
+
 
     @Autowired
     private UserService userService;
@@ -41,11 +46,26 @@ public class UserController {
      * <p>This endpoint is for user registration. It accepts a `User` object in the request body
      * and returns the created user object with a 201 status on success.</p>
      *
-     * @param user The User object containing account information (validated with @Valid).
-     * @return ResponseEntity containing the created User and HTTP status 201, or 400 if creation fails.
+     * @param user The User object containing registration information.
+     * @return ResponseEntity with the created User object and HTTP status 201, or 400 if creation fails.
      */
     @PostMapping("/createAccount")
-    public ResponseEntity<User> createAccount(@Valid @RequestBody RegisterUserDto user) {
+    @Operation(
+        summary = "Register a new user account", 
+        description = "Create a new user account with the provided user details",
+        responses = {
+            @ApiResponse(
+                responseCode = "201", 
+                description = "User created successfully", 
+                content = @Content(schema = @Schema(implementation = User.class))
+            ),
+            @ApiResponse(responseCode = "400", description = "Invalid user details or creation failed")
+        }
+    )
+    public ResponseEntity<User> createAccount(
+            @Parameter(description = "User object with account details")
+            @Valid @RequestBody RegisterUserDto user
+        ) {
         try {
             User createdUser = authenticationService.signup(user);
             return ResponseEntity.status(201).body(createdUser);
@@ -57,14 +77,21 @@ public class UserController {
     /**
      * Authenticates a user and generates a token.
      *
-     * <p>This endpoint is for user login. It accepts a `User` object with `username` and `password`
-     * fields in the request body, and returns a token if authentication is successful.</p>
-     *
-     * @param loginRequest The User object containing login credentials.
-     * @return ResponseEntity with a token (String) and HTTP status 200, or 401 if authentication fails.
+     * @param loginRequest User object containing login credentials.
+     * @return ResponseEntity with token (String) and HTTP status 200, or 401 if authentication fails.
      */
     @PostMapping("/login")
-    public ResponseEntity<AuthToken> login(@RequestBody LoginUserDto loginRequest) {
+    @Operation(
+        summary = "Authenticate user and generate token", 
+        description = "Authenticate the user and generate an authentication token",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "User authenticated successfully"),
+            @ApiResponse(responseCode = "401", description = "Invalid username or password")
+        }
+    )
+    public ResponseEntity<AuthToken> login(
+        @Parameter(description = "User object with login credentials") @RequestBody LoginUserDto loginRequest
+        ) {
         try {
             User authenticatedUser = authenticationService.authenticate(loginRequest);
             String jwtToken = jwtService.generateToken(authenticatedUser);
@@ -83,37 +110,59 @@ public class UserController {
     /**
      * Updates user account information.
      *
-     * <p>This endpoint allows users to update their account details. It accepts an updated `User` object
-     * and returns the updated user data.</p>
-     *
      * @param updatedUser The User object containing updated information.
-     * @return ResponseEntity with the updated User and HTTP status 200, or 400 if update fails.
+     * @return ResponseEntity with updated User object and HTTP status 200, or 400 if update fails.
      */
     @PutMapping("/updateAccount")
-    public ResponseEntity<User> updateAccount(@RequestBody User updatedUser) {
+    @Operation(
+        summary = "Update user account information", 
+        description = "Update the user account with the provided details",
+        responses = {
+            @ApiResponse(
+                responseCode = "200", 
+                description = "User account updated successfully", 
+                content = @Content(schema = @Schema(implementation = User.class))
+            ),
+            @ApiResponse(responseCode = "400", description = "Invalid data or update failed")
+        }
+    )
+    public ResponseEntity<User> updateAccount(
+            @Parameter(description = "Updated User object with new details") @RequestBody User updatedUser) {
+        
         try {
             User user = userService.updateAccount(updatedUser);
             return ResponseEntity.ok(user);
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.badRequest().body(null);
         }
     }
 
     /**
-     * Retrieves the account details for a specific user.
+     * Retrieves account details for a specific user.
      *
-     * <p>This endpoint is for fetching user account data. It requires a `userId` as a query parameter.</p>
-     *
-     * @param userId The ID of the user whose account data is being requested.
-     * @return ResponseEntity with the User object and HTTP status 200, or 404 if user is not found.
+     * @param userId The ID of the user whose details are requested.
+     * @return ResponseEntity with User object and HTTP status 200, or 404 if user is not found.
      */
     @GetMapping("/account")
-    public ResponseEntity<User> getAccount(@RequestParam String userId) {
+    @Operation(
+        summary = "Retrieve user account details by user ID", 
+        description = "Retrieve the details of a user account based on user ID",
+        responses = {
+            @ApiResponse(
+                responseCode = "200", 
+                description = "User found and returned successfully", 
+                content = @Content(schema = @Schema(implementation = User.class))
+            ),
+            @ApiResponse(responseCode = "404", description = "User not found")
+        }
+    )
+    public ResponseEntity<User> getAccount(
+            @Parameter(description = "ID of the user") @RequestParam String userId) {
         // WARN: BIrras vê isto: serve para obter o token dos headers
         // faz ctrl+f e pesquisa SecurityContextHolder
         // https://medium.com/@tericcabrel/implement-jwt-authentication-in-a-spring-boot-3-application-5839e4fd8fac
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        
         Optional<User> user = userService.getAccount(userId);
         return user.map(ResponseEntity::ok)
                    .orElseGet(() -> ResponseEntity.status(404).body(null));
@@ -122,14 +171,17 @@ public class UserController {
     /**
      * Logs out the user.
      *
-     * <p>This endpoint performs user logout. It could be extended with token invalidation logic if needed.</p>
-     *
      * @return ResponseEntity with a success message and HTTP status 200.
      */
     @PostMapping("/logout")
+    @Operation(
+        summary = "Logout user", 
+        description = "Logs out the current user",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "User logged out successfully")
+        }
+    )
     public ResponseEntity<String> logout() {
         return ResponseEntity.ok("Logged out successfully");
     }
-
-    // TODO: Consider adding token-based security for session management
 }

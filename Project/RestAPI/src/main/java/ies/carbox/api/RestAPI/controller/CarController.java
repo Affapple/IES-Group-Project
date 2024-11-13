@@ -4,14 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import ies.carbox.api.RestAPI.entity.Car;
 import ies.carbox.api.RestAPI.entity.CarLiveInfo;
@@ -20,12 +13,18 @@ import ies.carbox.api.RestAPI.entity.User;
 import ies.carbox.api.RestAPI.service.CarService;
 import ies.carbox.api.RestAPI.service.TripInfoService;
 import ies.carbox.api.RestAPI.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Parameter;
 import ies.carbox.api.RestAPI.CONSTANTS;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-
+/**
+ * CarController provides endpoints for managing cars, including viewing, associating cars to users, 
+ * retrieving car data and trips, and removing car associations.
+ */
 @RestController
 @RequestMapping(CONSTANTS.baseUrl + "/vehicles")  // Base path for Car-related requests
 
@@ -43,16 +42,17 @@ public class CarController {
     }
 
     /**
-     * GET /api/v1/vehicles
+     * Retrieves a list of cars owned by the specified user.
      *
-     * Get User owned cars
-     *
-     * @param user User
-     * @return List<Car>
+     * @param user The User object representing the user whose cars are to be retrieved.
+     * @return A list of Car objects associated with the user.
      */
     @GetMapping
+    @Operation(summary = "Retrieve all cars owned by a specific user", description = "Retrieve a list of cars owned by a user")
+    @ApiResponse(responseCode = "200", description = "Cars retrieved successfully")
+    @ApiResponse(responseCode = "404", description = "User not found")
     public ResponseEntity<List<Car>> getAllCars(
-        @RequestBody(required = true) User user
+        @Parameter(description = "User object containing user's email") @RequestBody(required = true) User user
     ) {
         System.out.println("Hello");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -71,17 +71,19 @@ public class CarController {
     }
 
     /**
-     * GET /api/v1/vehicles/addVehicle/{carId}
+     * Associates a car with a user.
      *
-     * Associate a car to a User
-     *
-     * @param user User
-     * @return operation result
+     * @param user The User object containing user's email.
+     * @param ecuId The ID of the car to be associated with the user.
+     * @return The associated Car object on success.
      */
     @PostMapping("/addVehicle/{carId}")
+    @Operation(summary = "Associate a car with a user", description = "Associates a car with the specified user")
+    @ApiResponse(responseCode = "200", description = "Car associated with user successfully")
+    @ApiResponse(responseCode = "404", description = "User or car not found")
     public ResponseEntity<Car> associateCarToUser(
-        @RequestBody(required = true) User user,
-        @PathVariable(required = true, name = "carId") String ecuId
+        @Parameter(description = "User object containing user's email") @RequestBody(required = true) User user,
+        @Parameter(description = "ID of the car to be associated") @PathVariable(required = true, name = "carId") String ecuId
     ) {
         String userEmail = user.getEmail();
 
@@ -93,15 +95,17 @@ public class CarController {
     }
 
     /**
-     * GET /api/v1/vehicles/data
-     * Get data of the car carId
+     * Retrieves data for a specific car by its ID.
      *
-     * @param carId String Id of the car
-     * @return Car
+     * @param carId The ID of the car to retrieve data for.
+     * @return The Car object containing data of the specified car.
      */
     @GetMapping("/data")
+    @Operation(summary = "Retrieve car data by car ID", description = "Retrieve detailed car data by specifying car ID")
+    @ApiResponse(responseCode = "200", description = "Car data retrieved successfully")
+    @ApiResponse(responseCode = "404", description = "Car not found")
     public ResponseEntity<Car> getCarById(
-        @RequestParam(required = true, value = "carId") String carId
+        @Parameter(description = "ID of the car to retrieve") @RequestParam(required = true, value = "carId") String carId
     ) {
         try {
             Car car = carService.getCarById(carId);
@@ -113,15 +117,17 @@ public class CarController {
     }
 
     /**
-     * GET /api/v1/vehicles/{carId}
-     * Get latest data of car
+     * Retrieves the latest live information for a specified car.
      *
-     * @param carId String Id of the car
-     * @return CarLiveInfo
+     * @param carId The ID of the car for which to retrieve the latest information.
+     * @return The CarLiveInfo object containing the latest data of the specified car.
      */
     @GetMapping("/{carId}")
+    @Operation(summary = "Retrieve the latest live information of a car by car ID", description = "Retrieve the latest live data for a specific car")
+    @ApiResponse(responseCode = "200", description = "Latest car data retrieved successfully")
+    @ApiResponse(responseCode = "404", description = "Car not found")
     public ResponseEntity<CarLiveInfo> getCarLatestInfo(
-        @PathVariable(required = true, value = "carId") String carId
+        @Parameter(description = "ID of the car to retrieve live data for") @PathVariable(required = true, value = "carId") String carId
     ) {
         try {
             CarLiveInfo car = carService.getLatestCarData(carId);
@@ -133,16 +139,19 @@ public class CarController {
     }
 
     /**
-     * GET /api/v1/vehicles/{carId}
-     * Delete association of a user to a car
+     * Deletes the association of a car from a user.
      *
-     * @param carId Id of the car to be dissasociated
-     * @return result String with status
+     * @param carId The ID of the car to be dissociated.
+     * @param user The User object containing user's email.
+     * @return A status message indicating the result of the deletion.
      */
     @DeleteMapping("/{carId}")
+    @Operation(summary = "Dissociate a car from a user by car ID", description = "Removes the association of a car from a user")
+    @ApiResponse(responseCode = "200", description = "Car dissociated from user successfully")
+    @ApiResponse(responseCode = "404", description = "User or car not found")
     public ResponseEntity<String> deleteCar(
-        @PathVariable(required = true) String carId,
-        @RequestBody(required = true) User user
+        @Parameter(description = "ID of the car to be removed from user") @PathVariable(required = true) String carId,
+        @Parameter(description = "User object containing user's email") @RequestBody(required = true) User user
     ) {
         try {
             userService.removeUserCar(user.getEmail(), carId);
@@ -153,26 +162,21 @@ public class CarController {
         }
     }
 
-
     /**
-     * GET /api/v1/vehicles/trips
-     * Gets all trips made by a Car
+     * Retrieves all trips made by a specific car.
      *
-     * @param carId Id of the car
-     * @returns List<TripInfo>
+     * @param carId The ID of the car to retrieve trips for.
+     * @return A list of TripInfo objects for the specified car.
      */
     @GetMapping("/trips")
+    @Operation(summary = "Retrieve all trips made by a car", description = "Retrieve a list of trips associated with a specific car")
+    @ApiResponse(responseCode = "200", description = "Trips retrieved successfully")
+    @ApiResponse(responseCode = "404", description = "Car not found or no trips available")
     public ResponseEntity<List<TripInfo>> getCarTrips(
-        // FIX: If necessary, make consistent with get /trip
-        @RequestParam(required = true, name = "carId") String carId
-        // @RequestBody(required = true) String carId
+        @Parameter(description = "ID of the car to retrieve trips for") @RequestParam(required = true, name = "carId") String carId
     ) {
-        // FIX: put carId on body would be cleaner(in both 5. and 6.), but could lead to potential
-        // Issues for the user, if they are not worked out on frontend
         try {
-            System.out.println("Getting trips");
             List<TripInfo> trips = tripInfoService.getTripInfoByCarId(carId);
-            System.out.println("Got " + trips);
             return ResponseEntity.ok(trips);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
@@ -180,19 +184,19 @@ public class CarController {
     }
 
     /**
-     * GET /api/v1/vehicles/trip/{carId}/{tripId}
-     * Get a trip made by a Car
+     * Retrieves a specific trip made by a car.
      *
-     * @param carId Id of the car
-     * @param tripId Id of the trip
-     *
-     * @returns CarTrip
+     * @param carId The ID of the car for the trip.
+     * @param tripId The ID of the trip to retrieve.
+     * @return The TripInfo object containing data for the specified trip.
      */
     @GetMapping("/trip/{carId}/{tripId}")
+    @Operation(summary = "Retrieve a specific trip made by a car", description = "Retrieve detailed information of a specific trip associated with a car")
+    @ApiResponse(responseCode = "200", description = "Trip retrieved successfully")
+    @ApiResponse(responseCode = "404", description = "Trip or car not found")
     public ResponseEntity<TripInfo> getTrip(
-        @PathVariable(required = true, name = "carId") String carId,
-        // @RequestBody(required = true) String carId
-        @PathVariable(required = true, name="tripId") String tripId
+        @Parameter(description = "ID of the car related to the trip") @PathVariable(required = true, name = "carId") String carId,
+        @Parameter(description = "ID of the trip to retrieve") @PathVariable(required = true, name="tripId") String tripId
     ) {
         try {
             TripInfo trips = tripInfoService.getTripInfo(tripId, carId);
