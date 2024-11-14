@@ -22,7 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
- * CarController provides endpoints for managing cars, including viewing, associating cars to users, 
+ * CarController provides endpoints for managing cars, including viewing, associating cars to users,
  * retrieving car data and trips, and removing car associations.
  */
 @RestController
@@ -51,9 +51,7 @@ public class CarController {
     @Operation(summary = "Retrieve all cars owned by a specific user", description = "Retrieve a list of cars owned by a user")
     @ApiResponse(responseCode = "200", description = "Cars retrieved successfully")
     @ApiResponse(responseCode = "404", description = "User not found")
-    public ResponseEntity<List<Car>> getAllCars(
-        @Parameter(description = "User object containing user's email") @RequestBody(required = true) User user
-    ) {
+    public ResponseEntity<List<Car>> getAllCars() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName(); // Gets the email of the user, no need for Body User user
 
