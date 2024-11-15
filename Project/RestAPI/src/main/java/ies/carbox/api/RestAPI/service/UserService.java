@@ -88,7 +88,6 @@ public class UserService implements UserDetailsService {
     }
 
     public Optional<User> getAccount(String userEmail) {
-        return userRepository.findById(userEmail);
-        // TODO: Maybe here we have to retrieve more data? Or do we do that somewhere else
+        return userRepository.findByEmail(userEmail);
     }
 }

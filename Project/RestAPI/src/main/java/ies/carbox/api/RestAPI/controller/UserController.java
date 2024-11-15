@@ -49,7 +49,7 @@ public class UserController {
      * @param user The User object containing registration information.
      * @return ResponseEntity with the created User object and HTTP status 201, or 400 if creation fails.
      */
-    @PostMapping("/createAccount")
+    @PostMapping("/account")
     @Operation(
         summary = "Register a new user account", 
         description = "Create a new user account with the provided user details",
@@ -113,7 +113,7 @@ public class UserController {
      * @param updatedUser The User object containing updated information.
      * @return ResponseEntity with updated User object and HTTP status 200, or 400 if update fails.
      */
-    @PutMapping("/updateAccount")
+    @PutMapping("/account")
     @Operation(
         summary = "Update user account information", 
         description = "Update the user account with the provided details",
@@ -157,12 +157,13 @@ public class UserController {
         }
     )
     public ResponseEntity<User> getAccount(
-            @Parameter(description = "ID of the user") @RequestParam String userId) {
-        // WARN: BIrras vê isto: serve para obter o token dos headers
-        // faz ctrl+f e pesquisa SecurityContextHolder
-        // https://medium.com/@tericcabrel/implement-jwt-authentication-in-a-spring-boot-3-application-5839e4fd8fac
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            @Parameter(description = "ID of the user") @RequestBody String userId) {
         
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = (User) authentication.getPrincipal();
+        if (!currentUser.getEmail().equals(userId)) {
+            return ResponseEntity.status(403).body(null);
+        }
         Optional<User> user = userService.getAccount(userId);
         return user.map(ResponseEntity::ok)
                    .orElseGet(() -> ResponseEntity.status(404).body(null));
@@ -182,6 +183,7 @@ public class UserController {
         }
     )
     public ResponseEntity<String> logout() {
+        SecurityContextHolder.clearContext();
         return ResponseEntity.ok("Logged out successfully");
     }
 }

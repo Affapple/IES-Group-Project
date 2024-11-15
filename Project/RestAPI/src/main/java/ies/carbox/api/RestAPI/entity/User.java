@@ -10,6 +10,8 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import jakarta.persistence.Tuple;
+
 import org.springframework.data.annotation.Id;
 /**
  * Represents a user entity in the system.
@@ -22,6 +24,9 @@ import org.springframework.data.annotation.Id;
  *     <li><b>id</b>: Unique identifier for the user.</li>
  *     <li><b>username</b>: Username of the user, which must be unique.</li>
  *     <li><b>password</b>: Encrypted password of the user.</li>
+ *     <li><b>carsList</b>: List of cars owned by the user and their names.</li>
+ *     <li><b>phone</b>: Phone number of user.</li>
+ *     <li><b>admin</b>: User status.</li>
  * </ul>
  */
 @NoArgsConstructor
@@ -65,7 +70,17 @@ public class User implements UserDetails {
     /** List of cars owned by the user */
     @Field("carsList")
     @Getter @Setter
-    private List<String> carsList;
+    private List<Tuple> carsList;
+
+    /**Phone number of user */
+    @Field("phone")
+    @Getter @Setter
+    private int phone;
+
+    /**User status */
+    @Field("admin")
+    @Getter @Setter
+    private boolean admin;
 
     /**
      * Returns a string representation of the user.
