@@ -169,16 +169,13 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "User not found")
         }
     )
-    public ResponseEntity<User> getAccount(
-            @Parameter(description = "ID of the user") @RequestBody String userId) {
+    public ResponseEntity<User> getAccount() {
         
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) authentication.getPrincipal();
         String email = currentUser.getEmail();
         System.out.println(email);
-        System.out.println(userId);
-        // TODO Check if the user is authorized to access the requested account 
-        Optional<User> user = userService.getAccount(userId);
+        Optional<User> user = userService.getAccount(email);
         User userObj = user.orElse(null);
         System.out.println(userObj);
         return userObj != null ? ResponseEntity.status(200).body(userObj) : ResponseEntity.notFound().build();
