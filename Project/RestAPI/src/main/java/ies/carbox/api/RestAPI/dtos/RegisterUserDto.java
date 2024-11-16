@@ -1,5 +1,8 @@
 package ies.carbox.api.RestAPI.dtos;
 
+import java.util.List;
+
+import jakarta.persistence.Tuple;
 import lombok.*;
 
 @Getter
@@ -11,5 +14,6 @@ public class RegisterUserDto {
     private String username;
     private String password;
     private int phone;
+    private List<Tuple> carsList;
     
 }

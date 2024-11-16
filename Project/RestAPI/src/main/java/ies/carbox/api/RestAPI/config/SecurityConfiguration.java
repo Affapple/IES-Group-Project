@@ -37,8 +37,8 @@ public class SecurityConfiguration {
                 .disable()
                 .authorizeHttpRequests()
                 .requestMatchers(
+                    CONSTANTS.apiBase + "/user/accountCreation",
                     CONSTANTS.apiBase + "/user/login",
-                    CONSTANTS.apiBase + "/user/createAccount",
                     "swagger-ui/**",
                     "/v3/api-docs/**"
                 )

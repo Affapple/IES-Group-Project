@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 // import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import ies.carbox.api.RestAPI.dtos.RegisterUserDto;
 import ies.carbox.api.RestAPI.entity.User;
 import ies.carbox.api.RestAPI.repository.UserRepository;
 import jakarta.persistence.Tuple;
@@ -53,13 +54,13 @@ public class UserService implements UserDetailsService {
         return user.getCarsList();
     }
 
-    public void removeUserCar(String userEmail, String carId) {
+    public User removeUserCar(String userEmail, String carId) {
         User user = userRepository.findByEmail(userEmail)
                     .orElseThrow( () -> new IllegalArgumentException(
            String.format("User with userId=\"%s\" not found", userEmail)
         ));
-
-        userRepository.delete(user);
+        userRepository.deleteByEmail(user.getEmail());
+        
         List<Tuple> carList = user.getCarsList();
         for (Tuple car : carList) {
             if (car.get("ecu_id").equals(carId)) {
@@ -68,34 +69,37 @@ public class UserService implements UserDetailsService {
             }
         }
         user.setCarsList(carList);
-        userRepository.save(user);
+        return user;
     }
 
-    public void addUserCar(String userEmail, String vehicleId, String vehicleName) {
+    public User addUserCar(String userEmail, String vehicleId, String vehicleName) {
         User user = userRepository.findByEmail(userEmail)
                     .orElseThrow( () -> new IllegalArgumentException(
            String.format("User with userId=\"%s\" not found", userEmail)
         ));
-        userRepository.delete(user);
+        userRepository.deleteByEmail(user.getEmail());
         List<Tuple> carList = user.getCarsList();
         Pair<String, String> newCar = Pair.of(vehicleId, vehicleName);
         carList.add((Tuple) newCar);
+        user.setCarsList(carList);
+        return user;
     }
 
  
 
   
 
-    public User updateAccount(User updatedUser) throws Exception {
-        Optional<User> existingUser = userRepository.findByEmail(updatedUser.getEmail()); // The email corresponds to the user's ID
-        if (existingUser.isPresent()) {
-            userRepository.delete(existingUser.get());
-            return userRepository.save(updatedUser);
-        }
-        throw new Exception("User not found");
+    public Void delUser(User user) {
+        userRepository.delete(user);
+        return null;
     }
 
     public Optional<User> getAccount(String userEmail) {
         return userRepository.findByEmail(userEmail);
+    }
+
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 }

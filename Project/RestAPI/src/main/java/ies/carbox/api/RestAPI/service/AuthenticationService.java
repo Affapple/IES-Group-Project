@@ -1,5 +1,7 @@
 package ies.carbox.api.RestAPI.service;
 
+import java.util.ArrayList;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,8 +37,10 @@ public class AuthenticationService {
         user.setPassword(passwordEncoder.encode(input.getPassword()));
         user.setPhone(input.getPhone());
         user.setAdmin(false);
-        user.setCarsList(null);
-
+        if (input.getCarsList() != null)
+            user.setCarsList(input.getCarsList());
+        else
+            user.setCarsList(new ArrayList<>());
         System.out.println(user);
         return userRepository.save(user);
     }

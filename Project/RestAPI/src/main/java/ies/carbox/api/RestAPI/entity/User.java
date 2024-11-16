@@ -95,6 +95,10 @@ public class User implements UserDetails {
         return "User [email=" + email + ", password=***** , username=" + username + ", carlist=" + carsList + "]";
     }
 
+    public boolean isAdmin() {
+        return admin;
+    }
+
     /**
     */
     @Override

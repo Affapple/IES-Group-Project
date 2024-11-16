@@ -19,7 +19,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.Parameter;
 import ies.carbox.api.RestAPI.CONSTANTS;
-
+import ies.carbox.api.RestAPI.dtos.RegisterUserDto;
+import ies.carbox.api.RestAPI.service.AuthenticationService;
 import org.springframework.security.core.Authentication;
 import java.util.Date;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,6 +44,9 @@ public class CarController {
         this.userService = userService;
         this.tripInfoService = tripInfoService;
     }
+
+    @Autowired
+    private AuthenticationService authenticationService;
 
     /**
      * Retrieves a list of cars owned by the specified user.
@@ -99,7 +103,14 @@ public class CarController {
             if (car == null) {
                 return ResponseEntity.notFound().build();
             }
-            userService.addUserCar(userEmail, ecuId, vehicleName);
+            User user = userService.addUserCar(userEmail, ecuId, vehicleName);
+            RegisterUserDto userDto = new RegisterUserDto();
+            userDto.setEmail(user.getEmail());
+            userDto.setUsername(user.getName());
+            userDto.setPhone(user.getPhone());
+            userDto.setPassword(user.getPassword());
+            userDto.setCarsList(user.getCarsList());
+            User newUser = authenticationService.signup(userDto);
             return ResponseEntity.ok(car);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
@@ -118,7 +129,7 @@ public class CarController {
     @ApiResponse(responseCode = "200", description = "Car data retrieved successfully")
     @ApiResponse(responseCode = "404", description = "Car not found")
     public ResponseEntity<Car> getCarById(
-        @Parameter(description = "ID of the car to retrieve") @RequestParam(required = true, value = "vehicleId") String vehicleId
+        @Parameter(description = "ID of the car to retrieve") @PathVariable(required = true, value = "vehicleId") String vehicleId
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName(); 
@@ -244,7 +255,14 @@ public class CarController {
             return ResponseEntity.notFound().build();
         }
         try {
-            userService.removeUserCar(userEmail, vehicleId);
+            User user = userService.removeUserCar(userEmail, vehicleId);
+            RegisterUserDto userDto = new RegisterUserDto();
+            userDto.setEmail(user.getEmail());
+            userDto.setUsername(user.getName());
+            userDto.setPhone(user.getPhone());
+            userDto.setPassword(user.getPassword());
+            userDto.setCarsList(user.getCarsList());
+            User newUser = authenticationService.signup(userDto);
             return ResponseEntity.ok("Car removed successfully");
 
         } catch (IllegalArgumentException exception) {

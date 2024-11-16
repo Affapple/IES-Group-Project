@@ -16,6 +16,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+
+import java.util.List;
 import java.util.Optional;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -49,7 +51,7 @@ public class UserController {
      * @param user The User object containing registration information.
      * @return ResponseEntity with the created User object and HTTP status 201, or 400 if creation fails.
      */
-    @PostMapping("/account")
+    @PostMapping("/accountCreation")
     @Operation(
         summary = "Register a new user account", 
         description = "Create a new user account with the provided user details",
@@ -130,9 +132,20 @@ public class UserController {
             @Parameter(description = "Updated User object with new details") @RequestBody User updatedUser) {
         
         try {
-            User user = userService.updateAccount(updatedUser);
-            return ResponseEntity.ok(user);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            User currentUser = (User) authentication.getPrincipal();
+            User user = userService.loadUserByUsername(currentUser.getEmail());
+            userService.delUser(user);
+            RegisterUserDto userDto = new RegisterUserDto();
+            userDto.setEmail(updatedUser.getEmail());
+            userDto.setUsername(updatedUser.getName());
+            userDto.setPhone(updatedUser.getPhone());
+            userDto.setPassword(updatedUser.getPassword());
+            userDto.setCarsList(user.getCarsList());
+            User newUser = authenticationService.signup(userDto);
+            return ResponseEntity.ok(newUser);
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return ResponseEntity.badRequest().body(null);
         }
     }
@@ -161,12 +174,14 @@ public class UserController {
         
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) authentication.getPrincipal();
-        if (!currentUser.getEmail().equals(userId)) {
-            return ResponseEntity.status(403).body(null);
-        }
+        String email = currentUser.getEmail();
+        System.out.println(email);
+        System.out.println(userId);
+        // TODO Check if the user is authorized to access the requested account 
         Optional<User> user = userService.getAccount(userId);
-        return user.map(ResponseEntity::ok)
-                   .orElseGet(() -> ResponseEntity.status(404).body(null));
+        User userObj = user.orElse(null);
+        System.out.println(userObj);
+        return userObj != null ? ResponseEntity.status(200).body(userObj) : ResponseEntity.notFound().build();
     }
 
     /**
@@ -185,5 +200,35 @@ public class UserController {
     public ResponseEntity<String> logout() {
         SecurityContextHolder.clearContext();
         return ResponseEntity.ok("Logged out successfully");
+    }
+
+
+
+
+    /**
+     * Gets a list of all cars and their associated users. For admin purposes only.
+     * 
+     */
+    @GetMapping("/all")
+    @Operation(
+        summary = "Get all users and their cars", 
+        description = "Get a list of all users and their cars",
+        responses = {
+            @ApiResponse(
+                responseCode = "200", 
+                description = "List of all users and their cars", 
+                content = @Content(schema = @Schema(implementation = User.class))
+            ),
+            @ApiResponse(responseCode = "403", description = "Unauthorized access")
+        }
+    )
+    public ResponseEntity<List<User>> getAllUsers() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = (User) authentication.getPrincipal();
+        if (!currentUser.isAdmin()) {
+            return ResponseEntity.status(403).body(null);
+        }
+        List<User> users = userService.getAllUsers();
+        return ResponseEntity.ok(users);
     }
 }
