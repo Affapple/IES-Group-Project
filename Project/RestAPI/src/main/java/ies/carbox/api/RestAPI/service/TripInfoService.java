@@ -39,4 +39,14 @@ public class TripInfoService {
                 );
     }
 
+    public TripInfo getLatestTripInfo(String carId) {
+        List<TripInfo> trips = tripInfoRepository.findByCarId(carId)
+                .orElseThrow(
+                    () -> new IllegalArgumentException (
+                        String.format("No trips found for car %s", carId)
+                    )
+                );
+        return trips.get(trips.size() - 1);
+    }
+
 }

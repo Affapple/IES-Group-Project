@@ -3,6 +3,7 @@ package ies.carbox.api.RestAPI.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,12 +12,13 @@ import org.springframework.stereotype.Service;
 
 import ies.carbox.api.RestAPI.entity.User;
 import ies.carbox.api.RestAPI.repository.UserRepository;
+import jakarta.persistence.Tuple;
 
 /**
  * userService
  */
 /*
- * TODO: Dar update para retornar tudo UserDetails
+    * This class is responsible for handling the user's account
  */
 @Service
 public class UserService implements UserDetailsService {
@@ -27,14 +29,23 @@ public class UserService implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
+    public Boolean belongsToUser(String ecuId, String userEmail) {
+        User user = userRepository.findByEmail(userEmail)
+                    .orElseThrow( () -> new IllegalArgumentException(
+           String.format("User with userId=\"%s\" not found", userEmail)
+        ));
+        return user.getCarsList().stream().anyMatch(car -> car.get("ecu_id").equals(ecuId));
+    }
+
 
     // ! Maybe correct this later to be email and not username
+    // May not be necessary this method
     @Override
     public User loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
-     }
+    }
 
-    public List<String> getListOfEcuIds(String userEmail) {
+    public List<Tuple> getListOfEcuIds(String userEmail) {
         User user = userRepository.findByEmail(userEmail)
                     .orElseThrow( () -> new IllegalArgumentException(
            String.format("User with userId=\"%s\" not found", userEmail)
@@ -49,36 +60,33 @@ public class UserService implements UserDetailsService {
         ));
 
         userRepository.delete(user);
-        List<String> carList = user.getCarsList();
-        carList.remove(carId);
+        List<Tuple> carList = user.getCarsList();
+        for (Tuple car : carList) {
+            if (car.get("ecu_id").equals(carId)) {
+                carList.remove(car);
+                break;
+            }
+        }
+        user.setCarsList(carList);
         userRepository.save(user);
     }
 
-    public User createAccount(User user) throws Exception {
-        if (userRepository.findByUsername(user.getName()).isPresent()) {
-            throw new Exception("Username already exists");
-        }
-        return userRepository.save(user);
+    public void addUserCar(String userEmail, String vehicleId, String vehicleName) {
+        User user = userRepository.findByEmail(userEmail)
+                    .orElseThrow( () -> new IllegalArgumentException(
+           String.format("User with userId=\"%s\" not found", userEmail)
+        ));
+        userRepository.delete(user);
+        List<Tuple> carList = user.getCarsList();
+        Pair<String, String> newCar = Pair.of(vehicleId, vehicleName);
+        carList.add((Tuple) newCar);
     }
 
-   //  @Autowired
-    // private BCryptPasswordEncoder passwordEncoder;
+ 
 
-    public String login(String username, String password) throws Exception {
-        // Optional<User> userOptional = userRepository.findByUsername(username);
-        // if (userOptional.isPresent()) {
-        //     User user = userOptional.get();
-        //     if (passwordEncoder.matches(password, user.getPassword())) {
-        //         return jwtUtil.generateToken(user); // TODO: Create a jwtUtil class
-        //     }
-        // }
-        // throw new Exception("Invalid username or password");
-        return null;
-    }
+  
 
     public User updateAccount(User updatedUser) throws Exception {
-        /* TODO: - Mail tem de ser obtido de outra forma */
-        /*       - Encontrar maneira de dar update só ao que é mudado */
         Optional<User> existingUser = userRepository.findByEmail(updatedUser.getEmail()); // The email corresponds to the user's ID
         if (existingUser.isPresent()) {
             userRepository.delete(existingUser.get());
