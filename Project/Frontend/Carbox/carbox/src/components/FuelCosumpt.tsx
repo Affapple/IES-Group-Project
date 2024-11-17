@@ -47,17 +47,17 @@ export default function FuelConsumpt({data}) {
                     {autonomyLevel ? <p className="bigInfo2">{autonomy} Km</p> : <p className="bigInfo2Alert">{autonomy} Km</p>}
                 </div>
                 <div className='pt-6'>
-                    <Gauge width={150} height={150} value={autonomy}  valueMax={600}  />
+                    <Gauge width={150} height={150} value={autonomy} text={autonomy+"/600"}  valueMax={600}  />
                 </div>
             </div>
             <div className="flex justify-between items-center mr-10">
                 <div className="">
                     <h2 className="text-3xl font-semibold mb-6 text-gray-800">Engine</h2>
                     <p className="bigInfo">Temperature </p>
-                    {temperatureLevel ? <p className="bigInfo2">{temperature} ºC</p> : <p className="bigInfo2Alert">{temperature} Km</p>}
+                    {temperatureLevel ? <p className="bigInfo2">{temperature} ºCelsious</p> : <p className="bigInfo2Alert">{temperature} ºCelsious</p>}
                 </div>
                 <div className='pt-6 pl-10'>
-                    <Gauge width={150} height={150} value={temperature} valueMax={150} />
+                    <Gauge width={150} height={150} value={temperature} valueMax={150} text={temperature+"ºC"} />
                 </div>
             </div>
             

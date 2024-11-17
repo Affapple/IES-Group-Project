@@ -4,6 +4,8 @@ import CarDetails from '../components/CarDetails';
 import '../css/CarDetails.css';
 import FuelConsumpt from '../components/FuelCosumpt';
 import '../apiClient';
+import NameDisplay from '../components/NameDisplay';
+import Battery from '../components/Battery';
 
 const CarInfo: React.FC = () => {
 
@@ -17,8 +19,10 @@ const CarInfo: React.FC = () => {
     year: '2004',
     l_plate: 'ABC-123',
     last_revision: '13-12-2020',
-    autonomy: 100,
+    autonomy: 123,
     temperature: 25,
+    battery: 50, 
+    name: 'Johns Car'
 });
 
 
@@ -27,11 +31,15 @@ const CarInfo: React.FC = () => {
     <div className="min-h-screen bg-gray-50 font-sans ml-0">
       <Navbar />
       <div className='justify-between items-center p-5 bg-white '>
+        <NameDisplay data={carData}/>
         <div className='Main'>
           <CarDetails data={carData}/>
         </div>
         <div className='Main'>
           <FuelConsumpt data={carData}/>
+        </div>
+        <div className='Main'>
+          <Battery data={carData}/>
         </div>
 
       </div>
