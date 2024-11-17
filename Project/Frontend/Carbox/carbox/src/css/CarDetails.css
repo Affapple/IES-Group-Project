@@ -19,7 +19,8 @@
     text-align: left;
     text-decoration: black;
     font-weight: bold;
-    font-size: 20px;
+    font-size: 30px;
+    margin-left: 10px;
     
 
 }
@@ -32,7 +33,22 @@
     text-align: left;
     text-decoration: black;
     font-weight: bold;
-    font-size: 18px;
+    font-size: 25px;
+    margin-left: 10px;
+    
+
+}
+.bigInfo2Alert {
+    display: flex;
+    justify-content: left;
+    margin: 10px 0;
+    margin-top: 0;
+    text-align: left;
+    text-decoration: red;
+    color: red;
+    font-weight: bold;
+    font-size: 30px;
+    margin-left: 10px;
     
 
 }
@@ -43,7 +59,7 @@
     justify-content: left;
     margin-left: 0px;
     font-weight: bold;
-    margin: 10px;
+
     margin-top: 2px;
     padding: 100px;
     padding-bottom: 5px;

@@ -7,28 +7,31 @@ import '../apiClient';
 
 const CarInfo: React.FC = () => {
 
-  const [id, setId] = React.useState(0);
-  const [name, setName] = React.useState('');
+  const [carId, setId] = React.useState(0);
+  const [carName, setName] = React.useState('Johns Car');
+
+
   const [carData, setCar] = React.useState({
     brand: 'Tesla',
     model: 'Model S',
     year: '2004',
     l_plate: 'ABC-123',
     last_revision: '13-12-2020',
-    autonomy: 400
+    autonomy: 100,
+    temperature: 25,
 });
 
 
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans">
+    <div className="min-h-screen bg-gray-50 font-sans ml-0">
       <Navbar />
       <div className='justify-between items-center p-5 bg-white '>
         <div className='Main'>
           <CarDetails data={carData}/>
         </div>
         <div className='Main'>
-          <FuelConsumpt autonomy={carData.autonomy}/>
+          <FuelConsumpt data={carData}/>
         </div>
 
       </div>
