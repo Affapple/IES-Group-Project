@@ -63,13 +63,13 @@ public class CarController {
         String userEmail = authentication.getName(); // Gets the email of the user, no need for Body User user
 
         try {
-            List<Tuple> data = userService.getListOfEcuIds(userEmail);
+            List<List<String>> data = userService.getListOfEcuIds(userEmail);
             if (data == null) {
                 return ResponseEntity.noContent().build();
             }
             List<String> ecuIds = new ArrayList<>();
-            for (Tuple car : data) {
-                ecuIds.add((String) car.get("ecuId"));
+            for (List<String> car : data) {
+                ecuIds.add(car.get(0));
             }
         
             List<Car> cars = carService.getAllUserCars(ecuIds);
@@ -164,10 +164,10 @@ public class CarController {
             return ResponseEntity.notFound().build();
         }
         try {
-            List<Tuple> car = userService.getListOfEcuIds(userEmail);
-            for (Tuple c : car) {
-                if (c.get("ecuId").equals(vehicleId)) {
-                    return ResponseEntity.ok((String) c.get("name"));
+            List<List<String>> car = userService.getListOfEcuIds(userEmail);
+            for (List<String> c : car) {
+                if (c.get(0).equals(vehicleId)) {
+                    return ResponseEntity.ok((String) c.get(1));
                 }
             }
             return ResponseEntity.notFound().build();
@@ -283,7 +283,7 @@ public class CarController {
     @ApiResponse(responseCode = "200", description = "Trips retrieved successfully")
     @ApiResponse(responseCode = "404", description = "Car not found or no trips available")
     public ResponseEntity<List<TripInfo>> getCarTrips(
-        @Parameter(description = "ID of the car to retrieve trips for") @RequestParam(required = true, name = "vehicleId") String vehicleId,
+        @Parameter(description = "ID of the car to retrieve trips for") @PathVariable(required = true, name = "vehicleId") String vehicleId,
         @Parameter(description = "Optional trip identifier") @RequestBody(required = false) String tripId
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -323,6 +323,7 @@ public class CarController {
         }
         try {
             TripInfo trip = tripInfoService.getLatestTripInfo(vehicleId);
+            System.out.println(trip);
             return ResponseEntity.ok(trip);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();

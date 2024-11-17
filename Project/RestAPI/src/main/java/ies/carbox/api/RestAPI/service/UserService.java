@@ -1,5 +1,6 @@
 package ies.carbox.api.RestAPI.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,7 +36,7 @@ public class UserService implements UserDetailsService {
                     .orElseThrow( () -> new IllegalArgumentException(
            String.format("User with userId=\"%s\" not found", userEmail)
         ));
-        return user.getCarsList().stream().anyMatch(car -> car.get("ecu_id").equals(ecuId));
+        return user.getCarsList().stream().anyMatch(car -> car.get(0).equals(ecuId));
     }
 
 
@@ -46,7 +47,7 @@ public class UserService implements UserDetailsService {
         return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-    public List<Tuple> getListOfEcuIds(String userEmail) {
+    public List<List<String>> getListOfEcuIds(String userEmail) {
         User user = userRepository.findByEmail(userEmail)
                     .orElseThrow( () -> new IllegalArgumentException(
            String.format("User with userId=\"%s\" not found", userEmail)
@@ -61,9 +62,9 @@ public class UserService implements UserDetailsService {
         ));
         userRepository.deleteByEmail(user.getEmail());
         
-        List<Tuple> carList = user.getCarsList();
-        for (Tuple car : carList) {
-            if (car.get("ecu_id").equals(carId)) {
+        List<List<String>> carList = user.getCarsList();
+        for (List<String> car : carList) {
+            if (car.get(0).equals(carId)) {
                 carList.remove(car);
                 break;
             }
@@ -78,9 +79,12 @@ public class UserService implements UserDetailsService {
            String.format("User with userId=\"%s\" not found", userEmail)
         ));
         userRepository.deleteByEmail(user.getEmail());
-        List<Tuple> carList = user.getCarsList();
-        Pair<String, String> newCar = Pair.of(vehicleId, vehicleName);
-        carList.add((Tuple) newCar);
+        List<List<String>> carList = user.getCarsList();
+        List<String> car = new ArrayList<>();
+        car.add(vehicleId);
+        car.add(vehicleName);
+        carList.add(car);
+
         user.setCarsList(carList);
         return user;
     }

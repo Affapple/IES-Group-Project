@@ -14,6 +14,6 @@ public class RegisterUserDto {
     private String username;
     private String password;
     private int phone;
-    private List<Tuple> carsList;
+    private List<List<String>> carsList;
     
 }

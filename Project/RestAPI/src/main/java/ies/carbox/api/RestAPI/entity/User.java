@@ -70,7 +70,7 @@ public class User implements UserDetails {
     /** List of cars owned by the user */
     @Field("carsList")
     @Getter @Setter
-    private List<Tuple> carsList;
+    private List<List<String>> carsList;
 
     /**Phone number of user */
     @Field("phone")
