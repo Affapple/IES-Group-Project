@@ -52,7 +52,6 @@ public class CarService {
                 Car car = carRepository.findByEcuId(ecuId).get();
                 carList.add(car);
 
-                // FIX: Dar improve a esta parte para guardar os dados no CarInfo?
                 CarLiveInfo latestStatus = getLatestCarData(car.getEcuId());
                 if (latestStatus == null) {
                     continue;
@@ -70,7 +69,6 @@ public class CarService {
     }
 
     public CarLiveInfo getLatestCarData(String ecuId) {
-        // FIX: Procurar por  o que esta em comentario
         List<CarLiveInfo> carLiveInfos = carLiveInfoRepository.findByCarId(ecuId)
                                             .orElseThrow(
                                                 () -> new IllegalArgumentException("Car has no info!")
@@ -79,7 +77,6 @@ public class CarService {
         CarLiveInfo latestInfo = null;
 
         for(CarLiveInfo carInfo : carLiveInfos) {
-            System.out.println("X iteration");
             if (0 < carInfo.getTimestamp().compareTo(latestDate)) {
                 latestInfo = carInfo;
                 latestDate = carInfo.getTimestamp();
@@ -89,12 +86,23 @@ public class CarService {
         return latestInfo;
     }
 
-    /**
-     * Retrieves a specific car by its ID for the user.
-     *
-     * @param carId the ID of the car to retrieve
-     * @return the {@link Car} entity associated with the specified ID, or null if not found
-     */
+    public List<CarLiveInfo> getCarDataAfterTimestamp(String ecuId, Date timestamp) {
+        List<CarLiveInfo> carLiveInfos = carLiveInfoRepository.findByCarId(ecuId)
+                                            .orElseThrow(
+                                                () -> new IllegalArgumentException("Car has no info!")
+                                            );
+        List<CarLiveInfo> carLiveInfosAfterTimestamp = new ArrayList<>();
+
+        for(CarLiveInfo carInfo : carLiveInfos) {
+            if (0 < carInfo.getTimestamp().compareTo(timestamp)) {
+                carLiveInfosAfterTimestamp.add(carInfo);
+            }
+        }
+        
+        return carLiveInfosAfterTimestamp;
+    }
+
+
     public Car getCarById(String carId) {
         // Implementation to retrieve a car by ID
         return carRepository
@@ -102,6 +110,8 @@ public class CarService {
                 .orElseThrow(() -> new IllegalArgumentException("Car with carId \""+carId+"\" does not exist!"));
     }
 
+
+    //The following methods may not be necessary
     /**
      * Updates an existing {@link Car} entity in the database.
      *
