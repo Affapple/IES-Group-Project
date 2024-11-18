@@ -60,7 +60,7 @@ const Navbar: React.FC = () => {
             className="text-gray-800 font-semibold"
             onClick={toggleSettings}
           >
-            Christian
+            { user.name ? user.name : "User" }
           </button>
         </div>
         <div className="relative -bottom-1">
