@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
 
+
   return (
     <div className="relative p-5 min-h-screen bg-[#F8F9FA] font-dm-sans">
       {/* Header */}
@@ -29,7 +30,7 @@ const LandingPage: React.FC = () => {
 
       {/* Content */}
       <main className="flex flex-col md:flex-row items-center justify-between py-10">
-        {/* Text Section */}
+        {/* Section for text */}
         <div className="md:pl-[150px] md:pt-[120px]">
           <h1 className="max-w-[350px] text-[44.95px] font-semibold text-[#2C2C2C] leading-tight font-poppins">
             The best way to keep up with{' '}

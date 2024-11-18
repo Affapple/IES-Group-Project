@@ -2,9 +2,17 @@ import React from "react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaBell } from "react-icons/fa";
+import { Link, useLocation } from "react-router-dom";
 import UserSettingsMenu from "./User/UserSettingsMenu";
 
 const Navbar: React.FC = () => {
+  const location = useLocation();
+
+  const isActive = (path: string) =>
+    location.pathname === path
+      ? "text-green-500 font-semibold underline underline-offset-4"
+      : "text-gray-600 hover:text-gray-800 transition-colors duration-300";
+
   const [open, setOpen] = useState<boolean>(false);
 
   const toggleSettings = () => {
@@ -13,25 +21,29 @@ const Navbar: React.FC = () => {
 
   return (
     <header className="flex justify-between items-center p-5 bg-white shadow-md">
+      {/* Logo */}
       <div className="flex items-center space-x-4">
         <img src="/src/assets/logo.png" alt="Logo" className="w-10 h-10" />
-        <h1 className="text-2xl font-semibold text-gray-800" id="modal-title">CarBox</h1>
-        <nav className="flex space-x-6 ml-10">
-          <Link to="/" className="text-gray-600 hover:text-gray-800">
-            Home
-          </Link>
-          <Link to="/main" className="text-gray-600 hover:text-gray-800">
-            My vehicles
-          </Link>
-          <Link to="/faqs" className="text-gray-600 hover:text-gray-800">
-            FAQs
-          </Link>
-        </nav>
+        <h1 className="text-2xl font-semibold text-gray-800">CarBox</h1>
       </div>
+
+      {/* Navigation Links */}
+      <nav className="flex-grow flex justify-center space-x-6">
+        <Link to="/home" className={isActive("/home")}>
+          Home
+        </Link>
+        <Link to="/myvehicles" className={isActive("/myvehicles")}>
+          My Vehicles
+        </Link>
+        <Link to="/faqs" className={isActive("/faqs")}>
+          FAQs
+        </Link>
+      </nav>
+
+      {/* User Section */}
       <div className="relative">
         <div className="flex items-center space-x-4">
-          <FaBell className="text-yellow-500 text-2xl" />
-          <button
+            <button
             className="text-gray-800 font-semibold"
             onClick={toggleSettings}
           >
@@ -41,6 +53,7 @@ const Navbar: React.FC = () => {
         <div className="relative -bottom-1">
           <UserSettingsMenu open={open} />
         </div>
+        <FaBell className="text-yellow-500 text-2xl hover:text-yellow-600 transition duration-300" />
       </div>
     </header>
   );

@@ -1,18 +1,28 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import Footer from '../components/Footer';
 
-const LoginPage: React.FC = () => {
+const Login: React.FC = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null); // Para exibir mensagens de erro
   const navigate = useNavigate();
-  
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
   const handleLogin = () => {
-    // adicionar a lógica de autenticação
-    navigate('/home');
+    // Desativa qualquer validação ou autenticação
+    if (!email || !password) {
+      setError('Please fill in both email and password.');
+      return;
+    }
+
+    // Mock para navegação direta (sem autenticação real)
+    navigate('/home', { replace: true });
   };
 
   return (
@@ -35,20 +45,30 @@ const LoginPage: React.FC = () => {
         {/* Sign In Title */}
         <h2 className="text-center text-2xl font-medium mb-6 text-gray-800 p-12">Sign in</h2>
 
-        {/* Username Input */}
+        {/* Email Input */}
         <div className="mb-4">
-          <label className="block text-gray-600 mb-1">Username</label>
+          <label htmlFor="email" className="block text-gray-600 mb-1">Email</label>
           <input
-            type="text"
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            aria-label="Email"
             className="w-full px-4 py-2 border rounded-md focus:outline-none focus:border-green-500 transition-all duration-300"
           />
         </div>
 
         {/* Password Input */}
         <div className="mb-6 relative">
-          <label className="block text-gray-600 mb-1">Your password</label>
+          <label htmlFor="password" className="block text-gray-600 mb-1">Password</label>
           <input
-            type={showPassword ? "text" : "password"}
+            type={showPassword ? 'text' : 'password'}
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            aria-label="Password"
             className="w-full px-4 py-2 border rounded-md focus:outline-none focus:border-green-500 transition-all duration-300"
           />
           <button
@@ -57,50 +77,24 @@ const LoginPage: React.FC = () => {
             className="absolute right-3 top-1/4 transform -translate-y-1/2 text-gray-500 text-sm flex items-center space-x-1 transition duration-300 hover:text-green-500"
           >
             {showPassword ? <FaEyeSlash className="text-xl" /> : <FaEye className="text-xl" />}
-            <span>{showPassword ? "Hide" : "Show"}</span>
+            <span>{showPassword ? 'Hide' : 'Show'}</span>
           </button>
         </div>
 
+        {/* Error Message */}
+        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+
         {/* Login Button */}
-        <button 
-            onClick={handleLogin}
-            className="w-full bg-green-500 text-white py-2 rounded-md font-semibold hover:bg-green-600 transition transform hover:scale-105 duration-300">
+        <button
+          onClick={handleLogin}
+          className="w-full bg-green-500 text-white py-2 rounded-md font-semibold transition transform hover:scale-105 duration-300 hover:bg-green-600"
+        >
           Login
         </button>
-
-        {/* Terms and Privacy Policy */}
-        <p className="text-center text-sm text-gray-500 mt-4">
-          By continuing, you agree to the <a href="#" className="text-green-500 underline">Terms of use</a> and <a href="#" className="text-green-500 underline">Privacy Policy</a>.
-        </p>
-
-        {/* Forgot Password */}
-        <p className="text-center mt-4">
-          <a href="#" className="text-gray-600 underline">Forgot your password?</a>
-        </p>
       </div>
-
-      {/* Divider */}
-      <div className="flex items-center my-6 w-full max-w-md animate-fade-in-up">
-        <div className="flex-grow border-t border-gray-300"></div>
-        <span className="px-4 text-gray-500">New to our community?</span>
-        <div className="flex-grow border-t border-gray-300"></div>
-      </div>
-
-      {/* Create Account Button */}
-      <button onClick={() => navigate('/register')} className="w-full max-w-md bg-white border border-green-500 text-green-500 py-2 rounded-md font-semibold hover:bg-green-50 transition transform hover:scale-105 duration-300">
-        Create an account
-      </button>
-
-      {/* Footer Links */}
-      <footer className="mt-16 text-center text-sm text-gray-500">
-        <div className="flex justify-center space-x-4">
-          <a href="#" className="hover:underline">Help Center</a>
-          <a href="#" className="hover:underline">Terms of Service</a>
-          <a href="#" className="hover:underline">Privacy Policy</a>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
 
-export default LoginPage;
+export default Login;

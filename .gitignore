@@ -38,3 +38,4 @@ Thumbs.db
 venv
 .env
 .venv
+node_modules/

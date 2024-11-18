@@ -47,7 +47,7 @@ public class CarLiveInfo {
     String tripId;
 
     /** Timestamp of the gathered data */
-    @Field("")
+    @Field("timestamp")
     Date timestamp;
 
     /** Current status of the vehicle (true: on; false: off) */
