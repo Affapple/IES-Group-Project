@@ -1,8 +1,10 @@
 package ies.carbox.api.RestAPI.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -19,6 +21,9 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
+    @Value("${security.cors.frontend.address}")
+    String frontendAddress;
+
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
@@ -33,7 +38,10 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         System.out.println("running filter");
-        http.csrf()
+        http
+            .cors()
+            .and()
+            .csrf()
                 .disable()
                 .authorizeHttpRequests()
                 .requestMatchers(
@@ -59,7 +67,8 @@ public class SecurityConfiguration {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of(CONSTANTS.baseUrl));
+        // TODO: Meter apenas prod frontend address
+        configuration.setAllowedOrigins(List.of(CONSTANTS.baseUrl, "http://localhost:5173", "http://localhost:80", "http://172.26.0.4:5173", "http://localhost"));
         configuration.setAllowedMethods(List.of("GET","POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(List.of("Authorization","Content-Type"));
 

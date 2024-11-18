@@ -29,6 +29,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
  * CarController provides endpoints for managing cars, including viewing, associating cars to users,
  * retrieving car data and trips, and removing car associations.
  */
+@CrossOrigin(maxAge = 3600)
 @RestController
 @RequestMapping(CONSTANTS.apiBase + "/vehicles")  // Base path for Car-related requests
 

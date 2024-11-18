@@ -29,6 +29,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * UserController provides endpoints for managing user accounts, including registration, login, 
  * updating account details, retrieving user information, and logout.
  */
+@CrossOrigin(maxAge = 3600)
 @RestController
 @RequestMapping(CONSTANTS.apiBase + "/user")
 @io.swagger.v3.oas.annotations.tags.Tag(name = "User Management", description = "Endpoints for user account operations")

@@ -9,6 +9,13 @@ const apiClient = axios.create({
 },
 });
 
+function loadToken() {
+  apiClient.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem("token")}`;
+}
+function unloadToken() {
+  apiClient.defaults.headers.common['Authorization'] = undefined;
+  localStorage.removeItem("token");
+}
 
 // Login
 export const login = async (email, password) => {
@@ -17,13 +24,16 @@ export const login = async (email, password) => {
     password
   });
   const token = response.data.token;
-  apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  console.log("Token = " + token);
+  localStorage.setItem("token", token);
   return response.data;
 }
 
+
 // Register
 export const register = async (email, password, phone, username) => {
-  const response = await apiClient.post('/user/account', {
+  console.log(apiClient.defaults.headers.common)
+  const response = await apiClient.post('/user/accountCreation', {
     email,
     password,
     phone,
@@ -35,6 +45,7 @@ export const register = async (email, password, phone, username) => {
 
 // Update User
 export const updateUser = async (email, password, phone, username) => {
+  loadToken();
   const response = await apiClient.put('/user/account', {
     email,
     password,
@@ -46,15 +57,16 @@ export const updateUser = async (email, password, phone, username) => {
 
 // Get User
 export const getUser = async () => {
+  loadToken();
   const response = await apiClient.get('/user/account');
   return response.data;
 }
 
 // Logout
 export const logout = async () => {
+  loadToken();
   const response = await apiClient.post('/user/logout');
-  token = null;
-  apiClient.defaults.headers.common['Authorization'] = null;
+  unloadToken()
 
   return response.data;
 }
@@ -62,6 +74,7 @@ export const logout = async () => {
 // Get All Cars of User
 
 export const getCars = async () => {
+  loadToken();
   const response = await apiClient.get('/vehicles');
   return response.data;
 }
@@ -69,30 +82,35 @@ export const getCars = async () => {
 
 // Associate Car to User
 export const associateCar = async (vehicleId, vehicle_name) => {
+  loadToken();
   const response = await apiClient.post('/vehicles/' + vehicleId + '/'+vehicle_name);
   return response.data;
 }
 
 // Get Car Data by Id
 export const getCar = async (vehicleId) => {
+  loadToken();
   const response = await apiClient.get('/vehicles/' + vehicleId);
   return response.data;
 }
 
 // Get Car Name by Id
 export const getCarName = async (vehicleId) => {
+  loadToken();
   const response = await apiClient.get('/vehicles/name/' + vehicleId);
   return response.data;
 }
 
 // Get Car Live Data after timestamp
 export const getCarLiveData = async (vehicleId, timestamp) => {
+  loadToken();
   const response = await apiClient.get('/vehicles/live' + vehicleId + '/' + timestamp);
   return response.data;
 }
 
 // Get Car latest Data
 export const getCarLatestData = async (vehicleId) => {
+  loadToken();
   const response = await apiClient.get('/vehicles/live/' + vehicleId);
   return response.data;
 }
@@ -100,13 +118,14 @@ export const getCarLatestData = async (vehicleId) => {
 
 // Delete association of Car to User
 export const deleteCar = async (vehicleId) => {
+  loadToken();
   const response = await apiClient.delete('/vehicles/' + vehicleId);
   return response.data;
 }
 
 // Get all trips of Car
 export const getTrips = async (vehicleId, tripId) => {
-
+  loadToken();
     if(tripId!=null){
       const response = await apiClient.get('/vehicles/trips/' + vehicleId, {
         tripId
@@ -119,6 +138,7 @@ export const getTrips = async (vehicleId, tripId) => {
 
 // Get last trip of Car
 export const getLastTrip = async (vehicleId) => {
+  loadToken();
   const response = await apiClient.get('/vehicles/trips/lastest/' + vehicleId);
   return response.data;
 }

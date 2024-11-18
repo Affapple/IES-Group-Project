@@ -8,7 +8,12 @@ import { getUser } from 'apiClient.js';
 
 const Navbar: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
-  const [user, setUser] = useState<User | undefined>(undefined);
+  const [user, setUser] = useState<User>({
+    name: "User",
+    phoneNumber: "",
+    email: "",
+    password: "",
+  });
   const location = useLocation();
 
   useEffect( () => {
@@ -60,7 +65,7 @@ const Navbar: React.FC = () => {
             className="text-gray-800 font-semibold"
             onClick={toggleSettings}
           >
-            { user.name ? user.name : "User" }
+            {user.name}
           </button>
         </div>
         <div className="relative -bottom-1">

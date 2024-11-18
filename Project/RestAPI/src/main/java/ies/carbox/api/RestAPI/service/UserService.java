@@ -4,17 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 // import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import ies.carbox.api.RestAPI.dtos.RegisterUserDto;
 import ies.carbox.api.RestAPI.entity.User;
 import ies.carbox.api.RestAPI.repository.UserRepository;
-import jakarta.persistence.Tuple;
 
 /**
  * userService

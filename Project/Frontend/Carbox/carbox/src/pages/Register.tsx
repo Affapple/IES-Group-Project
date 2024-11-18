@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import Footer from '../components/Footer';
+import { register } from 'apiClient.js';
 
 const RegisterPage: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -32,7 +33,11 @@ const RegisterPage: React.FC = () => {
     setError(null); // Reseta mensagens de erro
     setIsLoading(true); // Ativa estado de carregamento
     try {
-      // Mock temporário para simular o sucesso do registro
+      const response = await register(email, password, phone, username);
+
+      if (!response)
+        throw new Error("Something went wrong ")
+
       console.log('User registered:', { username, email, phone, password });
       navigate('/login', { replace: true }); // Redireciona para login após sucesso
     } catch (err) {
