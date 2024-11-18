@@ -1,15 +1,36 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useState } from "react";
 import { FaBell } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
+import UserSettingsMenu from "./User/UserSettingsMenu";
+import User from "Types/User";
+import { getUser } from 'apiClient.js';
 
 const Navbar: React.FC = () => {
+  const [open, setOpen] = useState<boolean>(false);
+  const [user, setUser] = useState<User | undefined>(undefined);
   const location = useLocation();
+
+  useEffect( () => {
+    const response = getUser().then( (response) => {
+      setUser({
+        name: response.username,
+        email: response.email,
+        phoneNumber: response.phone,
+        password: "",
+      })
+    })
+  }, [])
 
   const isActive = (path: string) =>
     location.pathname === path
       ? "text-green-500 font-semibold underline underline-offset-4"
       : "text-gray-600 hover:text-gray-800 transition-colors duration-300";
 
+
+  const toggleSettings = () => {
+    setOpen((open) => !open);
+  };
   return (
     <header className="flex justify-between items-center p-5 bg-white shadow-md">
       {/* Logo */}
@@ -32,9 +53,24 @@ const Navbar: React.FC = () => {
       </nav>
 
       {/* User Section */}
-      <div className="flex items-center space-x-4">
-        <span className="text-gray-800 font-semibold">Christian</span>
-        <FaBell className="text-yellow-500 text-2xl hover:text-yellow-600 transition duration-300" />
+      <div className="relative">
+        <div className="flex items-center space-x-4">
+          <FaBell className="text-yellow-500 text-2xl hover:text-yellow-600 transition duration-300" />
+            <button
+            className="text-gray-800 font-semibold"
+            onClick={toggleSettings}
+          >
+            { user.name ? user.name : "User" }
+          </button>
+        </div>
+        <div className="relative -bottom-1">
+          {
+            user ? 
+            <UserSettingsMenu open={open} user={user} />
+            :
+            <></>
+          }
+        </div>
       </div>
     </header>
   );
