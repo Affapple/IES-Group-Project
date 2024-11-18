@@ -1,38 +1,9 @@
-import React from "react";
-import { FaSearch, FaFilter } from "react-icons/fa";
-import { useState } from "react";
-import Modal from "../components/Modal";
+import React from 'react';
+import { FaSearch, FaFilter } from 'react-icons/fa';
 
 const UserVehicles: React.FC = () => {
-  const [validECU, setValidECU] = useState<boolean>(true);
-  const [ECUId, setECUId] = useState<string>("");
-  const [modalShown, setModalShown] = useState<boolean>(false);
-  const toggleModal = () => {
-    setModalShown(modalShown => !modalShown);
-  }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // TODO
-    /* Verificar se ECU existe */
-    const valid = true;
-    /* Se nao, avisar o utilizador */
-
-    if (!valid) {
-      setValidECU(false);
-      return;
-    }
-
-    /* Se sim, adicionar o ECU ao utilizador */
-    // API call
-    }
-  
-    const resetForm = () => {
-      setECUId("");
-      setValidECU(true);
-      toggleModal()
-    }
-  
+    
   return (
     <div className="min-h-screen bg-gray-100 font-sans">
       {/* Header */}
@@ -41,18 +12,9 @@ const UserVehicles: React.FC = () => {
           <img src="/src/assets/logo.png" alt="Logo" className="w-10 h-10" />
           <h1 className="text-2xl font-semibold text-gray-800">CarBox</h1>
           <nav className="flex space-x-6 ml-10">
-            <a href="#" className="text-gray-600 hover:text-gray-800">
-              Home
-            </a>
-            <a
-              href="#"
-              className="text-green-500 font-semibold border-b-2 border-green-500"
-            >
-              My vehicles
-            </a>
-            <a href="#" className="text-gray-600 hover:text-gray-800">
-              FAQs
-            </a>
+            <a href="#" className="text-gray-600 hover:text-gray-800">Home</a>
+            <a href="#" className="text-green-500 font-semibold border-b-2 border-green-500">My vehicles</a>
+            <a href="#" className="text-gray-600 hover:text-gray-800">FAQs</a>
           </nav>
         </div>
         <div className="flex items-center space-x-4">
@@ -65,14 +27,8 @@ const UserVehicles: React.FC = () => {
       <main className="px-8 py-12">
         {/* Banner */}
         <div className="relative bg-gray-200 h-40 rounded-lg flex items-center justify-center">
-          <h2 className="absolute text-3xl font-semibold text-white">
-            My vehicles
-          </h2>
-          <img
-            src="/src/assets/car-banner.png"
-            alt="Car Banner"
-            className="object-cover w-full h-full rounded-lg opacity-80"
-          />
+          <h2 className="absolute text-3xl font-semibold text-white">My vehicles</h2>
+          <img src="/src/assets/car-banner.png" alt="Car Banner" className="object-cover w-full h-full rounded-lg opacity-80" />
         </div>
 
         {/* Search Bar */}
@@ -90,120 +46,32 @@ const UserVehicles: React.FC = () => {
 
         {/* Add New Vehicle Button */}
         <div className="flex justify-center mb-8">
-          <button
-            className="bg-green-500 text-white px-6 py-2 rounded-full font-semibold hover:bg-green-600 transition"
-            onClick={toggleModal}
-          >
+          <button className="bg-green-500 text-white px-6 py-2 rounded-full font-semibold hover:bg-green-600 transition">
             Add new vehicle
           </button>
-
-          {modalShown ? (
-            <Modal>
-              <div className="flex-cols">
-                <h1 className="text-center">
-                  <b>Enter ECU ID</b>
-                </h1>
-                <div className="flex justify-center">
-                  <form onSubmit={handleSubmit}>
-                    <div className="flex flex-col">
-                      <label className="py-2 grid grid-cols-4">
-                        <span className="col-span-1">ECU Id:</span>
-                        <input
-                          className="border-black border mx-2 flex-grow col-span-3"
-                          type="text"
-                          value={ECUId}
-                          onChange={(e) => setECUId(e.target.value)}
-                        />
-                      </label>
-                      {
-                        validECU ? 
-                        <></> 
-                        : 
-                        <span className="text-red-500">* ECU Id entered is not valid!</span>
-                      }
-                    </div>
-                    <div className="flex justify-center py-8 gap-5">
-                      <button
-                        className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
-                        onClick={resetForm}
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        className="bg-green-500 hover:bg-green-400 text-white font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded"
-                        type="submit"
-                      >
-                        Add ECU
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </Modal>
-          ) : (
-            <></>
-          )}
         </div>
 
         {/* Vehicle Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           {[
-            {
-              name: "John's Car",
-              autonomy: "431 km",
-              battery: "Optimal",
-              batteryColor: "text-green-500",
-            },
-            {
-              name: "Mom's",
-              autonomy: "216 km",
-              battery: "Be careful",
-              batteryColor: "text-yellow-500",
-            },
-            {
-              name: "Smart",
-              autonomy: "352 km",
-              battery: "Change",
-              batteryColor: "text-red-500",
-            },
-            {
-              name: "Dad's",
-              autonomy: "198 km",
-              battery: "Optimal",
-              batteryColor: "text-green-500",
-              live: true,
-            },
+            { name: "John's Car", autonomy: "431 km", battery: "Optimal", batteryColor: "text-green-500" },
+            { name: "Mom's", autonomy: "216 km", battery: "Be careful", batteryColor: "text-yellow-500" },
+            { name: "Smart", autonomy: "352 km", battery: "Change", batteryColor: "text-red-500" },
+            { name: "Dad's", autonomy: "198 km", battery: "Optimal", batteryColor: "text-green-500", live: true }
           ].map((vehicle, index) => (
-            <div
-              key={index}
-              className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition"
-            >
+            <div key={index} className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition">
               <div className="relative h-32 bg-gray-300 rounded-lg mb-4">
-                <img
-                  src="/src/assets/vehicle-map.png"
-                  alt="Vehicle Map"
-                  className="object-cover w-full h-full rounded-lg"
-                />
-                {vehicle.live && (
-                  <span className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full">
-                    LIVE
-                  </span>
-                )}
+                <img src="/src/assets/vehicle-map.png" alt="Vehicle Map" className="object-cover w-full h-full rounded-lg" />
+                {vehicle.live && <span className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full">LIVE</span>}
               </div>
-              <h3 className="text-lg font-semibold text-gray-800">
-                {vehicle.name}
-              </h3>
+              <h3 className="text-lg font-semibold text-gray-800">{vehicle.name}</h3>
               <div className="flex justify-between items-center mt-2">
                 <p className="text-sm text-gray-500">Autonomy</p>
-                <p className="text-sm font-medium text-gray-800">
-                  {vehicle.autonomy}
-                </p>
+                <p className="text-sm font-medium text-gray-800">{vehicle.autonomy}</p>
               </div>
               <div className="flex justify-between items-center mt-1">
                 <p className="text-sm text-gray-500">Battery</p>
-                <p className={`text-sm font-semibold ${vehicle.batteryColor}`}>
-                  {vehicle.battery}
-                </p>
+                <p className={`text-sm font-semibold ${vehicle.batteryColor}`}>{vehicle.battery}</p>
               </div>
               <button className="w-full bg-gray-800 text-white mt-4 py-2 rounded-md font-medium hover:bg-gray-900 transition">
                 More info →
@@ -223,15 +91,9 @@ const UserVehicles: React.FC = () => {
       {/* Footer */}
       <footer className="bg-gray-100 py-6 text-center text-sm text-gray-500 border-t">
         <div className="flex justify-center space-x-4">
-          <a href="#" className="hover:underline">
-            Help Center
-          </a>
-          <a href="#" className="hover:underline">
-            Terms of Service
-          </a>
-          <a href="#" className="hover:underline">
-            Privacy Policy
-          </a>
+          <a href="#" className="hover:underline">Help Center</a>
+          <a href="#" className="hover:underline">Terms of Service</a>
+          <a href="#" className="hover:underline">Privacy Policy</a>
         </div>
       </footer>
     </div>
