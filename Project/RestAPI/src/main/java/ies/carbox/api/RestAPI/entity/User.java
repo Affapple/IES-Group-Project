@@ -2,11 +2,15 @@ package ies.carbox.api.RestAPI.entity;
 
 import lombok.*;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import jakarta.persistence.Tuple;
 
 import org.springframework.data.annotation.Id;
 /**
@@ -20,12 +24,15 @@ import org.springframework.data.annotation.Id;
  *     <li><b>id</b>: Unique identifier for the user.</li>
  *     <li><b>username</b>: Username of the user, which must be unique.</li>
  *     <li><b>password</b>: Encrypted password of the user.</li>
+ *     <li><b>carsList</b>: List of cars owned by the user and their names.</li>
+ *     <li><b>phone</b>: Phone number of user.</li>
+ *     <li><b>admin</b>: User status.</li>
  * </ul>
  */
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection = "Users")
-public class User {
+public class User implements UserDetails {
 
     @Id
     @Field("_id")
@@ -36,36 +43,44 @@ public class User {
     @Field("email")
     @Getter @Setter
     private String email;
+    /**
+     * @return email (must be like this because of JWT authentication)
+     */
+    public String getUsername(){ return email; }
 
     /** Username of the user, which must be unique. */
     @Field("username")
-    @Getter @Setter
     private String username;
+    
+    /**
+     * @return Username
+     */
+    public String getName() { return username; }
+    /**
+     * Sets username
+     * @param name 
+     */
+    public void setName(String name) { username = name; }
 
     /** Encrypted password of the user. */
     @Field("password")
-    @Getter
+    @Getter @Setter
     private String password;
 
     /** List of cars owned by the user */
     @Field("carsList")
     @Getter @Setter
-    private List<String> carsList;
+    private List<List<String>> carsList;
 
-    /**
-     * Sets the user's password after encrypting it.
-     *
-     * <p>This method uses BCrypt to encode the provided plain text password
-     * before storing it in the entity. It ensures that the password is not
-     * stored in plain text for security reasons.</p>
-     *
-     * @param password The plain text password to be encrypted and set.
-     */
-    public void setPassword(String password) {
-        // BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        // this.password = encoder.encode(password);
-        this.password = password;
-    }
+    /**Phone number of user */
+    @Field("phone")
+    @Getter @Setter
+    private int phone;
+
+    /**User status */
+    @Field("admin")
+    @Getter @Setter
+    private boolean admin;
 
     /**
      * Returns a string representation of the user.
@@ -77,6 +92,41 @@ public class User {
      */
     @Override
     public String toString() {
-        return "User [email=" + email + ", password= "+password + ", username=" + username + ", carlist=" + carsList + "]";
+        return "User [email=" + email + ", password=***** , username=" + username + ", carlist=" + carsList + "]";
+    }
+
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    /**
+    */
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+    @Override
+    public int hashCode() {
+        return toString().hashCode();
     }
 }
