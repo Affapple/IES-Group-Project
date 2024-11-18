@@ -1,12 +1,7 @@
 import React, { useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-
-interface Vehicle {
-  id: string;
-  name: string;
-  license: string;
-  live?: boolean;
-}
+import { useNavigate } from 'react-router-dom';
+import Vehicle from 'Types/Vehicle';
 
 interface VehicleCarouselProps {
   vehicles: Vehicle[];
@@ -16,10 +11,12 @@ interface VehicleCarouselProps {
 
 const VehicleCarousel: React.FC<VehicleCarouselProps> = ({ vehicles, selectedVehicleId, onSelectVehicle }) => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const navigate = useNavigate();
 
   const handleVehicleSelect = (index: number) => {
+    navigate(`/carInfo/`)
     setActiveIndex(index);
-    onSelectVehicle(vehicles[index].id); // Atualiza o veículo selecionado
+    onSelectVehicle(vehicles[index].ecuId); // Atualiza o veículo selecionado
   };
 
   return (
@@ -30,19 +27,19 @@ const VehicleCarousel: React.FC<VehicleCarouselProps> = ({ vehicles, selectedVeh
         </button>
 
         <div className="flex overflow-x-auto space-x-4 px-8">
-          {vehicles.map((vehicle, index) => (
+          {vehicles.map((vehicle: Vehicle, index: number) => (
             <div
-              key={vehicle.id}
+              key={vehicle.ecuId}
               onClick={() => handleVehicleSelect(index)}
               className={`cursor-pointer transition-transform duration-300 rounded-lg border ${
-                vehicle.id === selectedVehicleId
+                vehicle.ecuId === selectedVehicleId
                   ? 'bg-gray-500 text-white scale-125 shadow-2xl z-10'
                   : 'bg-white text-gray-800 scale-90 shadow-md opacity-75'
               } min-w-[200px] p-6 flex flex-col items-center hover:scale-105`}
             >
-              <h3>{vehicle.name}</h3>
-              <p>{vehicle.license}</p>
-              {vehicle.live && <span className="text-red-500 text-xs font-semibold mt-1">LIVE</span>}
+              {/* TODO: <h3>{vehicle.name}</h3> */}
+              <p>{vehicle.licensePlate}</p>
+              {/* TODO: {vehicle.live && <span className="text-red-500 text-xs font-semibold mt-1">LIVE</span>} */}
             </div>
           ))}
         </div>

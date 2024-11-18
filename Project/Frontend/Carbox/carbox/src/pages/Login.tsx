@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import Footer from '../components/Footer';
+import { login } from 'apiClient.js';
+
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -21,8 +23,13 @@ const Login: React.FC = () => {
       return;
     }
 
-    // Mock para navegação direta (sem autenticação real)
-    navigate('/home', { replace: true });
+    const response = login(email, password);
+
+    // TODO Fazer try catch
+    if (!response)
+      throw new Error("Error logging in!");
+
+    navigate('/home');
   };
 
   return (

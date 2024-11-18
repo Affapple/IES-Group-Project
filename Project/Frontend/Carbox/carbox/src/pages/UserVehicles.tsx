@@ -5,9 +5,11 @@ import Footer from '../components/Footer';
 import AddVehicleModal from '../components/AddVehicleModal';
 import myVehicles from '../assets/myVehicles.png';
 import filter from '../assets/filter.png';
+import { associateCar } from 'apiClient.js';
 
 const UserVehicles: React.FC = () => {
   // Mock data para veículos
+  // TODO: fix this part to ensure only 
   const mockVehicles = [
     { id: '1', name: "John's Car", range: 431, battery: 'Optimal', live: true },
     { id: '2', name: "Mom's", range: 216, battery: 'Be careful', live: false },
@@ -35,6 +37,9 @@ const UserVehicles: React.FC = () => {
   };
 
   const handleAddVehicle = (newVehicle: { licensePlate: string; name: string; ecuId: string }) => {
+    const request = associateCar(newVehicle.ecuId, newVehicle.name);
+    console.log(request);
+
     const updatedVehicles = [
       ...vehicles,
       { id: (vehicles.length + 1).toString(), name: newVehicle.name, range: 0, battery: 'Unknown', live: false },

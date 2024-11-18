@@ -2,7 +2,7 @@ import { useState, useEffect, EventHandler } from "react";
 import User from "Types/User";
 import Modal from "../Modal";
 import { logout, updateUser } from 'apiClient.js'
-import { redirect } from "react-router-dom";
+import { redirect, useNavigate } from "react-router-dom";
 
 function UserSettingsMenu({ open, user } : {open: boolean, user: User}) {
   const [name, setName] = useState(user.name);
@@ -10,6 +10,7 @@ function UserSettingsMenu({ open, user } : {open: boolean, user: User}) {
   const [phone, setPhone] = useState(user.phoneNumber);
   const [password, setPassword] = useState("");
   const [modalShown, setModalShown] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -31,7 +32,7 @@ function UserSettingsMenu({ open, user } : {open: boolean, user: User}) {
   const handleLogout = async () => {
     const response = await logout();
     if (response)
-      redirect('/')
+      navigate('/', { replace: true });
   }
 
   const toggleModal = () => {
