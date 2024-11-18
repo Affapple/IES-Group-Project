@@ -12,12 +12,16 @@ import { Button } from '@mui/material';
 import { FormControlLabel, Switch } from '@mui/material';
 import Specs from '../components/Specs';
 import Advanced from '../components/Advanced';
+import Live from '../components/Live';
 
 const CarInfo: React.FC = () => {
 
   const [carId, setId] = React.useState(0);
   const [carName, setName] = React.useState('Johns Car');
+  const [isLive, setLive] = React.useState(true);
 
+  const [liveList, setLiveList] = React.useState([
+    {speed:[100,120,140,150,120,180], rpm:[2000,2500,3000,3500,4000,4500], torque:[100,120,140,150,120,180]}]);
 
   const [carData, setCar] = React.useState({
     brand: 'Tesla',
@@ -27,7 +31,7 @@ const CarInfo: React.FC = () => {
     last_revision: '13-12-2020',
     autonomy: 123,
     temperature: 25,
-    battery: 50, 
+    battery: 22, 
     name: 'Johns Car',
     tires: 'Michelin',
     engine: 'Electric',
@@ -38,7 +42,7 @@ const CarInfo: React.FC = () => {
     batteryType: 'Lithium',
     brakes: true,
     tiresPress: [30, 30, 30, 30],
-    oil:3
+    oil:3 
 });
 
   const [trips, setTrips] = React.useState([
@@ -86,6 +90,11 @@ const CarInfo: React.FC = () => {
             <Specs data={carData}/>
           </div> : null
         } 
+        {isLive ?
+          <div className='Main'>
+            <Live LiveInfo={liveList}/>
+          </div> : null
+        }
         <div className='Main'>
           <FuelConsumpt data={carData}/>
         </div>

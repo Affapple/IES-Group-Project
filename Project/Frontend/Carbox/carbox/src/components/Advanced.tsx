@@ -12,6 +12,7 @@ export default function FuelConsumpt({data}) {
     const oil = data.oil;
 
     const [oilLevel, setOilLevel] = React.useState(true);
+    const [tirePressure, setTirePressure] = React.useState(true);
 
     function checkOilLevel() {
         if (oil <= 5) {
@@ -21,9 +22,20 @@ export default function FuelConsumpt({data}) {
         }
     };
 
+    function checkTirePressure() {
+        for (let i = 0; i < tires.length; i++) {
+            if (tires[i] < 20) {
+                setTirePressure(false);
+            } else {
+                setTirePressure(true);
+            }
+        }
+    }
+
     useEffect(() => {   
+        checkTirePressure();
         checkOilLevel();
-    } , [oilLevel]);
+    } , [oilLevel, tirePressure]);
     
 
     return (
@@ -31,10 +43,10 @@ export default function FuelConsumpt({data}) {
             <div className="flex justify-between items-center ml-10">
                 <div className="">
                     <p className="bigInfo">Tire Pressure (PSI) </p>
-                    <p className="bigInfo2">Front Left {tires[0]}</p>
-                    <p className="bigInfo2">Front Right {tires[1]}</p>
-                    <p className="bigInfo2">Back Left {tires[2]}</p>
-                    <p className="bigInfo2">Back Right {tires[3]}</p>
+                    {tirePressure ? <p className="bigInfo2">Front Left: {tires[0]}</p> : <p className="bigInfo2Alert">Front Left: {tires[0]} </p>}
+                    {tirePressure ? <p className="bigInfo2">Front Right: {tires[1]}</p> : <p className="bigInfo2Alert">Front Right: {tires[1]} </p>}
+                    {tirePressure ? <p className="bigInfo2">Back Left: {tires[2]}</p> : <p className="bigInfo2Alert">Back Left: {tires[2]} </p>}
+                    {tirePressure ? <p className="bigInfo2">Back Right: {tires[3]}</p> : <p className="bigInfo2Alert">Back Right: {tires[3]} </p>}
                 </div>
             </div>
             <div className="flex justify-between items-center ml-10 mr-10">
