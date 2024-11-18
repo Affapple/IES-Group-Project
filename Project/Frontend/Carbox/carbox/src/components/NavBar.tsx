@@ -3,6 +3,13 @@ import { FaBell } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 
 const Navbar: React.FC = () => {
+  const [open, setOpen] = useState<boolean>(false);
+  const [user, setUser] = useState<User>({
+    name: "User",
+    phoneNumber: "",
+    email: "",
+    password: "",
+  });
   const location = useLocation();
 
   const isActive = (path: string) =>
@@ -32,9 +39,24 @@ const Navbar: React.FC = () => {
       </nav>
 
       {/* User Section */}
-      <div className="flex items-center space-x-4">
-        <span className="text-gray-800 font-semibold">Christian</span>
-        <FaBell className="text-yellow-500 text-2xl hover:text-yellow-600 transition duration-300" />
+      <div className="relative">
+        <div className="flex items-center space-x-4">
+          <FaBell className="text-yellow-500 text-2xl hover:text-yellow-600 transition duration-300" />
+            <button
+            className="text-gray-800 font-semibold"
+            onClick={toggleSettings}
+          >
+            {user.name}
+          </button>
+        </div>
+        <div className="relative -bottom-1">
+          {
+            user ? 
+            <UserSettingsMenu open={open} user={user} />
+            :
+            <></>
+          }
+        </div>
       </div>
     </header>
   );

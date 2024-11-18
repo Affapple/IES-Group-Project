@@ -15,7 +15,7 @@ services:
       context: ./RestAPI
       dockerfile: Dockerfile
     environment:
-      SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI}
+      SPRING_DATA_MONGODB_URI: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@db:${MONGO_INITDB_PORT}/${MONGO_INITDB_DATABASE}?authSource=admin
     depends_on:
       - db 
     ports:
