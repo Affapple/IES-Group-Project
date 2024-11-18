@@ -15,6 +15,8 @@ export const login = async (email, password) => {
     email,
     password
   });
+  const token = response.data.token;
+  apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   return response.data;
 }
 
@@ -49,6 +51,8 @@ export const getUser = async () => {
 // Logout
 export const logout = async () => {
   const response = await apiClient.post('/user/logout');
+  token = null;
+  apiClient.defaults.headers.common['Authorization'] = null;
   return response.data;
 }
 
