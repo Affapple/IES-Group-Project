@@ -4,7 +4,7 @@ import { FaBell } from 'react-icons/fa';
 import '../css/CarDetails.css';
 
 
-export default function  ({data}) {
+export default function  CarDetails({data}) {
 
    
 
