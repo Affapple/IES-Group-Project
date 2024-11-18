@@ -1,30 +1,26 @@
 import { useState, useEffect, EventHandler } from "react";
 import User from "Types/User";
 import Modal from "../Modal";
+import { logout, updateUser } from 'apiClient.js'
+import { redirect } from "react-router-dom";
 
-function UserSettingsMenu({ open }) {
-  const user: User = {
-    name: "Christian Oliveira",
-    email: "email@email.com",
-    phoneNumber: "966448679",
-    password: "",
-  };
-
+function UserSettingsMenu({ open, user } : {open: boolean, user: User}) {
   const [name, setName] = useState(user.name);
   const [email, setEmail] = useState(user.email);
   const [phone, setPhone] = useState(user.phoneNumber);
   const [password, setPassword] = useState("");
   const [modalShown, setModalShown] = useState<boolean>(false);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // TODO: Implementar API call para editar os dados
-    toggleModal();
+    const response = await updateUser(email, password, name, phone)
+  
+    if (response)
+      toggleModal();
   };
 
   const resetForm = (event) => {
     event.preventDefault();
-    toggleModal();
     setName(user.name);
     setEmail(user.email);
     setPhone(user.phoneNumber);
@@ -32,8 +28,10 @@ function UserSettingsMenu({ open }) {
     setModalShown(false);
   };
 
-  const logout = () => {
-    // TODO: Implement Logout
+  const handleLogout = async () => {
+    const response = await logout();
+    if (response)
+      redirect('/')
   }
 
   const toggleModal = () => {
@@ -51,7 +49,7 @@ function UserSettingsMenu({ open }) {
             </li>
             <li className="transition-transform duration-50 hover:scale-105">
               <i></i>
-              <button onClick={logout}>Logout</button>
+              <button onClick={handleLogout}>Logout</button>
             </li>
           </ul>
         </div>

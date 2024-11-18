@@ -1,24 +1,36 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { FaBell } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import UserSettingsMenu from "./User/UserSettingsMenu";
+import User from "Types/User";
+import { getUser } from 'apiClient.js';
 
 const Navbar: React.FC = () => {
+  const [open, setOpen] = useState<boolean>(false);
+  const [user, setUser] = useState<User | undefined>(undefined);
   const location = useLocation();
+
+  useEffect( () => {
+    const response = getUser().then( (response) => {
+      setUser({
+        name: response.username,
+        email: response.email,
+        phoneNumber: response.phone,
+        password: "",
+      })
+    })
+  }, [])
 
   const isActive = (path: string) =>
     location.pathname === path
       ? "text-green-500 font-semibold underline underline-offset-4"
       : "text-gray-600 hover:text-gray-800 transition-colors duration-300";
 
-  const [open, setOpen] = useState<boolean>(false);
 
   const toggleSettings = () => {
     setOpen((open) => !open);
   };
-
   return (
     <header className="flex justify-between items-center p-5 bg-white shadow-md">
       {/* Logo */}
@@ -43,6 +55,7 @@ const Navbar: React.FC = () => {
       {/* User Section */}
       <div className="relative">
         <div className="flex items-center space-x-4">
+          <FaBell className="text-yellow-500 text-2xl hover:text-yellow-600 transition duration-300" />
             <button
             className="text-gray-800 font-semibold"
             onClick={toggleSettings}
@@ -51,9 +64,13 @@ const Navbar: React.FC = () => {
           </button>
         </div>
         <div className="relative -bottom-1">
-          <UserSettingsMenu open={open} />
+          {
+            user ? 
+            <UserSettingsMenu open={open} user={user} />
+            :
+            <></>
+          }
         </div>
-        <FaBell className="text-yellow-500 text-2xl hover:text-yellow-600 transition duration-300" />
       </div>
     </header>
   );
