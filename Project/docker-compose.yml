@@ -13,21 +13,21 @@ services:
   restapi:
     build:
       context: ./RestAPI
-      dockerfile: Dockerfile  # Dockerfile for the Spring Boot backend
+      dockerfile: Dockerfile
     environment:
       SPRING_DATA_MONGODB_URI: mongodb://carbox:mySecretPassword@db:27017/carbox?authSource=admin
     depends_on:
-      - db  # Ensure db starts before restapi
+      - db 
     ports:
-      - "8080:8080"  # Expose REST API on port 8080
+      - "8080:8080"  
 
   frontend:
     build:
-      context: ./Frontend/Carbox  # Path to your frontend source code
-      dockerfile: Dockerfile  # Dockerfile for the frontend
+      context: ./Frontend/Carbox  
+      dockerfile: Dockerfile  
     ports:
-      - "80:5173"  # Expose the frontend on port 80 (default HTTP port)
+      - "80:5173" 
     depends_on:
-      - restapi  # Ensure restapi starts before frontend
+      - restapi 
     environment:
       API_URL: http://restapi:8080  
