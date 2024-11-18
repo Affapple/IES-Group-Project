@@ -4,9 +4,9 @@ services:
     ports:
       - "27017:27017"
     environment:
-      MONGO_INITDB_DATABASE: carbox
-      MONGO_INITDB_ROOT_USERNAME: carbox
-      MONGO_INITDB_ROOT_PASSWORD: mySecretPassword
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     volumes:
       - ./Database/mongo-init:/docker-entrypoint-initdb.d
 
@@ -15,11 +15,11 @@ services:
       context: ./RestAPI
       dockerfile: Dockerfile
     environment:
-      SPRING_DATA_MONGODB_URI: mongodb://carbox:mySecretPassword@db:27017/carbox?authSource=admin
+      SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI}
     depends_on:
       - db 
     ports:
-      - "8080:8080"  
+      - "8080:8080"
 
   frontend:
     build:
@@ -30,4 +30,4 @@ services:
     depends_on:
       - restapi 
     environment:
-      API_URL: http://restapi:8080  
+      API_URL: http://restapi:8080
