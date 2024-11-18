@@ -39,7 +39,7 @@ public class SecurityConfiguration {
                 .requestMatchers(
                     CONSTANTS.apiBase + "/user/accountCreation",
                     CONSTANTS.apiBase + "/user/login",
-                    "swagger-ui/**",
+                    "/swagger-ui/**",
                     "/v3/api-docs/**"
                 )
                 .permitAll()
