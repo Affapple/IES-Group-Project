@@ -14,7 +14,7 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Setter
-@Document(collection = "CarTrips")
+@Document(collection = "TripInfos")
 public class TripInfo {
     /** Car Id */
     @Field("car_id")
@@ -32,4 +32,18 @@ public class TripInfo {
     @Field("trip_end")
     /** Trip End Date */
     Date Trip_end;
+
+    @Field("trip_speeds")
+    /** Trip Speeds */
+    float[] Trip_speeds;
+
+    @Field("trip_rpm")
+    int[] Trip_rpm;
+
+    @Field("trip_motor_temp")
+    float[] Trip_motor_temp;
+
+    @Field("trip_torque")
+    float[] Trip_torque;
+
 }
