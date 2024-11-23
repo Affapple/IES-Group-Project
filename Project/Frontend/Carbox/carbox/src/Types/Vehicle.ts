@@ -1,0 +1,16 @@
+export default interface Vehicle {
+    ecuId: string,
+    lastRevision: Date,
+    brand: string,
+    licensePlate: string,
+    year: number,
+    tires: string,
+    motor: string,
+    tank: string,
+    maxSpeed: number,
+    horsepower: number,
+    autonomy: number,
+    carStatus: boolean,
+    location: string,
+    name?: string,
+}
