@@ -5,6 +5,8 @@ import java.util.Date;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import lombok.*;
 
 /**
@@ -14,6 +16,7 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Setter
+@JsonSerialize
 @Document(collection = "TripInfos")
 public class TripInfo {
     /** Car Id */

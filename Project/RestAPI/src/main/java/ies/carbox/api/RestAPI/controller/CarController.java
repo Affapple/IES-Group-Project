@@ -38,7 +38,7 @@ public class CarController {
     private final CarService carService;
     private final UserService userService;
     private final TripInfoService tripInfoService;
-
+    
     @Autowired
     public CarController(CarService carService, UserService userService, TripInfoService tripInfoService ) {
         this.carService = carService;
