@@ -49,4 +49,14 @@ public class TripInfo {
     @Field("trip_torque")
     float[] Trip_torque;
 
+
+    @Override
+    public String toString() {
+        return "TripInfo [carId=" + carId + ", tripId=" + tripId + ", Trip_start=" + Trip_start + ", Trip_end=" + Trip_end + "]";
+    }
+    @Override
+    public int hashCode() {
+        return this.toString().hashCode();
+    }
+
 }

@@ -27,6 +27,11 @@ services:
     environment:
       SPRING_DATA_MONGODB_URI: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@db:${MONGO_INITDB_PORT}/${MONGO_INITDB_DATABASE}?authSource=admin
       SPRING_REDIS_HOST: redis
+      SPRING_APPLICATION_JSON: '{
+          "spring.data.redis.host": "${REDIS_HOST}",
+          "spring.data.redis.port": "${REDIS_PORT}",
+          "spring.data.redis.password": "${REDIS_PASSWORD}"
+        }'
     depends_on:
       - db
       - redis
