@@ -160,17 +160,25 @@ logging.basicConfig(filename='DataGenerator.log', level=logging.INFO)
 logging.info(Cars)
 
 #Function to simulate the state of the car on/off
-def simulateState(state):
+def simulateState(state, ecu_id):
     chance=random.randint(1,100)
     if state:
         if chance<=80:
             return True
         else:
+            LastLiveData[ecu_id]['speed']=0
+            LastLiveData[ecu_id]['rpm']=0
+            LastLiveData[ecu_id]['torque']=0
+            LastLiveData[ecu_id]['motor_temperature']=0
             return False
     else:
         if chance<=70:
             return True
         else:
+            LastLiveData[ecu_id]['speed']=0
+            LastLiveData[ecu_id]['rpm']=0
+            LastLiveData[ecu_id]['torque']=0
+            LastLiveData[ecu_id]['motor_temperature']=0
             return False
         
 #Function to simulate errors in the car
@@ -182,7 +190,7 @@ def simulateError(ecu_id):
             LastLiveData[ecu_id]['errors'].append(error)
             logging.info(f"Error {error} simulated in car {ecu_id}")
             logging.info(f"Errors: {LastLiveData[ecu_id]['errors']}")
-        if chance<=10:
+        if chance<=5:
             error=random.choice(errors)
             LastLiveData[ecu_id]['errors'].append(error)
             logging.info(f"Error {error} simulated in car {ecu_id}")
@@ -194,6 +202,9 @@ def simulateError(ecu_id):
 def simulateStats(ecu_id):
     change=random.randint(1,2)
     amount=random.randint(1,20)
+    if LastLiveData[ecu_id]['car_status'] and LastLiveData[ecu_id]['speed']<1:
+        change=1
+        amount=50
     for car in Cars:
         if car['ecu_id']==ecu_id:
             max_speed=car['max_speed']
@@ -271,6 +282,19 @@ def simulateLevels(ecu_id):
                 if LastLiveData[ecu_id]['tire_pressure'][i]>50:
                     LastLiveData[ecu_id]['tire_pressure'][i]=50
 
+def simulateLocationCoordinates(ecu_id):
+    if LastLiveData[ecu_id]['location']=='':
+        latitude=random.uniform(-90,90)
+        longitude=random.uniform(-180,180)
+        LastLiveData[ecu_id]['location']=f'{latitude},{longitude}'
+    else:
+        latitude=float(LastLiveData[ecu_id]['location'].split(',')[0])
+        longitude=float(LastLiveData[ecu_id]['location'].split(',')[1])
+        latitude+=random.uniform(-0.1,0.1)
+        longitude+=random.uniform(-0.1,0.1)
+        LastLiveData[ecu_id]['location']=f'{latitude},{longitude}'
+
+
 #Function to generate random data for the cars
 def GenerateData(ecu_id):
     if LastLiveData[ecu_id]=={}:
@@ -293,14 +317,15 @@ def GenerateData(ecu_id):
 
     else:
         LastLiveData[ecu_id]['timestamp']=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        LastLiveData[ecu_id]['car_status']=simulateState(LastLiveData[ecu_id]['car_status'])
-        simulateError(ecu_id)
-        simulateStats(ecu_id)
-        simulateLevels(ecu_id)
+        LastLiveData[ecu_id]['car_status']=simulateState(LastLiveData[ecu_id]['car_status'], ecu_id)
+        if LastLiveData[ecu_id]['car_status']:
+            simulateError(ecu_id)
+            simulateStats(ecu_id)
+            simulateLevels(ecu_id)
+        simulateLocationCoordinates(ecu_id)
         logging.info(f"Data for car {ecu_id} generated")
         logging.info(f"Data: {LastLiveData[ecu_id]}")
-        print(f"Data for car {ecu_id} generated")
-        print(f"Data: {LastLiveData[ecu_id]}")
+        
 
 
 #Simulate the data for the cars
