@@ -1,5 +1,6 @@
 package ies.carbox.api.RestAPI.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 @RequestMapping(CONSTANTS.apiBase + "/admin")
@@ -55,26 +58,6 @@ public class AdminController {
     }
 
 
-
-    @GetMapping("/cars") // to get all the cars through admin
-    @Operation(
-        summary = "Get all cars",
-        description = "Get a list of all cars",
-        responses = {
-            @ApiResponse(
-                responseCode = "200", 
-                description = "List of all cars", 
-                content = @Content(schema = @Schema(implementation = User.class))
-            ),
-            @ApiResponse(responseCode = "403", description = "Unauthorized access")
-        }
-    )
-    public ResponseEntity<List<Car>> getAllCars() {
-        List<Car> cars = carService.getAllCars();       // ! Add getAllCars method in CarService or add new service and repository for admin
-        return ResponseEntity.ok(cars);
-    }
-
-
     @GetMapping("/user/{email}") // to get a specific user through admin
     @Operation(
         summary = "Get a specific user",
@@ -94,9 +77,7 @@ public class AdminController {
         return ResponseEntity.ok(user);
     }
 
-// TODO FIX: AO FAZER SEARHC BY ID CRIARÀ BAD REQUEST
-// Porque email nao pode estar na url
-    @GetMapping("/cars/{user_email}") // to get all the cars of a specific user through admin
+    @GetMapping("/cars") // to get all the cars of a specific user through admin
     @Operation(
         summary = "Get all cars of a specific user",
         description = "Get a list of all cars of a specific user",
@@ -109,11 +90,22 @@ public class AdminController {
             @ApiResponse(responseCode = "403", description = "Unauthorized access")
         }
     )
-    // user id will always correspond to email
-    public ResponseEntity<List<Car>> getAllUserCars(@PathVariable List<String> ecuIds) {
-        // Fazer pesquisa por variavel de body
-        List<Car> cars = carService.getAllUserCars(ecuIds);
-        return ResponseEntity.ok(cars);
+    public ResponseEntity<List<Car>> getAllUserCar(@RequestParam(name = "email", required = false) String email) {
+        System.out.println("Email was " + email);
+        if (email == null) {
+            List<Car> cars = carService.getAllCars();       // ! Add getAllCars method in CarService or add new service and repository for admin
+            return ResponseEntity.ok(cars);
+        }
 
+        List<List<String>> userCars = userService.getListOfEcuIds(email);
+
+        List<String> carsEcuId = new ArrayList<>();
+        userCars.forEach((car) -> {carsEcuId.add(car.get(0));} );
+        userCars.forEach(System.out::println);
+
+        List<Car> cars = carService.getAllUserCars(carsEcuId);
+        cars.forEach(System.out::println);
+
+        return ResponseEntity.ok(cars);
     }
 }

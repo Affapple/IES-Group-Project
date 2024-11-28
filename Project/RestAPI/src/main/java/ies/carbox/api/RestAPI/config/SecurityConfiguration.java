@@ -69,7 +69,7 @@ public class SecurityConfiguration {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // TODO: Meter apenas prod frontend address
-        configuration.setAllowedOrigins(List.of(CONSTANTS.baseUrl, "http://localhost:5173", "http://localhost:80", "http://172.26.0.4:5173", "http://localhost"));
+        configuration.setAllowedOrigins(List.of(CONSTANTS.baseUrl, "*"));
         configuration.setAllowedMethods(List.of("GET","POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(List.of("Authorization","Content-Type"));
 
