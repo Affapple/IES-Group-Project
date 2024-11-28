@@ -171,7 +171,6 @@ public class UserController {
         }
     )
     public ResponseEntity<User> getAccount() {
-        
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) authentication.getPrincipal();
         String email = currentUser.getEmail();
@@ -198,35 +197,5 @@ public class UserController {
     public ResponseEntity<String> logout() {
         SecurityContextHolder.clearContext();
         return ResponseEntity.ok("Logged out successfully");
-    }
-
-
-
-
-    /**
-     * Gets a list of all cars and their associated users. For admin purposes only.
-     * 
-     */
-    @GetMapping("/all")
-    @Operation(
-        summary = "Get all users and their cars", 
-        description = "Get a list of all users and their cars",
-        responses = {
-            @ApiResponse(
-                responseCode = "200", 
-                description = "List of all users and their cars", 
-                content = @Content(schema = @Schema(implementation = User.class))
-            ),
-            @ApiResponse(responseCode = "403", description = "Unauthorized access")
-        }
-    )
-    public ResponseEntity<List<User>> getAllUsers() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User currentUser = (User) authentication.getPrincipal();
-        if (!currentUser.isAdmin()) {
-            return ResponseEntity.status(403).body(null);
-        }
-        List<User> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
     }
 }

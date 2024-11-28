@@ -15,6 +15,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import ies.carbox.api.RestAPI.CONSTANTS;
+import ies.carbox.api.RestAPI.entity.Role;
 
 import java.util.List;
 
@@ -37,7 +38,6 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        System.out.println("running filter");
         http
             .cors()
             .and()
@@ -51,6 +51,7 @@ public class SecurityConfiguration {
                     "/v3/api-docs/**"
                 )
                 .permitAll()
+                // .requestMatchers(CONSTANTS.apiBase + "/admin/**").hasAuthority(Role.ADMIN.name())
                 .anyRequest()
                 .authenticated()
                 .and()

@@ -45,7 +45,7 @@ if __name__ == "__main__":
             "password": "password123",
             "username": "User One",
             "phone": 213,
-            "admin": False,
+            "role": 'USER',
             "carsList": [["Car1", "User1's Car"], ["Car2", "User1's Second Car"]]
         },
         {
@@ -53,7 +53,7 @@ if __name__ == "__main__":
             "password": "password123",
             "username": "User Two",
             "phone": 213,
-            "admin": False,
+            "role": 'USER',
             "carsList": [["Car3", "User2's Car"]]
         },
         {
@@ -61,8 +61,17 @@ if __name__ == "__main__":
             "password": "adminpassword",
             "username": "admin User",
             "phone": 32,
-            "admin": True,
+            "role": 'USER',
             "carsList": []  # No cars associated
+        },
+        {
+            "email": 'admin@admin.com',
+            "username": 'admin',
+            "password": '$2a$10$BYPsOQzU2JuMbLg0PLs6/uVcBfzYSgPu1oMb8kGJXmQAGg6qkWlma',
+            "carsList": [],
+            "phone": 312321,
+            "role": 'ADMIN',
+            "_class": 'ies.carbox.api.RestAPI.entity.User'
         }
     ]
 

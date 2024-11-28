@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import ies.carbox.api.RestAPI.dtos.LoginUserDto;
 import ies.carbox.api.RestAPI.dtos.RegisterUserDto;
+import ies.carbox.api.RestAPI.entity.Role;
+import ies.carbox.api.RestAPI.entity.Role;
 import ies.carbox.api.RestAPI.entity.User;
 import ies.carbox.api.RestAPI.repository.UserRepository;
 
@@ -36,7 +38,7 @@ public class AuthenticationService {
         user.setEmail(input.getEmail());
         user.setPassword(passwordEncoder.encode(input.getPassword()));
         user.setPhone(input.getPhone());
-        user.setAdmin(false);
+        user.setRole(Role.USER);
         if (input.getCarsList() != null)
             user.setCarsList(input.getCarsList());
         else
@@ -53,7 +55,10 @@ public class AuthenticationService {
                 )
         );
 
-        return userRepository.findByEmail(input.getEmail())
+        User user = userRepository.findByEmail(input.getEmail())
                 .orElseThrow();
+        
+        System.out.println(user);
+        return user;
     }
 }

@@ -8,17 +8,8 @@ import MainPage from "./pages/HomePage";
 import UserVehicles from "./pages/UserVehicles";
 import AdminDashboard from "./pages/AdminDashboard";
 
-const isAdmin = () => {
-  const token = localStorage.getItem("token"); 
-  if (!token) return false;
 
-  try {
-    const payload = JSON.parse(atob(token.split(".")[1])); 
-    return payload.role === "admin"; 
-  } catch (error) {
-    return false;
-  }
-};
+// !for now because the email is encrypted in the token we will only verify if its admin if the username is admin and password...
 
 const App: React.FC = () => {
   return (
@@ -32,7 +23,8 @@ const App: React.FC = () => {
         <Route path="/myvehicles" element={<UserVehicles />} />
         <Route
           path="/admin"
-          element={isAdmin() ? <AdminDashboard /> : <Navigate to="/login" />}
+          // No verification for now
+          element={<AdminDashboard />}
         />
         {/* Other routes */}
       </Routes>

@@ -8,9 +8,8 @@ import java.util.List;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import jakarta.persistence.Tuple;
 
 import org.springframework.data.annotation.Id;
 /**
@@ -77,10 +76,9 @@ public class User implements UserDetails {
     @Getter @Setter
     private int phone;
 
-    /**User status */
-    @Field("admin")
+    @Field("role")
     @Getter @Setter
-    private boolean admin;
+    private Role role;
 
     /**
      * Returns a string representation of the user.
@@ -92,18 +90,19 @@ public class User implements UserDetails {
      */
     @Override
     public String toString() {
-        return "User [email=" + email + ", password=***** , username=" + username + ", carlist=" + carsList + "]";
-    }
-
-    public boolean isAdmin() {
-        return admin;
+        return "User [email=" + email + ", password=***** , username=" + username + ", carlist=" + carsList + ", role=" + role.name() + "]";
     }
 
     /**
     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
+
+    @Override
+    public int hashCode() {
+        return toString().hashCode();
     }
 
     @Override
@@ -124,9 +123,5 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-    @Override
-    public int hashCode() {
-        return toString().hashCode();
     }
 }
