@@ -94,7 +94,8 @@ public class AdminController {
         return ResponseEntity.ok(user);
     }
 
-// TODO FIX: AO FAZER SEARHC BY ID CRIARÀ BAD REQUEST Porque email nao pode estar na url
+// TODO FIX: AO FAZER SEARHC BY ID CRIARÀ BAD REQUEST
+// Porque email nao pode estar na url
     @GetMapping("/cars/{user_email}") // to get all the cars of a specific user through admin
     @Operation(
         summary = "Get all cars of a specific user",
@@ -110,6 +111,7 @@ public class AdminController {
     )
     // user id will always correspond to email
     public ResponseEntity<List<Car>> getAllUserCars(@PathVariable List<String> ecuIds) {
+        // Fazer pesquisa por variavel de body
         List<Car> cars = carService.getAllUserCars(ecuIds);
         return ResponseEntity.ok(cars);
 
