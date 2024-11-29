@@ -9,8 +9,10 @@ def connect(url, username, password):
     logging.info("Connected to database!")
     return mongo_client
 
-def check_collections(client):
-    db = client["carbox"]
+def get_db(client, db_name):
+    return client[db_name]
+
+def check_collections(db):
     for col in db.list_collection_names():
         logging.info(f"Collection: {col}")
 
@@ -240,6 +242,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     logging.info("Starting Database Adapter...")
     db=connect("mongodb://db:27017/", "carbox", "mySecretPassword")
+    db=get_db(db, "carbox")
     check_collections(db)
     cars=load_cars()
     for car in cars:
@@ -247,9 +250,9 @@ if __name__ == "__main__":
 
     #TODO Wait for messages and update the database
     while True:
+        continue
         live_data=readQueue()
         logging.info(f"Data received: {live_data}")
-        continue
         if check_for_errors(live_data):
             notify_user(live_data)
         else:
