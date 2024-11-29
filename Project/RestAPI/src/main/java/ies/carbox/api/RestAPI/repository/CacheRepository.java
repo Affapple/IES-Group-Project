@@ -159,4 +159,9 @@ public class CacheRepository {
         }
     }
 
+    public void deleteUser(String email) {
+        String key = email;
+        redisTemplate.delete(key);
+    }
+
 }

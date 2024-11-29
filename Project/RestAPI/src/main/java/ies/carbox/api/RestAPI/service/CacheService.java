@@ -54,4 +54,8 @@ public class CacheService {
     public List<CarLiveInfo> getLiveData(String email) {
         return cacheRepository.getLiveData(email);
     }
+
+    public void deleteUser(String email) {
+        cacheRepository.deleteUser(email);
+    }
 }
