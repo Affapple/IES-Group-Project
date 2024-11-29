@@ -2,7 +2,7 @@ package ies.carbox.api.RestAPI.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,25 +16,20 @@ import ies.carbox.api.RestAPI.entity.Car;
 import ies.carbox.api.RestAPI.entity.CarLiveInfo;
 import ies.carbox.api.RestAPI.entity.TripInfo;
 import ies.carbox.api.RestAPI.entity.User;
-import ies.carbox.api.RestAPI.repository.CacheRepository;
 
 /**
  * CacheRepository
  */
-@Component
+@Service
 public class CacheService {
     @Autowired
     RedisTemplate<String, String> redisTemplate;
-
-    @Autowired
-    CacheRepository cacheRepository;
 
     @Value("${cache.general.expiration-time}")
     private long ttl;
 
     private static String tripKey = "_trips";
     private static String liveDataKey = "_livedata";
-
     
     public void saveTrip(TripInfo trip, String carId) {
         ObjectMapper mapper = new ObjectMapper();
