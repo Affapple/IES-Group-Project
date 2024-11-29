@@ -10,6 +10,14 @@ services:
     volumes:
       - ./Database/mongo-init:/docker-entrypoint-initdb.d
 
+  database_adapter:
+    build:
+      context: ./Database
+      dockerfile: Dockerfile
+    depends_on:
+    #Later add the dependency to the RabbitMQ
+      - db
+    
   restapi:
     build:
       context: ./RestAPI
