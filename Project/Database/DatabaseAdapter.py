@@ -1,278 +1,264 @@
 from pymongo import MongoClient
 from datetime import datetime
-
-#For an initial setup, while we don't have the components dockerized
-#Use the following command to start the MongoDB server:
-#mongod --dbpath /path/to/data/db
+import logging
 
 
-if __name__ == "__main__":
-    print("Connecting to database...")
-    mongo_client = MongoClient("mongodb://localhost:27017/",
-                                username="carbox",
-                                password="mySecretPassword")
-    print("Connected to database!")
+def connect(url, username, password):
+    logging.info("Connecting to database...")
+    mongo_client = MongoClient(url, username=username, password=password)
+    logging.info("Connected to database!")
+    return mongo_client
 
-    print("Adding information...")
-    db = mongo_client["carbox"]
+def getDb(client, db_name):
+    return client[db_name]
 
+def checkCollections(db):
     for col in db.list_collection_names():
-        print(f"Dropping {col}")
-        db.drop_collection(col)
-    print(db.list_collection_names())
+        logging.info(f"Collection: {col}")
 
     if "Users" not in db.list_collection_names():
         db.create_collection("Users")
-
     if "Cars" not in db.list_collection_names():
         db.create_collection("Cars")
-
     if "CarLiveInfo" not in db.list_collection_names():
         db.create_collection("CarLiveInfo")
-
     if "TripInfos" not in db.list_collection_names():
         db.create_collection("TripInfos")
 
-    # Insertion of fake temporary data for testing purposes
-    # When the data generation stream is implemented, this will be removed
-    from datetime import datetime, timedelta
-    import random
-
-    # User data
-    users = [
-        {
-            "email": "user1@example.com",
-            "password": "password123",
-            "username": "User One",
-            "phone": 213,
-            "admin": False,
-            "carsList": [["Car1", "User1's Car"], ["Car2", "User1's Second Car"]]
-        },
-        {
-            "email": "user2@example.com",
-            "password": "password123",
-            "username": "User Two",
-            "phone": 213,
-            "admin": False,
-            "carsList": [["Car3", "User2's Car"]]
-        },
-        {
-            "email": 'admin@admin.com',
-            "username": 'admin',
-            "password": '$2a$10$BYPsOQzU2JuMbLg0PLs6/uVcBfzYSgPu1oMb8kGJXmQAGg6qkWlma',
-            "carsList": [],
-            "phone": 312321,
-            "role": 'ADMIN',
-            "_class": 'ies.carbox.api.RestAPI.entity.User'
-        }
-    ]
-
-    # Car_Info data
-    cars_info = [
-        {
-            "ecu_id": "Car1",
-            "last_revision": datetime(2023, 1, 10),
-            "brand": "Toyota",
-            "license_plate": "ABC123",
-            "model": "Corolla",
-            "year": 2020,
-            "tires": "All-Season",
-            "motor": "V4",
-            "tank": "50L",
-            "max_speed": 180.0,
-            "horsepower": 130,
-            "autonomy": 600.0
-        },
-        {
-            "ecu_id": "Car2",
-            "last_revision": datetime(2023, 5, 15),
-            "brand": "Ford",
-            "license_plate": "DEF456",
-            "model": "Focus",
-            "year": 2019,
-            "tires": "Summer",
-            "motor": "V4",
-            "tank": "55L",
-            "max_speed": 190.0,
-            "horsepower": 140,
-            "autonomy": 650.0
-        },
-        {
-            "ecu_id": "Car3",
-            "last_revision": datetime(2023, 3, 20),
-            "brand": "Honda",
-            "license_plate": "GHI789",
-            "model": "Civic",
-            "year": 2021,
-            "tires": "All-Season",
-            "motor": "V6",
-            "tank": "60L",
-            "max_speed": 200.0,
-            "horsepower": 150,
-            "autonomy": 700.0
-        }
-    ]
-
-    # Trip_Info data
-    trip_info = [
-        {
-            "trip_id": "Trip1",
-            "car_id": "Car1",
-            "trip_start": datetime(2024, 11, 1, 8, 0),
-            "trip_end": datetime(2024, 11, 1, 10, 30),
-            "trip_speeds": [random.uniform(40, 120) for _ in range(10)],
-            "trip_rpm": [random.randint(1000, 4000) for _ in range(10)],
-            "trip_motor_temp": [random.uniform(70, 90) for _ in range(10)],
-            "trip_torque": [random.uniform(100, 200) for _ in range(10)]
-        },
-        {
-            "trip_id": "Trip2",
-            "car_id": "Car1",
-            "trip_start": datetime(2024, 11, 5, 14, 0),
-            "trip_end": datetime(2024, 11, 5, 16, 0),
-            "trip_speeds": [random.uniform(50, 130) for _ in range(10)],
-            "trip_rpm": [random.randint(1500, 4500) for _ in range(10)],
-            "trip_motor_temp": [random.uniform(75, 95) for _ in range(10)],
-            "trip_torque": [random.uniform(110, 210) for _ in range(10)]
-        },
-        {
-            "trip_id": "Trip3",
-            "car_id": "Car2",
-            "trip_start": datetime(2024, 11, 3, 9, 30),
-            "trip_end": datetime(2024, 11, 3, 12, 0),
-            "trip_speeds": [random.uniform(30, 100) for _ in range(10)],
-            "trip_rpm": [random.randint(1200, 3800) for _ in range(10)],
-            "trip_motor_temp": [random.uniform(72, 85) for _ in range(10)],
-            "trip_torque": [random.uniform(90, 180) for _ in range(10)]
-        },
-        {
-            "trip_id": "Trip4",
-            "car_id": "Car3",
-            "trip_start": datetime(2024, 11, 6, 11, 0),
-            "trip_end": datetime(2024, 11, 6, 12, 45),
-            "trip_speeds": [random.uniform(60, 140) for _ in range(10)],
-            "trip_rpm": [random.randint(1600, 4200) for _ in range(10)],
-            "trip_motor_temp": [random.uniform(78, 92) for _ in range(10)],
-            "trip_torque": [random.uniform(115, 220) for _ in range(10)]
-        }
-    ]
-
-    # Car_Live_Info data
-    car_live_info = [
-        {
-            "car_id": "Car1",
-            "timestamp": datetime.now(),
-            "trip_id": "Trip1",
-            "oil_level": 80.0,
-            "battery_charge": 90.0,
-            "car_status": True,
-            "speed": 100.0,
-            "rpm": 3000,
-            "gas_level": 60.0,
-            "location": "37.7749° N, 122.4194° W",
-            "motor_temperature": 85.0,
-            "abs": True,
-            "torque": 150.0,
-            "tire_pressure": [32.0, 32.0, 32.0, 32.0],
-            "errors": []
-        },
-        {
-            "car_id": "Car1",
-            "timestamp": datetime.now() - timedelta(minutes=10),
-            "trip_id": "Trip1",
-            "oil_level": 78.0,
-            "battery_charge": 88.0,
-            "car_status": True,
-            "speed": 95.0,
-            "rpm": 2800,
-            "gas_level": 55.0,
-            "location": "37.7750° N, 122.4195° W",
-            "motor_temperature": 84.0,
-            "abs": True,
-            "torque": 145.0,
-            "tire_pressure": [32.0, 32.0, 31.0, 32.0],
-            "errors": []
-        },
-        # Additional 6 Car_Live_Info entries
-        {
-            "car_id": "Car2",
-            "timestamp": datetime.now(),
-            "trip_id": "Trip3",
-            "oil_level": 70.0,
-            "battery_charge": 85.0,
-            "car_status": True,
-            "speed": 80.0,
-            "rpm": 2500,
-            "gas_level": 50.0,
-            "location": "40.7128° N, 74.0060° W",
-            "motor_temperature": 82.0,
-            "abs": False,
-            "torque": 120.0,
-            "tire_pressure": [30.0, 30.0, 30.0, 30.0],
-            "errors": []
-        },
-        {
-            "car_id": "Car2",
-            "timestamp": datetime.now() - timedelta(minutes=20),
-            "trip_id": "Trip3",
-            "oil_level": 68.0,
-            "battery_charge": 82.0,
-            "car_status": True,
-            "speed": 78.0,
-            "rpm": 2400,
-            "gas_level": 48.0,
-            "location": "40.7130° N, 74.0062° W",
-            "motor_temperature": 80.0,
-            "abs": False,
-            "torque": 118.0,
-            "tire_pressure": [30.0, 30.0, 29.0, 30.0],
-            "errors": []
-        },
-        {
-            "car_id": "Car3",
-            "timestamp": datetime.now(),
-            "trip_id": "Trip4",
-            "oil_level": 85.0,
-            "battery_charge": 92.0,
-            "car_status": True,
-            "speed": 105.0,
-            "rpm": 3200,
-            "gas_level": 65.0,
-            "location": "34.0522° N, 118.2437° W",
-            "motor_temperature": 88.0,
-            "abs": True,
-            "torque": 160.0,
-            "tire_pressure": [33.0, 33.0, 33.0, 33.0],
-            "errors": []
-        },
-        {
-            "car_id": "Car3",
-            "timestamp": datetime.now() - timedelta(minutes=15),
-            "trip_id": "Trip4",
-            "oil_level": 83.0,
-            "battery_charge": 90.0,
-            "car_status": True,
-            "speed": 100.0,
-            "rpm": 3100,
-            "gas_level": 63.0,
-            "location": "34.0525° N, 118.2439° W",
-            "motor_temperature": 87.0,
-            "abs": True,
-            "torque": 158.0,
-            "tire_pressure": [33.0, 32.5, 33.0, 33.0],
-            "errors": []
-        }
-    ]
-
-    for user in users:
-        db["Users"].insert_one(user)
-    for car in cars_info:
+def checkCarExists(db, car):
+    if db["Cars"].find_one({"ecu_id":car["ecu_id"]})==None:
         db["Cars"].insert_one(car)
-    for trip in trip_info:
-        db["TripInfos"].insert_one(trip)
-    for live_info in car_live_info:
-        db["CarLiveInfo"].insert_one(live_info)
-    
-    print("Data added successfully!")
-        
+        logging.info("Car inserted successfully!")
+    else:
+        logging.info("Car already exists!")
 
+
+def checkForErrors(liveData):
+    if liveData["errors"]!=[]:
+        logging.error(f"Error: {liveData['errors']}")
+        return True
+    
+def insertCarData(db, data):
+    db["Cars"].insert_one(data)
+    logging.info("Car data inserted successfully!")d
+
+def insertCarLiveData(db, data):
+    db["CarLiveInfo"].insert_one(data)
+    logging.info("Car live data inserted successfully!")
+
+def insertTripData(db, data):
+    db["TripInfos"].insert_one(data)
+    logging.info("Trip data inserted successfully!")
+
+#Checks last live data of car and sees if its a new trip or the end of one
+def checkTrip(db, liveData):
+    #Get last trip of car and sort by trip number
+    lastTrip = db["TripInfos"].find({"car_id":liveData["car_id"]}).sort("trip_id", -1).limit(1)
+    if lastTrip.count()==0:
+        if liveData["car_status"]:
+            #Its the first trip ever
+            liveData["trip_id"]=1
+            createTrip(db, liveData, 1)
+            return liveData
+    else:
+        lastTrip = lastTrip[0]
+        #If trip has not ended yet
+        if lastTrip["trip_end"]==None:
+            if liveData["car_status"]:
+                liveData["trip_id"]=lastTrip["trip_id"]
+                return liveData
+            else:
+                lastTrip["trip_end"]=liveData["timestamp"]
+                liveData["trip_id"]=lastTrip["trip_id"]
+                #Get all the speeds, rpm, motortemp and torque of trip
+                trip_data = db["CarLiveInfo"].find({"car_id":liveData["car_id"], "trip_id":lastTrip["trip_id"]}).sort("timestamp", 1)
+                speeds = []
+                rpm = []
+                motorTemp = []
+                torque = []
+                for data in trip_data:
+                    speeds.append(data["speed"])
+                    rpm.append(data["rpm"])
+                    motorTemp.append(data["motor_temperature"])
+                    torque.append(data["torque"])
+                lastTrip["trip_speeds"]=speeds
+                lastTrip["trip_rpm"]=rpm
+                lastTrip["trip_motor_temp"]=motorTemp
+                lastTrip["trip_torque"]=torque
+                db["TripInfos"].update_one({"car_id":liveData["car_id"], "trip_id":lastTrip["trip_id"]}, {"$set":lastTrip})
+                return liveData
+        else:
+            liveData["trip_id"]=lastTrip["trip_id"]+1
+            createTrip(db, liveData, lastTrip["trip_id"]+1)
+            return liveData
+
+def createTrip(db, liveData, num):
+    trip={"car_id":liveData["car_id"], "trip_id":num, "trip_start":liveData["timestamp"], "trip_end":None}
+    insertTripData(db, trip)
+    return trip
+    
+    
+#TODO: Implement this function to send alerts to the notification handler
+def notifyUser(liveData):
+    pass
+
+#TODO Implement this function to read messages from the queue
+def readQueue():
+    return "Not reading messages yet, but program working"
+
+def loadCars():
+    #Given the data is simulated, the cars must be preloaded in the database
+    #If we generated new cars from 0, we would need a way for people on the frontend to know their new car's ecu_id
+    cars=[]
+    cars.append({
+        'ecu_id': '12345ABCDEF',
+        'brand': 'Toyota',
+        'model': 'Corolla',
+        'year': 2015,
+        'license_plate': 'ABC123',
+        'last_revision': '2020-01-01',
+        'tires': 'Michelin',
+        'motor': 'DSL',
+        'tank': 'petrol',
+        'max_speed': 180,
+        'horsepower': 120,
+        'autonomy': 600,
+    })
+    cars.append({
+        'ecu_id': '67890FGHIJK',
+        'brand': 'Honda',
+        'model': 'Civic',
+        'year': 2018,
+        'license_plate': 'XYZ456',
+        'last_revision': '2021-05-10',
+        'tires': 'Bridgestone',
+        'motor': 'ESS',
+        'tank': 'petrol',
+        'max_speed': 200,
+        'horsepower': 158,
+        'autonomy': 550,
+    })
+    cars.append({
+        'ecu_id': '24680LMNOPQ',
+        'brand': 'Ford',
+        'model': 'Focus',
+        'year': 2017,
+        'license_plate': 'LMN789',
+        'last_revision': '2022-03-15',
+        'tires': 'Goodyear',
+        'motor': 'DSL',
+        'tank': 'diesel',
+        'max_speed': 190,
+        'horsepower': 150,
+        'autonomy': 700,
+    })
+    cars.append({
+        'ecu_id': '13579QRSTUV',
+        'brand': 'Chevrolet',
+        'model': 'Malibu',
+        'year': 2016,
+        'license_plate': 'JKL012',
+        'last_revision': '2019-11-20',
+        'tires': 'Pirelli',
+        'motor': 'ESS',
+        'tank': 'petrol',
+        'max_speed': 210,
+        'horsepower': 197,
+        'autonomy': 580,
+    })
+    cars.append({
+        'ecu_id': '98765WXYZAB',
+        'brand': 'BMW',
+        'model': '3 Series',
+        'year': 2020,
+        'license_plate': 'DEF345',
+        'last_revision': '2023-06-01',
+        'tires': 'Continental',
+        'motor': 'HEV',
+        'tank': 'petrol',
+        'max_speed': 250,
+        'horsepower': 255,
+        'autonomy': 520,
+    })
+    cars.append({
+        'ecu_id': '54321CDEFGH',
+        'brand': 'Mercedes',
+        'model': 'C-Class',
+        'year': 2019,
+        'license_plate': 'UVW678',
+        'last_revision': '2022-12-15',
+        'tires': 'Dunlop',
+        'motor': 'HEV',
+        'tank': 'diesel',
+        'max_speed': 240,
+        'horsepower': 194,
+        'autonomy': 800,
+    })
+    cars.append({
+        'ecu_id': '11223IJKLMN',
+        'brand': 'Audi',
+        'model': 'A4',
+        'year': 2021,
+        'license_plate': 'GHI910',
+        'last_revision': '2023-09-01',
+        'tires': 'Hankook',
+        'motor': 'MHEV',
+        'tank': 'petrol',
+        'max_speed': 240,
+        'horsepower': 201,
+        'autonomy': 550,
+    })
+    cars.append({
+        'ecu_id': '99887OPQRST',
+        'brand': 'Tesla',
+        'model': 'Model 3',
+        'year': 2022,
+        'license_plate': 'XYZ321',
+        'last_revision': '2023-10-05',
+        'tires': 'Michelin',
+        'motor': 'Electric',
+        'tank': 'electric',
+        'max_speed': 261,
+        'horsepower': 283,
+        'autonomy': 560,
+    })
+    cars.append({
+        'ecu_id': '55667UVWXYZ',
+        'brand': 'Volkswagen',
+        'model': 'Passat',
+        'year': 2014,
+        'license_plate': 'QRS654',
+        'last_revision': '2021-04-11',
+        'tires': 'Nokian',
+        'motor': 'LPG',
+        'tank': 'diesel',
+        'max_speed': 220,
+        'horsepower': 174,
+        'autonomy': 750,
+    })
+    return cars
+
+#Main program
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+    logging.info("Starting Database Adapter...")
+    db=connect("mongodb://db:27017/", "carbox", "mySecretPassword")
+    db=getDb(db, "carbox")
+    checkCollections(db)
+    cars=loadCars()
+    for car in cars:
+        checkCarExists(db, car)
+
+    #TODO Wait for messages and update the database
+    while True:
+        continue
+        liveData=readQueue()
+        logging.info(f"Data received: {liveData}")
+        if checkForErrors(liveData):
+            notifyUser(liveData)
+        else:
+            liveData=checkTrip(db, liveData)
+            insertCarLiveData(db, liveData)
+
+
+    
