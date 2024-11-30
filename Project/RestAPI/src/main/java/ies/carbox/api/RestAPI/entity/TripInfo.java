@@ -5,6 +5,8 @@ import java.util.Date;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import lombok.*;
 
 /**
@@ -14,6 +16,7 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Setter
+@JsonSerialize
 @Document(collection = "TripInfos")
 public class TripInfo {
     /** Car Id */
@@ -45,5 +48,15 @@ public class TripInfo {
 
     @Field("trip_torque")
     float[] Trip_torque;
+
+
+    @Override
+    public String toString() {
+        return "TripInfo [carId=" + carId + ", tripId=" + tripId + ", Trip_start=" + Trip_start + ", Trip_end=" + Trip_end + "]";
+    }
+    @Override
+    public int hashCode() {
+        return this.toString().hashCode();
+    }
 
 }

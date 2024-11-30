@@ -10,6 +10,15 @@ services:
     volumes:
       - ./Database/mongo-init:/docker-entrypoint-initdb.d
 
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./Cache/redis-data:/data
+      - ./Cache/redis.conf:/usr/local/etc/redis/redis.conf
+    environment:
+      - REDIS_ARGS="--requirepass ${REDIS_PASSWORD} --save ${REDIS_SNAPSHOT_PERIOD} ${REDIS_SNAPSHOT_MIN_CHANGE} --appendonly yes"
 
   database_adapter:
     build:
@@ -28,25 +37,35 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
 
-    
   restapi:
     build:
       context: ./RestAPI
       dockerfile: Dockerfile
     environment:
       SPRING_DATA_MONGODB_URI: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@db:${MONGO_INITDB_PORT}/${MONGO_INITDB_DATABASE}?authSource=admin
+      SPRING_APPLICATION_JSON: '{
+          "spring.data.mongodb.authentication-database": "admin",
+
+          "spring.redis.host": "${REDIS_HOST}",
+          "spring.redis.port": "${REDIS_PORT}",
+          "spring.redis.password": "${REDIS_PASSWORD}",
+
+          "security.jwt.secret-key": "${JWT_SECRET_KEY}",
+          "security.jwt.expiration-time": ${JWT_TOKEN_TTL}
+        }'
     depends_on:
-      - db 
+      - db
+      - redis
     ports:
       - "8080:8080"
 
   frontend:
     build:
-      context: ./Frontend/Carbox  
-      dockerfile: Dockerfile  
+      context: ./Frontend/Carbox
+      dockerfile: Dockerfile
     ports:
-      - "80:5173" 
+      - "80:5173"
     depends_on:
-      - restapi 
+      - restapi
     environment:
       API_URL: http://restapi:8080

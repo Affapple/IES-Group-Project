@@ -36,7 +36,6 @@ public class AuthenticationService {
         user.setEmail(input.getEmail());
         user.setPassword(passwordEncoder.encode(input.getPassword()));
         user.setPhone(input.getPhone());
-        user.setAdmin(false);
         if (input.getCarsList() != null)
             user.setCarsList(input.getCarsList());
         else
