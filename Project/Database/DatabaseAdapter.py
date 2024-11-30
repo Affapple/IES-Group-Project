@@ -40,7 +40,7 @@ def checkForErrors(liveData):
     
 def insertCarData(db, data):
     db["Cars"].insert_one(data)
-    logging.info("Car data inserted successfully!")d
+    logging.info("Car data inserted successfully!")
 
 def insertCarLiveData(db, data):
     db["CarLiveInfo"].insert_one(data)

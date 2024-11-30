@@ -59,12 +59,11 @@ public class CarService {
                 Car car = cacheService.getCar(ecuId);
                 if (car == null) {
                     car = carRepository.findByEcuId(ecuId).orElseThrow(
-                            () -> new IllegalArgumentException("Car with ecuId \"" + ecuId + "\" does not exist!")
-                    );
+                            () -> new IllegalArgumentException("Car with ecuId \"" + ecuId + "\" does not exist!"));
                     cacheService.saveCar(car);
                 }
-                carList.add(car);
 
+                carList.add(car);
                 CarLiveInfo latestStatus = getLatestCarData(car.getEcuId());
                 if (latestStatus == null) {
                     continue;
@@ -115,9 +114,15 @@ public class CarService {
 
     public Car getCarById(String carId) {
         // Implementation to retrieve a car by ID
-        return carRepository
+        Car car = cacheService.getCar(carId);
+        if (car != null) {
+            return car;
+        }
+        car = carRepository
                 .findByEcuId(carId)
                 .orElseThrow(() -> new IllegalArgumentException("Car with carId \"" + carId + "\" does not exist!"));
+        cacheService.saveCar(car);
+        return car;
     }
 
     // The following methods may not be necessary

@@ -54,6 +54,7 @@ public class TripInfoService {
                 .orElseThrow(
                         () -> new IllegalArgumentException(
                                 String.format("No trips found for car %s", carId)));
+        cacheService.saveTrip(trips, carId);
         return trips.get(trips.size() - 1);
     }
 }
