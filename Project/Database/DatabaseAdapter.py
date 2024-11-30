@@ -14,6 +14,20 @@ def connect(url, username, password):
 def getDb(client, db_name):
     return client[db_name]
 
+def setAdmin(db):
+    admin =  {
+            "email": 'admin@admin.com',
+            "username": 'admin',
+            "password": '$2a$10$BYPsOQzU2JuMbLg0PLs6/uVcBfzYSgPu1oMb8kGJXmQAGg6qkWlma',
+            "carsList": [],
+            "phone": 312321,
+            "role": 'ADMIN',
+            "_class": 'ies.carbox.api.RestAPI.entity.User'
+        }
+    if db["Users"].find_one({"email":admin["email"]})==None:
+        db["Users"].insert_one(admin)
+        logging.info("Admin inserted successfully!")
+
 def checkCollections(db):
     for col in db.list_collection_names():
         logging.info(f"Collection: {col}")
@@ -253,6 +267,7 @@ if __name__ == "__main__":
     db=getDb(db, "carbox")
     checkCollections(db)
     cars=loadCars()
+    setAdmin(db)
     for car in cars:
         checkCarExists(db, car)
 
