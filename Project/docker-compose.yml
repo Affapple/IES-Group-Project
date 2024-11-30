@@ -10,6 +10,15 @@ services:
     volumes:
       - ./Database/mongo-init:/docker-entrypoint-initdb.d
 
+
+  database_adapter:
+    build:
+      context: ./Database
+      dockerfile: Dockerfile
+    depends_on:
+    #Later add the dependency to the RabbitMQ
+      - db
+
   rabbitmq:
     image: rabbitmq:3-management
     ports:
@@ -18,6 +27,7 @@ services:
     environment:  
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+
     
   restapi:
     build:
