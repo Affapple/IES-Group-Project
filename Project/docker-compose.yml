@@ -20,6 +20,23 @@ services:
     environment:
       - REDIS_ARGS="--requirepass ${REDIS_PASSWORD} --save ${REDIS_SNAPSHOT_PERIOD} ${REDIS_SNAPSHOT_MIN_CHANGE} --appendonly yes"
 
+  database_adapter:
+    build:
+      context: ./Database
+      dockerfile: Dockerfile
+    depends_on:
+    #Later add the dependency to the RabbitMQ
+      - db
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:  
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+
   restapi:
     build:
       context: ./RestAPI
