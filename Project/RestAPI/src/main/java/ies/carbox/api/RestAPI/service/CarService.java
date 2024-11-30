@@ -57,6 +57,12 @@ public class CarService {
             // They MUST exist, otherwise something is very wrong
             try {
                 Car car = cacheService.getCar(ecuId);
+                if (car == null) {
+                    car = carRepository.findByEcuId(ecuId).orElseThrow(
+                            () -> new IllegalArgumentException("Car with ecuId \"" + ecuId + "\" does not exist!")
+                    );
+                    cacheService.saveCar(car);
+                }
                 carList.add(car);
 
                 CarLiveInfo latestStatus = getLatestCarData(car.getEcuId());
