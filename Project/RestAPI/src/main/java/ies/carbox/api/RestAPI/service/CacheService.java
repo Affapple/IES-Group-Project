@@ -86,6 +86,7 @@ public class CacheService {
         String key = user.getEmail();
 
         try {
+            System.err.println("DEBUG: User= " + user);
             var json = mapper.writeValueAsString(user);
             System.out.println("INFO: Saving User:" + json);
             redisTemplate.opsForValue().set(key, json);

@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.springframework.data.annotation.Id;
 /**
@@ -76,11 +77,6 @@ public class User implements UserDetails {
     @Getter @Setter
     private int phone;
 
-    /**User status */
-    @Field("admin")
-    @Getter @Setter
-    private boolean admin;
-
     /**
      * Returns a string representation of the user.
      *
@@ -94,12 +90,30 @@ public class User implements UserDetails {
         return "User [email=" + email + ", password=***** , username=" + username + ", carlist=" + carsList + "]";
     }
 
-    public boolean isAdmin() {
-        return admin;
+    @Override
+    @JsonIgnore
+    public boolean isEnabled() {
+        return true;
     }
 
-    /**
-    */
+    @Override
+    @JsonIgnore
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();
