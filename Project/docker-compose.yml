@@ -43,15 +43,17 @@ services:
       dockerfile: Dockerfile
     environment:
       SPRING_DATA_MONGODB_URI: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@db:${MONGO_INITDB_PORT}/${MONGO_INITDB_DATABASE}?authSource=admin
+      SECURITY_CORS_FRONTEND_ADDRESS: frontend:80
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: ${REDIS_PORT}
+      SPRING_DATA_REDIS_PASSWORD: ${REDIS_PASSWORD}
       SPRING_APPLICATION_JSON: '{
-          "spring.data.mongodb.authentication-database": "admin",
+        "spring.data.mongodb.authentication-database": "admin",
 
-          "spring.redis.host": "${REDIS_HOST}",
-          "spring.redis.port": "${REDIS_PORT}",
-          "spring.redis.password": "${REDIS_PASSWORD}",
+        "security.jwt.secret-key": "${JWT_SECRET_KEY}",
+        "security.jwt.expiration-time": ${JWT_TOKEN_TTL},
 
-          "security.jwt.secret-key": "${JWT_SECRET_KEY}",
-          "security.jwt.expiration-time": ${JWT_TOKEN_TTL}
+        "cache.general.expiration-time": "${REDIS_ITEMS_TTL}"
         }'
     depends_on:
       - db

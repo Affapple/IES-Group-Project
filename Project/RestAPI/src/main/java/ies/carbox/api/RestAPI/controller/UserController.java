@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
@@ -171,15 +172,20 @@ public class UserController {
         }
     )
     public ResponseEntity<User> getAccount() {
-        
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) authentication.getPrincipal();
         String email = currentUser.getEmail();
-        System.out.println(email);
-        Optional<User> user = userService.getAccount(email);
-        User userObj = user.orElse(null);
-        System.out.println(userObj);
-        return userObj != null ? ResponseEntity.status(200).body(userObj) : ResponseEntity.notFound().build();
+        try {
+            User user = userService.loadUserByUsername(email);
+            System.out.println(user);
+            return ResponseEntity.status(200).body(user);
+            
+        } catch (UsernameNotFoundException e) {
+            System.out.println("INFO: User \"" + email + "\" not found");
+            ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.status(500).body(null);
     }
 
     /**
@@ -207,26 +213,26 @@ public class UserController {
      * Gets a list of all cars and their associated users. For admin purposes only.
      * 
      */
-    @GetMapping("/all")
-    @Operation(
-        summary = "Get all users and their cars", 
-        description = "Get a list of all users and their cars",
-        responses = {
-            @ApiResponse(
-                responseCode = "200", 
-                description = "List of all users and their cars", 
-                content = @Content(schema = @Schema(implementation = User.class))
-            ),
-            @ApiResponse(responseCode = "403", description = "Unauthorized access")
-        }
-    )
-    public ResponseEntity<List<User>> getAllUsers() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User currentUser = (User) authentication.getPrincipal();
-        if (!currentUser.isAdmin()) {
-            return ResponseEntity.status(403).body(null);
-        }
-        List<User> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
-    }
+    // @GetMapping("/all")
+    // @Operation(
+    //     summary = "Get all users and their cars", 
+    //     description = "Get a list of all users and their cars",
+    //     responses = {
+    //         @ApiResponse(
+    //             responseCode = "200", 
+    //             description = "List of all users and their cars", 
+    //             content = @Content(schema = @Schema(implementation = User.class))
+    //         ),
+    //         @ApiResponse(responseCode = "403", description = "Unauthorized access")
+    //     }
+    // )
+    // public ResponseEntity<List<User>> getAllUsers() {
+    //     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    //     User currentUser = (User) authentication.getPrincipal();
+    //     if (!currentUser.isAdmin()) {
+    //         return ResponseEntity.status(403).body(null);
+    //     }
+    //     List<User> users = userService.getAllUsers();
+    //     return ResponseEntity.ok(users);
+    // }
 }

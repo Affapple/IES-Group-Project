@@ -32,6 +32,7 @@ def checkCarExists(db, car):
     else:
         logging.info("Car already exists!")
 
+
 def checkForErrors(liveData):
     if liveData["errors"]!=[]:
         logging.error(f"Error: {liveData['errors']}")
