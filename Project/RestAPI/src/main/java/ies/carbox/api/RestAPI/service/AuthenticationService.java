@@ -15,6 +15,7 @@ import ies.carbox.api.RestAPI.repository.UserRepository;
 @Service
 public class AuthenticationService {
     private final UserRepository userRepository;
+    private final CacheService cacheService;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -23,11 +24,13 @@ public class AuthenticationService {
     public AuthenticationService(
         UserRepository userRepository,
         AuthenticationManager authenticationManager,
-        PasswordEncoder passwordEncoder
+        PasswordEncoder passwordEncoder,
+        CacheService cacheService
     ) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.cacheService = cacheService;
     }
 
     public User signup(RegisterUserDto input) {
@@ -36,12 +39,12 @@ public class AuthenticationService {
         user.setEmail(input.getEmail());
         user.setPassword(passwordEncoder.encode(input.getPassword()));
         user.setPhone(input.getPhone());
-        user.setAdmin(false);
         if (input.getCarsList() != null)
             user.setCarsList(input.getCarsList());
         else
             user.setCarsList(new ArrayList<>());
         System.out.println(user);
+        cacheService.saveUser(user);
         return userRepository.save(user);
     }
 
@@ -53,7 +56,14 @@ public class AuthenticationService {
                 )
         );
 
-        return userRepository.findByEmail(input.getEmail())
+        User user = cacheService.getUser(input.getEmail());
+        if (user != null)
+            return user;
+            
+        user = userRepository.findByEmail(input.getEmail())
                 .orElseThrow();
+
+        cacheService.saveUser(user);
+        return user;
     }
 }

@@ -47,7 +47,7 @@ def checkCarExists(db, car):
         logging.info("Car inserted successfully!")
     else:
         logging.info("Car already exists!")
-  
+
 def insertCarData(db, data):
     db["Cars"].insert_one(data)
     logging.info("Car data inserted successfully!")

@@ -21,9 +21,12 @@ import io.swagger.v3.oas.annotations.Parameter;
 import ies.carbox.api.RestAPI.CONSTANTS;
 import ies.carbox.api.RestAPI.dtos.RegisterUserDto;
 import ies.carbox.api.RestAPI.service.AuthenticationService;
+import ies.carbox.api.RestAPI.service.CacheService;
+
 import org.springframework.security.core.Authentication;
 import java.util.Date;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 /**
  * CarController provides endpoints for managing cars, including viewing, associating cars to users,
@@ -38,12 +41,14 @@ public class CarController {
     private final CarService carService;
     private final UserService userService;
     private final TripInfoService tripInfoService;
-
+    private final CacheService cacheService;
+    
     @Autowired
-    public CarController(CarService carService, UserService userService, TripInfoService tripInfoService ) {
+    public CarController(CarService carService, UserService userService, TripInfoService tripInfoService, CacheService cacheService) {
         this.carService = carService;
         this.userService = userService;
         this.tripInfoService = tripInfoService;
+        this.cacheService = cacheService;
     }
 
     @Autowired
@@ -75,7 +80,12 @@ public class CarController {
         
             List<Car> cars = carService.getAllUserCars(ecuIds);
             return ResponseEntity.ok(cars);
-        } catch (IllegalArgumentException e) {
+        } catch (UsernameNotFoundException e) {
+            System.out.println("INFO: User \"" + userEmail + "\" not found");
+            e.printStackTrace();
+            return ResponseEntity.notFound().build();
+        }
+         catch (IllegalArgumentException e) {
             e.printStackTrace();
             return ResponseEntity.notFound().build();
         }
@@ -101,9 +111,6 @@ public class CarController {
         
         try {
             Car car = carService.getCarById(ecuId);
-            if (car == null) {
-                return ResponseEntity.notFound().build();
-            }
             User user = userService.addUserCar(userEmail, ecuId, vehicleName);
             RegisterUserDto userDto = new RegisterUserDto();
             userDto.setEmail(user.getEmail());
@@ -134,10 +141,10 @@ public class CarController {
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName(); 
-        if (!userService.belongsToUser(vehicleId, userEmail)) {
-            return ResponseEntity.notFound().build();
-        }
         try {
+            if (!userService.belongsToUser(vehicleId, userEmail)) {
+                return ResponseEntity.notFound().build();
+            }
             Car car = carService.getCarById(vehicleId);
             return ResponseEntity.ok(car);
         } catch (Exception e) {
@@ -161,10 +168,10 @@ public class CarController {
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName(); 
-        if (!userService.belongsToUser(vehicleId, userEmail)) {
-            return ResponseEntity.notFound().build();
-        }
         try {
+            if (!userService.belongsToUser(vehicleId, userEmail)) {
+                return ResponseEntity.notFound().build();
+            }
             List<List<String>> car = userService.getListOfEcuIds(userEmail);
             for (List<String> c : car) {
                 if (c.get(0).equals(vehicleId)) {
@@ -196,10 +203,10 @@ public class CarController {
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName(); 
-        if (!userService.belongsToUser(vehicleId, userEmail)) {
-            return ResponseEntity.notFound().build();
-        }
         try {
+            if (!userService.belongsToUser(vehicleId, userEmail)) {
+                return ResponseEntity.notFound().build();
+            }
             List<CarLiveInfo> car = carService.getCarDataAfterTimestamp(vehicleId, timestamp);
             return ResponseEntity.ok(car);
         } catch (Exception e) {
@@ -223,10 +230,10 @@ public class CarController {
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName(); 
-        if (!userService.belongsToUser(vehicleId, userEmail)) {
-            return ResponseEntity.notFound().build();
-        }
         try {
+            if (!userService.belongsToUser(vehicleId, userEmail)) {
+                return ResponseEntity.notFound().build();
+            }
             CarLiveInfo car = carService.getLatestCarData(vehicleId);
             return ResponseEntity.ok(car);
         } catch (Exception e) {
@@ -252,10 +259,11 @@ public class CarController {
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName(); 
-        if (!userService.belongsToUser(vehicleId, userEmail)) {
-            return ResponseEntity.notFound().build();
-        }
         try {
+            if (!userService.belongsToUser(vehicleId, userEmail)) {
+                return ResponseEntity.notFound().build();
+            }
+
             User user = userService.removeUserCar(userEmail, vehicleId);
             RegisterUserDto userDto = new RegisterUserDto();
             userDto.setEmail(user.getEmail());
@@ -266,8 +274,12 @@ public class CarController {
             User newUser = authenticationService.signup(userDto);
             return ResponseEntity.ok("Car removed successfully");
 
-        } catch (IllegalArgumentException exception) {
+        } catch (UsernameNotFoundException e) {
             return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            System.err.println("ERROR: Error removing car from user");
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error removing car from user");
         }
     }
 
@@ -289,10 +301,10 @@ public class CarController {
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName(); 
-        if (!userService.belongsToUser(vehicleId, userEmail)) {
-            return ResponseEntity.notFound().build();
-        }
         try {
+            if (!userService.belongsToUser(vehicleId, userEmail)) {
+                return ResponseEntity.notFound().build();
+            }
             if (tripId != null) {
                 TripInfo trip = tripInfoService.getTripInfo(tripId, vehicleId);
                 return ResponseEntity.ok(List.of(trip));
@@ -319,10 +331,10 @@ public class CarController {
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName(); 
-        if (!userService.belongsToUser(vehicleId, userEmail)) {
-            return ResponseEntity.notFound().build();
-        }
         try {
+            if (!userService.belongsToUser(vehicleId, userEmail)) {
+                return ResponseEntity.notFound().build();
+            }
             TripInfo trip = tripInfoService.getLatestTripInfo(vehicleId);
             System.out.println(trip);
             return ResponseEntity.ok(trip);
@@ -330,5 +342,4 @@ public class CarController {
             return ResponseEntity.notFound().build();
         }
     }
-    
 }
