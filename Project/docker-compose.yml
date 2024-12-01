@@ -68,4 +68,8 @@ services:
     depends_on:
       - restapi
     environment:
+
+      VITE_API_URL: $VITE_SPRING_SERVER_URL
+
       API_URL: http://restapi:8080
+
