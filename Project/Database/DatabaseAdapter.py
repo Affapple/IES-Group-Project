@@ -1,7 +1,9 @@
 from pymongo import MongoClient
 from datetime import datetime
 import logging
-
+import time
+import pika
+import json
 
 def connect(url, username, password):
     logging.info("Connecting to database...")
@@ -11,6 +13,20 @@ def connect(url, username, password):
 
 def getDb(client, db_name):
     return client[db_name]
+
+def setAdmin(db):
+    admin =  {
+            "email": 'admin@admin.com',
+            "username": 'admin',
+            "password": '$2a$10$BYPsOQzU2JuMbLg0PLs6/uVcBfzYSgPu1oMb8kGJXmQAGg6qkWlma',
+            "carsList": [],
+            "phone": 312321,
+            "role": 'ADMIN',
+            "_class": 'ies.carbox.api.RestAPI.entity.User'
+        }
+    if db["Users"].find_one({"email":admin["email"]})==None:
+        db["Users"].insert_one(admin)
+        logging.info("Admin inserted successfully!")
 
 def checkCollections(db):
     for col in db.list_collection_names():
@@ -32,12 +48,6 @@ def checkCarExists(db, car):
     else:
         logging.info("Car already exists!")
 
-
-def checkForErrors(liveData):
-    if liveData["errors"]!=[]:
-        logging.error(f"Error: {liveData['errors']}")
-        return True
-    
 def insertCarData(db, data):
     db["Cars"].insert_one(data)
     logging.info("Car data inserted successfully!")
@@ -53,8 +63,8 @@ def insertTripData(db, data):
 #Checks last live data of car and sees if its a new trip or the end of one
 def checkTrip(db, liveData):
     #Get last trip of car and sort by trip number
-    lastTrip = db["TripInfos"].find({"car_id":liveData["car_id"]}).sort("trip_id", -1).limit(1)
-    if lastTrip.count()==0:
+    lastTrip =list( db["TripInfos"].find({"car_id":liveData["car_id"]}).sort("trip_id", -1).limit(1))
+    if lastTrip==[]:
         if liveData["car_status"]:
             #Its the first trip ever
             liveData["trip_id"]=1
@@ -97,14 +107,25 @@ def createTrip(db, liveData, num):
     insertTripData(db, trip)
     return trip
     
-    
-#TODO: Implement this function to send alerts to the notification handler
-def notifyUser(liveData):
-    pass
-
-#TODO Implement this function to read messages from the queue
 def readQueue():
-    return "Not reading messages yet, but program working"
+    try:
+        credentials = pika.PlainCredentials('carbox', 'vroom')
+        connection=pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq', credentials=credentials))
+        channel=connection.channel()
+        channel.queue_declare(queue='carbox', durable=True)
+        def callback(ch, method, properties, body):
+            body=body.decode("utf-8")
+            body=json.loads(body)
+            logging.info(f"Received {body}")
+            liveData=checkTrip(db, body)
+            insertCarLiveData(db, liveData)
+        channel.basic_consume(queue='carbox', on_message_callback=callback, auto_ack=True)
+        channel.start_consuming()
+    except Exception as e:
+        logging.error(f"Error: {e}")
+        time.sleep(5)
+        logging.info("Reconnecting to queue...")
+        readQueue()
 
 def loadCars():
     #Given the data is simulated, the cars must be preloaded in the database
@@ -246,19 +267,13 @@ if __name__ == "__main__":
     db=getDb(db, "carbox")
     checkCollections(db)
     cars=loadCars()
+    setAdmin(db)
     for car in cars:
         checkCarExists(db, car)
 
-    #TODO Wait for messages and update the database
     while True:
-        continue
-        liveData=readQueue()
-        logging.info(f"Data received: {liveData}")
-        if checkForErrors(liveData):
-            notifyUser(liveData)
-        else:
-            liveData=checkTrip(db, liveData)
-            insertCarLiveData(db, liveData)
+        readQueue()
+        
 
 
     

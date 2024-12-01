@@ -2,6 +2,8 @@ import random
 from datetime import datetime
 import time
 import logging
+import pika
+import json
 
 #Instantiate the list of inicial cars, this list is static since we need to have a base to start the simulation and
 #need to know the ecu_id of each car to simulate the data and access it with users.
@@ -156,7 +158,7 @@ LastLiveData={
 
 errors=['ABS failure','Engine failure','Battery failure','Oil leak','Tire puncture','Brake failure','Coolant leak','Suspension failure','Transmission failure','Airbag failure']
 
-logging.basicConfig(filename='DataGenerator.log', level=logging.INFO)
+logging.basicConfig(level=logging.INFO)
 logging.info(Cars)
 
 #Function to simulate the state of the car on/off
@@ -192,6 +194,12 @@ def simulateError(ecu_id):
             logging.info(f"Errors: {LastLiveData[ecu_id]['errors']}")
         if chance<=5:
             error=random.choice(errors)
+            if error == 'ABS failure' and LastLiveData[ecu_id]['abs']:
+                LastLiveData[ecu_id]['abs']=False
+            elif error == 'ABS failure' and not LastLiveData[ecu_id]['abs']:
+                LastLiveData[ecu_id]['abs']=True
+                logging.info(f"ABS system repaired in car {ecu_id}")
+                return
             LastLiveData[ecu_id]['errors'].append(error)
             logging.info(f"Error {error} simulated in car {ecu_id}")
             logging.info(f"Errors: {LastLiveData[ecu_id]['errors']}")
@@ -294,6 +302,24 @@ def simulateLocationCoordinates(ecu_id):
         longitude+=random.uniform(-0.1,0.1)
         LastLiveData[ecu_id]['location']=f'{latitude},{longitude}'
 
+def sendToQueue(ecu_id):
+    try:
+        logging.info(f"Sending data for car {ecu_id} to queue")
+        logging.info(f"Data: {LastLiveData[ecu_id]}")
+        credentials = pika.PlainCredentials('carbox', 'vroom')
+        connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq', credentials= credentials))
+        channel = connection.channel()
+        channel.queue_declare(queue='carbox', durable=True)
+        message=json.dumps(LastLiveData[ecu_id])
+        channel.basic_publish(exchange='', routing_key='carbox', body=message)
+        logging.info(f"Data for car {ecu_id} sent to queue")
+        connection.close()
+    except Exception as e:
+        logging.error(f"Error sending data to queue: {e}")
+        time.sleep(5)
+        sendToQueue(ecu_id)
+
+
 
 #Function to generate random data for the cars
 def GenerateData(ecu_id):
@@ -314,17 +340,37 @@ def GenerateData(ecu_id):
         LastLiveData[ecu_id]['torque']=0
         logging.info(f"Initial data for car {ecu_id} generated")
         logging.info(f"Data: {LastLiveData[ecu_id]}")
+        sendToQueue(ecu_id)
 
     else:
-        LastLiveData[ecu_id]['timestamp']=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        LastLiveData[ecu_id]['car_status']=simulateState(LastLiveData[ecu_id]['car_status'], ecu_id)
-        if LastLiveData[ecu_id]['car_status']:
+        previousStat=LastLiveData[ecu_id]['car_status']
+        CurrentStat=simulateState(previousStat,ecu_id)
+        
+        if not CurrentStat and not previousStat:
+            logging.info(f"Car {ecu_id} is still off")
+            return
+        elif not CurrentStat:
+            LastLiveData[ecu_id]['car_status']=False
+            LastLiveData[ecu_id]['speed']=0
+            LastLiveData[ecu_id]['rpm']=0
+            LastLiveData[ecu_id]['torque']=0
+            LastLiveData[ecu_id]['motor_temperature']=0
             simulateError(ecu_id)
-            simulateStats(ecu_id)
+            simulateLocationCoordinates(ecu_id)
             simulateLevels(ecu_id)
-        simulateLocationCoordinates(ecu_id)
-        logging.info(f"Data for car {ecu_id} generated")
-        logging.info(f"Data: {LastLiveData[ecu_id]}")
+            LastLiveData['timestamp'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            logging.info(f"Car {ecu_id} turned off")
+        else:
+            LastLiveData[ecu_id]['car_status']=True
+            simulateStats(ecu_id)
+            simulateError(ecu_id)
+            simulateLocationCoordinates(ecu_id)
+            simulateLevels(ecu_id)
+            LastLiveData['timestamp'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            logging.info(f"Data for car {ecu_id} generated")
+            logging.info(f"Data: {LastLiveData[ecu_id]}")
+        sendToQueue(ecu_id)
+
         
 
 
