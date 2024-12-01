@@ -22,18 +22,17 @@ import ies.carbox.api.RestAPI.repository.UserRepository;
 @Service
 public class UserService implements UserDetailsService {
     UserRepository userRepository;
+    CacheService cacheService;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, CacheService cacheService) {
         this.userRepository = userRepository;
+        this.cacheService = cacheService;
     }
 
     public Boolean belongsToUser(String ecuId, String userEmail) {
-        User user = userRepository.findByEmail(userEmail)
-                    .orElseThrow( () -> new IllegalArgumentException(
-           String.format("User with userId=\"%s\" not found", userEmail)
-        ));
-        return user.getCarsList().stream().anyMatch(car -> car.get(0).equals(ecuId));
+        User user = loadUserByUsername(userEmail);
+        return user.getCarsList().streauserEmailm().anyMatch(car -> car.get(0).equals(ecuId));
     }
 
 
@@ -41,7 +40,16 @@ public class UserService implements UserDetailsService {
     // May not be necessary this method
     @Override
     public User loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+        // Check if in cache
+        User user = cacheService.getUser(email);
+        if (user != null)
+            return user;
+
+        user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException(
+                String.format("User with userId=\"%s\" not found", email)
+            ));
+        cacheService.saveUser(user);
+        return user;
     }
 
     public List<List<String>> getListOfEcuIds(String userEmail) {
