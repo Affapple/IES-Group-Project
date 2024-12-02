@@ -24,7 +24,7 @@ export const login = async (email, password) => {
     const response = await apiClient.post("/user/login", {
         email,
         password,
-    })
+    });
     const token = response.data.token;
     console.log("Token = " + token);
     localStorage.setItem("token", token);
