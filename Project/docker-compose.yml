@@ -88,3 +88,18 @@ services:
 
       API_URL: http://restapi:8080
 
+  notification_handler:
+    build:
+      context: ./NotificationHandler
+      dockerfile: Dockerfile
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_QUEUE: notifications
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      EMAIL_ADDR: ${EMAIL_ADDR}
+      EMAIL_PASSW: ${EMAIL_PASSW}
+    depends_on:
+      - rabbitmq
+    ports:
+      - "8000:8000"
