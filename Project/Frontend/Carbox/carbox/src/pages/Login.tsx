@@ -16,44 +16,21 @@ const Login: React.FC = () => {
     setShowPassword(!showPassword);
   };
 
-  // const handleLogin = () => {
-  //   // Desativa qualquer validação ou autenticação
-  //   if (!email || !password) {
-  //     setError('Please fill in both email and password.');
-  //     return;
-  //   }
-
-  //   const response = login(email, password);
-
-  //   // TODO Fazer try catch
-  //   if (!response)
-  //     throw new Error("Error logging in!");
-
-  //   navigate('/home');
-  // };
-
-  const handleLogin = async () => {
+  const handleLogin = () => {
+    // Desativa qualquer validação ou autenticação
     if (!email || !password) {
-        setError('Please fill in both email and password.');
-        return;
+      setError('Please fill in both email and password.');
+      return;
     }
 
-    try {
-        // Wait for login to complete
-        const response = await login(email, password);
+    const response = login(email, password);
 
-        if (response) {
-            // Navigate only after the token is stored
-            navigate('/home');
-        } else {
-            throw new Error("Login failed!");
-        }
-    } catch (error) {
-        console.error("Login error:", error);
-        setError("Unable to log in. Please try again.");
-    }
-};
+    // TODO Fazer try catch
+    if (!response)
+      throw new Error("Error logging in!");
 
+    navigate('/home');
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center font-sans">
