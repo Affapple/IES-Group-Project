@@ -44,7 +44,7 @@ public class CacheService {
             if (setExpire)
                 redisTemplate.expire(key, ttl, TimeUnit.MILLISECONDS);
 
-        } catch (JsonProcessingException e) {
+        } catch (Exception e) {
             System.out.println("ERROR: Error saving car trip to cache");
             e.printStackTrace();
         }
@@ -101,15 +101,22 @@ public class CacheService {
         String key = email;
 
         try {
+            System.out.println("Email: " + email);
             String userJson = redisTemplate.opsForValue().get(key);
+
+            if (userJson == null) {
+                System.out.println("INFO: User not found in cache (key = " + key + ")");
+                return null;
+            }
+
             User user = mapper.readValue(userJson, User.class);
             System.out.println("INFO: Fetched user from cache using key \"" + key + "\": " + user);
             return user;
-        } catch (Exception e) {
+        } catch (Exception e) {  
             System.out.println("ERROR: Error fetching user from cache");
             e.printStackTrace();
-            return null;
         }
+        return null;
     }
     public void deleteUser(String email) {
         String key = email;
@@ -186,8 +193,13 @@ public class CacheService {
         String key = ecuId;
 
         try {
-            String userJson = redisTemplate.opsForValue().get(key);
-            Car car = mapper.readValue(userJson, Car.class);
+            String carJson = redisTemplate.opsForValue().get(key);
+            if (carJson == null) {
+                System.out.println("INFO: User not found in cache (key = " + key + ")");
+                return null;
+            }
+            Car car = mapper.readValue(carJson, Car.class);
+            
             System.out.println("INFO: Fetched car from cache using key \"" + key + "\": " + car);
             return car;
         } catch (Exception e) {
