@@ -103,11 +103,6 @@ public class User implements UserDetails {
     }
 
     @Override
-    public int hashCode() {
-        return toString().hashCode();
-    }
-
-    @Override
     @JsonIgnore
     public boolean isAccountNonExpired() {
         return true;
@@ -123,11 +118,6 @@ public class User implements UserDetails {
     @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return true;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
     }
     
     @Override
