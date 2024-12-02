@@ -17,8 +17,9 @@ load_dotenv()
 
 EMAIL_ADDRESS = os.getenv("EMAIL_ADDR")
 EMAIL_PASSW = os.getenv("EMAIL_PASSW")
-RABBITMQ_HOST = os.getenv("RABBITMQ_HOST", "localhost")
-RABBITMQ_QUEUE = os.getenv("RABBITMQ_QUEUE", "carbox")
+# ! Depois mudar para variaveis ambiente
+#RABBITMQ_HOST = os.getenv("RABBITMQ_HOST", "localhost")
+#RABBITMQ_QUEUE = os.getenv("RABBITMQ_QUEUE", "carbox")
 
 # Set up RabbitMQ connection and queue
 credentials = pika.PlainCredentials('carbox', 'vroom')
@@ -79,10 +80,10 @@ def start_rabbitmq_consumer():
     """Starts RabbitMQ consumer to listen for incoming messages."""
     try:
         connection = pika.BlockingConnection(
-            pika.ConnectionParameters(host=RABBITMQ_HOST, credentials=credentials)
+            pika.ConnectionParameters(host='rabbitmq', credentials=credentials)
         )
         channel = connection.channel()
-        channel.queue_declare(queue=RABBITMQ_QUEUE)
+        channel.queue_declare(queue='carbox', durable=True)
 
         def callback(ch, method, properties, body):
             logging.info(f"Received message from RabbitMQ: {body}")
@@ -92,8 +93,8 @@ def start_rabbitmq_consumer():
             except Exception as e:
                 logging.error(f"Error processing message: {e}")
 
-        channel.basic_consume(queue=RABBITMQ_QUEUE, on_message_callback=callback, auto_ack=True)
-        logging.info(f"Listening for messages on RabbitMQ queue: {RABBITMQ_QUEUE}")
+        channel.basic_consume(queue='carbox', on_message_callback=callback, auto_ack=True)
+        logging.info(f"Listening for messages on RabbitMQ queue: {'carbox'}")
         channel.start_consuming()
 
     except Exception as e:
@@ -107,14 +108,17 @@ async def send_notification(notification: Notification, background_tasks: Backgr
     try:
         message = notification.dict()
         with pika.BlockingConnection(
-            pika.ConnectionParameters(host=RABBITMQ_HOST, credentials=credentials)
+            pika.ConnectionParameters(host='rabbitmq', credentials=credentials)
         ) as connection:
             channel = connection.channel()
-            channel.queue_declare(queue=RABBITMQ_QUEUE)
+            channel.queue_declare(queue='carbox', durable=True)
 
+
+
+# ! Attention possible error here
             channel.basic_publish(
                 exchange='',
-                routing_key=RABBITMQ_QUEUE,
+                routing_key='carbox',
                 body=json.dumps(message)
             )
 
