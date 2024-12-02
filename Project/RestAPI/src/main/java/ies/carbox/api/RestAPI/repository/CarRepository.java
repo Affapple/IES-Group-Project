@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 
 import ies.carbox.api.RestAPI.entity.Car;
 
+import java.util.List;
+
 /**
  * Repository interface for accessing and managing {@link Car} entities in the MongoDB database.
  *
@@ -18,4 +20,7 @@ import ies.carbox.api.RestAPI.entity.Car;
 @Repository
 public interface CarRepository extends MongoRepository<Car, String> {
     Optional<Car> findByEcuId(String ecuId);
+    List<Car> findByEcuIdIn(List<String> ecuIds); // para ir buscar varios carros com uma lista de ecuIds
+
+
 }

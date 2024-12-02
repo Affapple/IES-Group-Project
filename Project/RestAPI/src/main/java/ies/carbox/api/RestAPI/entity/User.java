@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -77,6 +78,10 @@ public class User implements UserDetails {
     @Getter @Setter
     private int phone;
 
+    @Field("role")
+    @Getter @Setter
+    private Role role;
+
     /**
      * Returns a string representation of the user.
      *
@@ -87,13 +92,14 @@ public class User implements UserDetails {
      */
     @Override
     public String toString() {
-        return "User [email=" + email + ", password=***** , username=" + username + ", carlist=" + carsList + "]";
+        return "User [email=" + email + ", password=***** , username=" + username + ", carlist=" + carsList + ", role=" + role.name() + "]";
     }
 
+    /**
+    */
     @Override
-    @JsonIgnore
-    public boolean isEnabled() {
-        return true;
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override
@@ -112,11 +118,6 @@ public class User implements UserDetails {
     @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return true;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
     }
     
     @Override

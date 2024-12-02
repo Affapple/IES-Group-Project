@@ -2,6 +2,7 @@ export default interface Vehicle {
     ecuId: string,
     lastRevision: Date,
     brand: string,
+    model?: string,
     licensePlate: string,
     year: number,
     tires: string,
