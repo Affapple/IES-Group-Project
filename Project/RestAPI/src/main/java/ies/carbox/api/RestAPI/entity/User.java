@@ -11,6 +11,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import org.springframework.data.annotation.Id;
 /**
  * Represents a user entity in the system.
@@ -106,22 +108,30 @@ public class User implements UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonExpired() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonLocked() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
     @Override
-    public boolean isEnabled() {
-        return true;
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+    
+    @Override
+    public int hashCode() {
+        return toString().hashCode();
     }
 }

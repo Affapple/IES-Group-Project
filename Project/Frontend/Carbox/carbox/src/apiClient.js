@@ -1,9 +1,10 @@
 import axios from 'axios';
 
-const BASE_URL = "http://localhost:8080/api/v2";
-
+const VITE_API_URL = import.meta.env.VITE_API_URL + "/api/v2";
+console.log(VITE_API_URL)
+console.log(import.meta.env.API_URL)
 const apiClient = axios.create({
-  baseURL: BASE_URL,
+  baseURL: VITE_API_URL,
   headers: {
     'Content-Type': 'application/json',
 },
@@ -104,7 +105,7 @@ export const getCarName = async (vehicleId) => {
 // Get Car Live Data after timestamp
 export const getCarLiveData = async (vehicleId, timestamp) => {
   loadToken();
-  const response = await apiClient.get('/vehicles/live' + vehicleId + '/' + timestamp);
+  const response = await apiClient.get('/vehicles/live/' + vehicleId + '/' + timestamp);
   return response.data;
 }
 
