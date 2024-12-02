@@ -11,6 +11,32 @@ import json
 from dotenv import load_dotenv
 import threading
 import time
+from pymongo import MongoClient
+import os
+
+
+# Connect to MongoDB
+# Ir buscar por variavel ambiente
+client = MongoClient("mongodb://carbox:mySecretPassword@db:27017/carbox?authSource=admin")
+db = client["carbox"]  # replace with your database name
+users_collection = db["Users"]  # replace with your collection name
+
+# Retrieve the email of a user based on the car ECU ID
+def get_user_email_by_ecu_id(car_ecu_id: str) -> str:
+    """Retrieve the user's email based on the car ECU ID."""
+    try:
+        # Find the user whose 'carsList' contains the car_ecu_id
+        user = users_collection.find_one({"carsList": car_ecu_id})
+        
+        if user:
+            return user.get("email")
+        else:
+            logging.error(f"No user found for car ECU ID: {car_ecu_id}")
+            return None
+    except Exception as e:
+        logging.error(f"Error retrieving user email: {e}")
+        return None
+
 
 # Load environment variables
 load_dotenv()
@@ -59,7 +85,6 @@ def send_email(to_email: str, subject: str, body: str):
 
 
 # Process incoming RabbitMQ messages
-# Process incoming RabbitMQ messages
 def process_notification(message: dict):
     """Processes notification messages from RabbitMQ."""
     car_id = message.get("car_id")
@@ -71,8 +96,14 @@ def process_notification(message: dict):
         logging.info(f"No errors to report for car {car_id}. Skipping email.")
         return  # Skip sending the email if no errors
 
-    # For now, using a placeholder email; can replace with database logic
-    user_email = "carbox1application@gmail.com"
+    # Extract the car ECU ID (assuming it can be derived from the car_id)
+    car_ecu_id = car_id  # This could be a part of the car_id or a separate field
+
+    # Get the user's email by ECU ID
+    user_email = get_user_email_by_ecu_id(car_ecu_id)
+    if not user_email:
+        logging.error(f"No email found for car {car_id} (ECU ID: {car_ecu_id}). Skipping email.")
+        return
 
     # Construct the email subject and body
     subject = f"Car Alert: {car_id}"
@@ -109,7 +140,6 @@ def start_rabbitmq_consumer():
         logging.error(f"Error in RabbitMQ consumer: {e}")
 
 
-# Endpoint to queue a notification
 # Endpoint to queue a notification
 @app.post("/send-notification")
 async def send_notification(notification: Notification, background_tasks: BackgroundTasks):

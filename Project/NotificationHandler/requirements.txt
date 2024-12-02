@@ -4,3 +4,4 @@ python-dotenv
 pydantic
 apscheduler
 pika
+pymongo
