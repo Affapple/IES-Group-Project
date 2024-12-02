@@ -59,46 +59,28 @@ def send_email(to_email: str, subject: str, body: str):
 
 
 # Process incoming RabbitMQ messages
-# def process_notification(message: dict):
-#     """Processes notification messages from RabbitMQ."""
-#     car_id = message.get("car_id")
-#     errors = message.get("errors")
-#     timestamp = message.get("timestamp")
-
-#     # For now, using a placeholder email; can replace with database logic
-#     user_email = "carbox1application@gmail.com"
-
-#     # Construct the email subject and body
-#     subject = f"Car Alert: {car_id}"
-#     body = f"Errors detected in car {car_id} at {timestamp}:\n{errors}"
-
-#     send_email(user_email, subject, body)
-# ! This needs to be altered for when theres no errors, to not send an email, because right now Im sending a message for every message Im receiving
+# Process incoming RabbitMQ messages
 def process_notification(message: dict):
     """Processes notification messages from RabbitMQ."""
     car_id = message.get("car_id")
     errors = message.get("errors")
     timestamp = message.get("timestamp")
 
-    # Ensure that the 'errors' field is a list and contains data
+    # Check if the 'errors' list is empty or None
     if not errors:
-        logging.warning(f"No errors found for car {car_id}. Email will not include errors.")
-    
-    # If errors are present, join them into a readable string format
-    errors_message = "\n".join(errors) if errors else "No errors detected."
+        logging.info(f"No errors to report for car {car_id}. Skipping email.")
+        return  # Skip sending the email if no errors
 
-    # Placeholder email (could be dynamic)
+    # For now, using a placeholder email; can replace with database logic
     user_email = "carbox1application@gmail.com"
 
     # Construct the email subject and body
     subject = f"Car Alert: {car_id}"
-    body = f"Errors detected in car {car_id} at {timestamp}:\n{errors_message}"
+    body = f"Errors detected in car {car_id} at {timestamp}:\n" + "\n".join(errors)
 
-    # Log the email body for debugging purposes
-    logging.info(f"Sending email to {user_email} with body:\n{body}")
-
-    # Send the email with the error message
+    # Send the email
     send_email(user_email, subject, body)
+
 
 
 # RabbitMQ Consumer
@@ -128,20 +110,19 @@ def start_rabbitmq_consumer():
 
 
 # Endpoint to queue a notification
+# Endpoint to queue a notification
 @app.post("/send-notification")
 async def send_notification(notification: Notification, background_tasks: BackgroundTasks):
     """Queues a notification message in RabbitMQ."""
     try:
         message = notification.dict()
+
         with pika.BlockingConnection(
             pika.ConnectionParameters(host='rabbitmq', credentials=credentials)
         ) as connection:
             channel = connection.channel()
             channel.queue_declare(queue='carbox', durable=True)
 
-
-
-# ! Attention possible error here
             channel.basic_publish(
                 exchange='',
                 routing_key='carbox',
@@ -154,7 +135,6 @@ async def send_notification(notification: Notification, background_tasks: Backgr
     except Exception as e:
         logging.error(f"Error queuing notification: {e}")
         raise HTTPException(status_code=500, detail=f"Error queuing notification: {e}")
-
 
 # Root endpoint for service health check
 @app.get("/")
