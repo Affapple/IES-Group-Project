@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaEllipsisV } from 'react-icons/fa';
-
+import { useNavigate } from 'react-router-dom';
 interface VehicleCardProps {
   name: string;
   autonomy: string;
@@ -9,10 +9,15 @@ interface VehicleCardProps {
   onRemove: () => void; // Adiciona a prop para remover
 }
 
-const VehicleCard: React.FC<VehicleCardProps> = ({ name, autonomy, battery, live, onRemove }) => {
+const VehicleCard: React.FC<VehicleCardProps> = ({ vehicleId, name, autonomy, battery, live, onRemove }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const navigate = useNavigate();
+
+  const handleClick = (vehicleId: string) => {
+    navigate(`/carInfo/${vehicleId}`); // Navega para a página CarInfo
+  };
 
   return (
     <div className="bg-white shadow-md rounded-lg p-4 flex flex-col space-y-4 relative w-[260px]">
@@ -75,7 +80,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({ name, autonomy, battery, live
       </div>
 
       {/* More Info Button */}
-      <button className="mt-auto bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-900 font-dm-sans">
+      <button className="mt-auto bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-900 font-dm-sans" onClick={() => handleClick(vehicleId)}>
         More info →
       </button>
     </div>

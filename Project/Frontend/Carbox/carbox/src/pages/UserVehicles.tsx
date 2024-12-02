@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Navbar from '../components/NavBar';
 import VehicleCard from '../components/VehicleCard';
 import Footer from '../components/Footer';
 import AddVehicleModal from '../components/AddVehicleModal';
 import myVehicles from '../assets/myVehicles.png';
 import filter from '../assets/filter.png';
-import { getCars, getCarLatestData, associateCar, deleteCar } from 'apiClient.js';
+import { getCars, getCarLatestData, associateCar, deleteCar, getCarName } from 'apiClient.js';
+
 
 const UserVehicles: React.FC = () => {
   const [vehicles, setVehicles] = useState([]);
@@ -13,9 +14,14 @@ const UserVehicles: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const hasFetched = useRef(false);
 
   // Carregar veículos do usuário e seus dados ao vivo
   useEffect(() => {
+    
+    if (hasFetched.current) return; // Prevent duplicate execution
+    hasFetched.current = true;
+
     const fetchVehicles = async () => {
       setLoading(true);
       try {
@@ -25,18 +31,18 @@ const UserVehicles: React.FC = () => {
   
         // Processar a carsList e mapear para objetos de veículos com live data
         const vehiclesWithLiveData = await Promise.all(
-          userAccount.carsList.map(async (car) => {
-            const [ecuId, name] = car; // Extrai o ECUId e o nome do veículo
-            console.log('Processing car:', ecuId, name);
-  
+          userAccount.map(async (car) => {
+            const name = await getCarName(car.ecuId);
+            console.log('Car Name:', name);
             // Buscar dados ao vivo para cada veículo
-            const liveData = await getCarLatestData(ecuId);
+            const liveData = await getCarLatestData(car.ecuId);
+            console.log('Live Data:', liveData);
             return {
-              id: ecuId,
+              id: car.ecuId,
               name: name,
-              range: liveData.autonomy || 0, // Autonomia
-              battery: liveData.battery || 'Unknown', // Bateria
-              live: liveData.live || false, // Estado ao vivo
+              range: liveData.gasLevel || 0, // Autonomia
+              battery: liveData.batteryCharge || 'Unknown', // Bateria
+              live: liveData.carStatus || false, // Estado ao vivo
             };
           })
         );
@@ -156,6 +162,7 @@ const UserVehicles: React.FC = () => {
           {filteredVehicles.map((vehicle) => (
             <VehicleCard
               key={vehicle.id}
+              vehicleId={vehicle.id}
               name={vehicle.name}
               autonomy={`${vehicle.range} km`}
               battery={vehicle.battery}
