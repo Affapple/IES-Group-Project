@@ -59,19 +59,45 @@ def send_email(to_email: str, subject: str, body: str):
 
 
 # Process incoming RabbitMQ messages
+# def process_notification(message: dict):
+#     """Processes notification messages from RabbitMQ."""
+#     car_id = message.get("car_id")
+#     errors = message.get("errors")
+#     timestamp = message.get("timestamp")
+
+#     # For now, using a placeholder email; can replace with database logic
+#     user_email = "carbox1application@gmail.com"
+
+#     # Construct the email subject and body
+#     subject = f"Car Alert: {car_id}"
+#     body = f"Errors detected in car {car_id} at {timestamp}:\n{errors}"
+
+#     send_email(user_email, subject, body)
+# ! This needs to be altered for when theres no errors, to not send an email, because right now Im sending a message for every message Im receiving
 def process_notification(message: dict):
     """Processes notification messages from RabbitMQ."""
     car_id = message.get("car_id")
     errors = message.get("errors")
     timestamp = message.get("timestamp")
 
-    # For now, using a placeholder email; can replace with database logic
+    # Ensure that the 'errors' field is a list and contains data
+    if not errors:
+        logging.warning(f"No errors found for car {car_id}. Email will not include errors.")
+    
+    # If errors are present, join them into a readable string format
+    errors_message = "\n".join(errors) if errors else "No errors detected."
+
+    # Placeholder email (could be dynamic)
     user_email = "carbox1application@gmail.com"
 
     # Construct the email subject and body
     subject = f"Car Alert: {car_id}"
-    body = f"Errors detected in car {car_id} at {timestamp}:\n{errors}"
+    body = f"Errors detected in car {car_id} at {timestamp}:\n{errors_message}"
 
+    # Log the email body for debugging purposes
+    logging.info(f"Sending email to {user_email} with body:\n{body}")
+
+    # Send the email with the error message
     send_email(user_email, subject, body)
 
 
