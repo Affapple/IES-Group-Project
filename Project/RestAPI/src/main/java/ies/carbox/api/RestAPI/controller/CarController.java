@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.persistence.Tuple;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import ies.carbox.api.RestAPI.entity.Car;
@@ -199,7 +201,7 @@ public class CarController {
     @ApiResponse(responseCode = "404", description = "Car not found")
     public ResponseEntity<List<CarLiveInfo>> getCarLiveInfo(
         @Parameter(description = "ID of the car to retrieve live data for") @PathVariable(required = true, value = "vehicleId") String vehicleId,
-        @Parameter(description = "Timestamp after which to retrieve live data") @PathVariable(required = true, value = "timestamp") Date timestamp
+        @Parameter(description = "Timestamp after which to retrieve live data") @PathVariable(required = true, value = "timestamp") LocalDateTime timestamp
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName(); 
@@ -336,7 +338,6 @@ public class CarController {
                 return ResponseEntity.notFound().build();
             }
             TripInfo trip = tripInfoService.getLatestTripInfo(vehicleId);
-            System.out.println(trip);
             return ResponseEntity.ok(trip);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();

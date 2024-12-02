@@ -24,10 +24,7 @@ public class TripInfoService {
 
     public List<TripInfo> getTripInfoByCarId(String carId) {
         List<TripInfo> trips;
-        trips = cacheService.getCarTrips(carId);
-        if (trips != null) {
-            return trips;
-        }
+        
         trips = tripInfoRepository.findByCarId(carId)
                 .orElseThrow(
                         () -> new IllegalArgumentException(
@@ -50,10 +47,15 @@ public class TripInfoService {
 
     public TripInfo getLatestTripInfo(String carId) {
         // Put in repository findFirstByCarIdOrderByDateDesc
-        List<TripInfo> trips = tripInfoRepository.findByCarId(carId)
+        List<TripInfo> trips= cacheService.getCarTrips(carId);
+        if (trips != null) {
+            return trips.get(trips.size() - 1);
+        }
+        trips = tripInfoRepository.findByCarId(carId)
                 .orElseThrow(
                         () -> new IllegalArgumentException(
                                 String.format("No trips found for car %s", carId)));
+
         cacheService.saveTrip(trips, carId);
         return trips.get(trips.size() - 1);
     }

@@ -6,6 +6,7 @@ import ies.carbox.api.RestAPI.entity.User;
 import ies.carbox.api.RestAPI.repository.CarLiveInfoRepository;
 import ies.carbox.api.RestAPI.repository.CarRepository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -84,7 +85,7 @@ public class CarService {
         List<CarLiveInfo> carLiveInfos = carLiveInfoRepository.findByCarId(ecuId)
                 .orElseThrow(
                         () -> new IllegalArgumentException("Car has no info!"));
-        Date latestDate = new Date(0);
+        LocalDateTime latestDate = LocalDateTime.MIN;
         CarLiveInfo latestInfo = null;
 
         for (CarLiveInfo carInfo : carLiveInfos) {
@@ -97,7 +98,7 @@ public class CarService {
         return latestInfo;
     }
 
-    public List<CarLiveInfo> getCarDataAfterTimestamp(String ecuId, Date timestamp) {
+    public List<CarLiveInfo> getCarDataAfterTimestamp(String ecuId, LocalDateTime timestamp) {
         List<CarLiveInfo> carLiveInfos = carLiveInfoRepository.findByCarId(ecuId)
                 .orElseThrow(
                         () -> new IllegalArgumentException("Car has no info!"));
