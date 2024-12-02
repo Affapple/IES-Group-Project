@@ -1,5 +1,6 @@
 package ies.carbox.api.RestAPI.entity;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -30,11 +31,11 @@ public class TripInfo {
 
     /** Trip Start Date */
     @Field("trip_start")
-    Date Trip_start;
+    LocalDateTime Trip_start;
 
     @Field("trip_end")
     /** Trip End Date */
-    Date Trip_end;
+    LocalDateTime Trip_end;
 
     @Field("trip_speeds")
     /** Trip Speeds */
