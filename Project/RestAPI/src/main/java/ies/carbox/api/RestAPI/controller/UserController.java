@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 
-import java.util.List;
-import java.util.Optional;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -71,9 +69,13 @@ public class UserController {
             @Valid @RequestBody RegisterUserDto user
         ) {
         try {
+            if (userService.loadUserByUsername(user.getEmail()) != null) {
+                return ResponseEntity.status(409).body(null);
+            }
             User createdUser = authenticationService.signup(user);
             return ResponseEntity.status(201).body(createdUser);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().body(null);
         }
     }

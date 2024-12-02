@@ -44,12 +44,20 @@ public class UserService implements UserDetailsService {
         if (user != null)
             return user;
 
-        user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(
-                String.format("User with userId=\"%s\" not found", email)
-            ));
-        
-        cacheService.saveUser(user);
-        return user;
+        try {
+            user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(
+                    String.format("User with userId=\"%s\" not found", email)
+                ));
+            
+            cacheService.saveUser(user);
+            return user;
+        } catch (UsernameNotFoundException e) {
+            System.out.println("INFO: User \"" + email + "\" not found");
+        } catch (Exception e) {
+            System.out.println("ERROR: Error fetching user from database!");
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public List<List<String>> getListOfEcuIds(String userEmail) {
