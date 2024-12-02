@@ -79,11 +79,10 @@ services:
       context: ./Frontend/Carbox
       dockerfile: Dockerfile
     environment:
+      VITE_API_URL: ${VITE_API_URL}:${API_PORT}
+    ports:
+      - "80:5173"
 
-
-      VITE_API_URL: $VITE_SPRING_SERVER_URL
-
-      API_URL: http://restapi:8080
 
   notification_handler:
     build:
@@ -100,8 +99,5 @@ services:
       - rabbitmq
     ports:
       - "8000:8000"
-=======
-      - VITE_API_URL=${VITE_API_URL}:${API_PORT}
-    ports:
-      - "80:5173"
+
 
