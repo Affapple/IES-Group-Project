@@ -102,4 +102,11 @@ public class UserService implements UserDetailsService {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
+
+//     public List<User> getAllUsersWithCars() {
+//     return userRepository.findAllWithCars(); // Custom query to fetch users and their cars
+// }
+
+
+
 }
