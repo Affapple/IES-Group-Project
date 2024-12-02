@@ -1,27 +1,59 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../components/NavBar';
 import VehicleCard from '../components/VehicleCard';
 import Footer from '../components/Footer';
 import AddVehicleModal from '../components/AddVehicleModal';
 import myVehicles from '../assets/myVehicles.png';
 import filter from '../assets/filter.png';
-import { associateCar } from 'apiClient.js';
+import { getCars, getCarLatestData, associateCar, deleteCar } from 'apiClient.js';
 
 const UserVehicles: React.FC = () => {
-  // Mock data para veículos
-  // TODO: fix this part to ensure only 
-  const mockVehicles = [
-    { id: '1', name: "John's Car", range: 431, battery: 'Optimal', live: true },
-    { id: '2', name: "Mom's", range: 216, battery: 'Be careful', live: false },
-    { id: '3', name: 'Smart', range: 352, battery: 'Change', live: false },
-    { id: '4', name: "Dad's", range: 198, battery: 'Optimal', live: true },
-  ];
-
-  const [vehicles, setVehicles] = useState(mockVehicles);
-  const [filteredVehicles, setFilteredVehicles] = useState(mockVehicles);
+  const [vehicles, setVehicles] = useState([]);
+  const [filteredVehicles, setFilteredVehicles] = useState([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
+  // Carregar veículos do usuário e seus dados ao vivo
+  useEffect(() => {
+    const fetchVehicles = async () => {
+      setLoading(true);
+      try {
+        // Buscar os dados do utilizador (inclui a carsList)
+        const userAccount = await getCars(); // getCars chama o endpoint /user/account
+        console.log('User Account:', userAccount);
+  
+        // Processar a carsList e mapear para objetos de veículos com live data
+        const vehiclesWithLiveData = await Promise.all(
+          userAccount.carsList.map(async (car) => {
+            const [ecuId, name] = car; // Extrai o ECUId e o nome do veículo
+            console.log('Processing car:', ecuId, name);
+  
+            // Buscar dados ao vivo para cada veículo
+            const liveData = await getCarLatestData(ecuId);
+            return {
+              id: ecuId,
+              name: name,
+              range: liveData.autonomy || 0, // Autonomia
+              battery: liveData.battery || 'Unknown', // Bateria
+              live: liveData.live || false, // Estado ao vivo
+            };
+          })
+        );
+  
+        // Atualizar o estado com os veículos processados
+        setVehicles(vehiclesWithLiveData);
+        setFilteredVehicles(vehiclesWithLiveData);
+      } catch (error) {
+        console.error('Erro ao buscar veículos:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchVehicles();
+  }, []);
+  
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
@@ -32,27 +64,57 @@ const UserVehicles: React.FC = () => {
   };
 
   const handleShowAllVehicles = () => {
-    setFilteredVehicles(vehicles); 
-    setSearchQuery(''); 
+    setFilteredVehicles(vehicles);
+    setSearchQuery('');
   };
 
-  const handleAddVehicle = (newVehicle: { licensePlate: string; name: string; ecuId: string }) => {
-    const request = associateCar(newVehicle.ecuId, newVehicle.name);
-    console.log(request);
-
-    const updatedVehicles = [
-      ...vehicles,
-      { id: (vehicles.length + 1).toString(), name: newVehicle.name, range: 0, battery: 'Unknown', live: false },
-    ];
-    setVehicles(updatedVehicles);
-    setFilteredVehicles(updatedVehicles);
+  const handleAddVehicle = async (newVehicle: { licensePlate: string; name: string; ecuId: string }) => {
+    try {
+      // Associar o novo veículo ao usuário
+      await associateCar(newVehicle.ecuId, newVehicle.name);
+  
+      // Buscar dados ao vivo do novo veículo
+      const liveData = await getCarLatestData(newVehicle.ecuId);
+  
+      // Atualizar o estado com o novo veículo, incluindo os dados ao vivo
+      const updatedVehicles = [
+        ...vehicles,
+        {
+          id: newVehicle.ecuId,
+          name: newVehicle.name,
+          range: liveData.autonomy || 0, // Garantir que autonomia seja exibida
+          battery: liveData.battery || 'Unknown', // Garantir que a bateria seja exibida
+          live: liveData.live || false,
+        },
+      ];
+      setVehicles(updatedVehicles);
+      setFilteredVehicles(updatedVehicles);
+    } catch (error) {
+      console.error('Erro ao adicionar veículo:', error);
+    }
   };
 
-  const handleRemoveVehicle = (id: string) => {
-    const updatedVehicles = vehicles.filter((vehicle) => vehicle.id !== id);
-    setVehicles(updatedVehicles);
-    setFilteredVehicles(updatedVehicles); // Atualiza a lista filtrada também
+  const handleRemoveVehicle = async (id: string) => {
+    try {
+      // Remover associação do veículo
+      await deleteCar(id);
+
+      // Atualizar o estado
+      const updatedVehicles = vehicles.filter((vehicle) => vehicle.id !== id);
+      setVehicles(updatedVehicles);
+      setFilteredVehicles(updatedVehicles);
+    } catch (error) {
+      console.error('Erro ao remover veículo:', error);
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Loading vehicles...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -95,10 +157,10 @@ const UserVehicles: React.FC = () => {
             <VehicleCard
               key={vehicle.id}
               name={vehicle.name}
-              autonomy={`${vehicle.range || 0} km`}
-              battery={vehicle.battery || 'Unknown'}
-              live={vehicle.live || false}
-              onRemove={() => handleRemoveVehicle(vehicle.id)} 
+              autonomy={`${vehicle.range} km`}
+              battery={vehicle.battery}
+              live={vehicle.live}
+              onRemove={() => handleRemoveVehicle(vehicle.id)}
             />
           ))}
         </div>

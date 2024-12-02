@@ -140,7 +140,7 @@ export const getTrips = async (vehicleId, tripId) => {
 // Get last trip of Car
 export const getLastTrip = async (vehicleId) => {
   loadToken();
-  const response = await apiClient.get('/vehicles/trips/lastest/' + vehicleId);
+  const response = await apiClient.get('/vehicles/trips/latest/' + vehicleId);
   return response.data;
 }
 
