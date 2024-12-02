@@ -79,6 +79,29 @@ services:
       context: ./Frontend/Carbox
       dockerfile: Dockerfile
     environment:
+
+
+      VITE_API_URL: $VITE_SPRING_SERVER_URL
+
+      API_URL: http://restapi:8080
+
+  notification_handler:
+    build:
+      context: ./NotificationHandler
+      dockerfile: Dockerfile
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_QUEUE: notifications
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      EMAIL_ADDR: ${EMAIL_ADDR}
+      EMAIL_PASSW: ${EMAIL_PASSW}
+    depends_on:
+      - rabbitmq
+    ports:
+      - "8000:8000"
+=======
       - VITE_API_URL=${VITE_API_URL}:${API_PORT}
     ports:
       - "80:5173"
+
