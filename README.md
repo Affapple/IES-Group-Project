@@ -5,7 +5,7 @@ This project aims to create a Car Management App that uses information retrieved
 
 ## Architecture
 
-![ArquiteturaDetalhado drawio (2)](https://github.com/user-attachments/assets/de448c8b-734f-4548-9b6f-6fdf7f4a9f9e)
+![Detailed Architecture](https://github.com/user-attachments/assets/5a9d975b-81e6-4a36-87cd-51d7b07b914e)
 
 
 # Team Members
