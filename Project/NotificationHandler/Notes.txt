@@ -1,0 +1,18 @@
+uvicorn notifications:app --reload # If running locally
+
+docker build -t notification-handler .
+
+docker run -p 8000:8000 --env-file .env notification-handler
+
+curl http://localhost:8000
+- Should return {"Hello": "World"}
+
+
+curl -X 'POST' \
+  'http://localhost:8000/send-notification' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "email": "carbox1application@gmail.com",
+  "subject": "Test Notification",
+  "message": "This is a test notification email."
+}'

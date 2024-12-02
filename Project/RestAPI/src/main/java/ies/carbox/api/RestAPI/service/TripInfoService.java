@@ -14,39 +14,49 @@ import ies.carbox.api.RestAPI.repository.TripInfoRepository;
 @Service
 public class TripInfoService {
     TripInfoRepository tripInfoRepository;
+    CacheService cacheService;
 
     @Autowired
-    public TripInfoService(TripInfoRepository tripInfos) {
-        this.tripInfoRepository = tripInfos;
+    public TripInfoService(TripInfoRepository tripInfoRepository, CacheService cacheService) {
+        this.tripInfoRepository = tripInfoRepository;
+        this.cacheService = cacheService;
     }
-
 
     public List<TripInfo> getTripInfoByCarId(String carId) {
-        return tripInfoRepository.findByCarId(carId)
+        List<TripInfo> trips;
+        
+        trips = tripInfoRepository.findByCarId(carId)
                 .orElseThrow(
-                    () -> new IllegalArgumentException (
-                        String.format("No trips found for car %s", carId)
-                    )
-                );
+                        () -> new IllegalArgumentException(
+                                String.format("No trips found for car %s", carId)));
+
+        cacheService.saveTrip(trips, carId);
+        return trips;
     }
 
-    public TripInfo getTripInfo(String tripId, String carId) {
-        return tripInfoRepository.findByCarIdAndTripId(carId, tripId)
-                .orElseThrow(
-                    () -> new IllegalArgumentException (
-                        String.format("Trip of id (tripId=%s, carId=%s) found for car", tripId, carId)
-                    )
-                );
+    public TripInfo getTripInfo(String tripId, String carId) throws IllegalArgumentException {
+        List<TripInfo> trips = getTripInfoByCarId(carId);
+        for (TripInfo trip : trips) {
+            if (trip.getTripId().equals(tripId)) {
+                return trip;
+            }
+        }
+        throw new IllegalArgumentException(
+                String.format("Trip %s not found for car %s", tripId, carId));
     }
 
     public TripInfo getLatestTripInfo(String carId) {
-        List<TripInfo> trips = tripInfoRepository.findByCarId(carId)
+        // Put in repository findFirstByCarIdOrderByDateDesc
+        List<TripInfo> trips= cacheService.getCarTrips(carId);
+        if (trips != null) {
+            return trips.get(trips.size() - 1);
+        }
+        trips = tripInfoRepository.findByCarId(carId)
                 .orElseThrow(
-                    () -> new IllegalArgumentException (
-                        String.format("No trips found for car %s", carId)
-                    )
-                );
+                        () -> new IllegalArgumentException(
+                                String.format("No trips found for car %s", carId)));
+
+        cacheService.saveTrip(trips, carId);
         return trips.get(trips.size() - 1);
     }
-
 }

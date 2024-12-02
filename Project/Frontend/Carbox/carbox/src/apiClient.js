@@ -105,7 +105,7 @@ export const getCarName = async (vehicleId) => {
 // Get Car Live Data after timestamp
 export const getCarLiveData = async (vehicleId, timestamp) => {
   loadToken();
-  const response = await apiClient.get('/vehicles/live' + vehicleId + '/' + timestamp);
+  const response = await apiClient.get('/vehicles/live/' + vehicleId + '/' + timestamp);
   return response.data;
 }
 

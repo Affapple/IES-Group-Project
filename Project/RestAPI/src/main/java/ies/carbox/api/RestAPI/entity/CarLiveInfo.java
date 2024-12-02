@@ -2,6 +2,8 @@ package ies.carbox.api.RestAPI.entity;
 
 import lombok.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -48,7 +50,7 @@ public class CarLiveInfo {
 
     /** Timestamp of the gathered data */
     @Field("timestamp")
-    Date timestamp;
+    LocalDateTime timestamp;
 
     /** Current status of the vehicle (true: on; false: off) */
     @Field("car_status")

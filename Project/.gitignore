@@ -1,1 +1,4 @@
-Cache/*
+# Database persistent files
+mongo-init
+# Cache persistent files
+Cache
