@@ -23,13 +23,17 @@ const Login: React.FC = () => {
       return;
     }
 
-    const response = login(email, password);
-
-    // TODO Fazer try catch
-    if (!response)
-      throw new Error("Error logging in!");
-
-    navigate('/home');
+    login(email, password).then((response) => {
+      navigate('/home');
+    }).catch((err) => {
+      switch (err.response.status) {
+        case 401:
+          setError("Invalid Credentials!");
+          break;
+        default:
+          setError("An unexpected error occurred. Please try again.");
+      }
+    });
   };
 
   return (
