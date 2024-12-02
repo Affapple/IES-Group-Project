@@ -105,11 +105,13 @@ public class CacheService {
             User user = mapper.readValue(userJson, User.class);
             System.out.println("INFO: Fetched user from cache using key \"" + key + "\": " + user);
             return user;
+        } catch (JsonProcessingException e) {
+            System.out.println("INFO: No user associated to email = \"" + email + "\" found in cache");
         } catch (Exception e) {
             System.out.println("ERROR: Error fetching user from cache");
             e.printStackTrace();
-            return null;
         }
+        return null;
     }
     public void deleteUser(String email) {
         String key = email;
@@ -136,9 +138,9 @@ public class CacheService {
     public void saveLiveData(List<CarLiveInfo> live_datas, String email) {
         live_datas.forEach((live_data) -> saveLiveData(live_data, email));
     }
-    public List<CarLiveInfo> getLiveData(String email) {
+    public List<CarLiveInfo> getLiveData(String ecuId) {
         ObjectMapper mapper = new ObjectMapper();
-        String key = email + liveDataKey;
+        String key = ecuId + liveDataKey;
 
         try {
             List<String> liveDataJson = redisTemplate.opsForList().range(key, 0, -1);
@@ -162,8 +164,8 @@ public class CacheService {
         } catch (Exception e) {
             System.out.println("ERROR: Error fetching user live data from cache");
             e.printStackTrace();
-            return null;
         }
+        return null;
     }
     
     
@@ -176,7 +178,7 @@ public class CacheService {
             System.out.println("INFO: Saving Car:" + json);
             redisTemplate.opsForValue().set(key, json);
             redisTemplate.expire(key, ttl, TimeUnit.MILLISECONDS);
-        } catch (JsonProcessingException e) {
+        } catch (Exception e) {
             System.out.println("ERROR: Error saving car to cache");
             e.printStackTrace();
         }
@@ -190,10 +192,13 @@ public class CacheService {
             Car car = mapper.readValue(userJson, Car.class);
             System.out.println("INFO: Fetched car from cache using key \"" + key + "\": " + car);
             return car;
+        } catch (JsonProcessingException e) {
+            System.out.println("INFO: No car with ecuID = \"" + ecuId + "\" found in cache");
         } catch (Exception e) {
             System.out.println("ERROR: Error fetching car from cache");
             e.printStackTrace();
-            return null;
-        }        
+        }
+        
+        return null;
     }
 }

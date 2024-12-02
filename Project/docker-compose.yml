@@ -2,7 +2,7 @@ services:
   db:
     image: mongo
     ports:
-      - "27017:27017"
+      - "${MONGO_INITDB_PORT}:27017"
     environment:
       MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
@@ -14,7 +14,7 @@ services:
   redis:
     image: redis
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT}:6379"
     volumes:
       - ./Cache/redis-data:/data
       - ./Cache/redis.conf:/usr/local/etc/redis/redis.conf
@@ -28,27 +28,28 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
-    environment:  
+    environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
 
 
   database_adapter:
-      build:
-        context: ./Database
-        dockerfile: Dockerfile
-      depends_on:
-        - rabbitmq
-        - db
+    build:
+      context: ./Database
+      dockerfile: Dockerfile
+    depends_on:
+      - rabbitmq
+      - db
+
 
   data_generator:
-      build:
-        context: ./DataGenerator
-        dockerfile: Dockerfile
-      depends_on:
-        - rabbitmq
-        - database_adapter
-    
+    build:
+      context: ./DataGenerator
+      dockerfile: Dockerfile
+    depends_on:
+      - rabbitmq
+      - database_adapter
+
 
   restapi:
     build:
@@ -56,35 +57,47 @@ services:
       dockerfile: Dockerfile
     environment:
       SPRING_DATA_MONGODB_URI: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@db:${MONGO_INITDB_PORT}/${MONGO_INITDB_DATABASE}?authSource=admin
-      SECURITY_CORS_FRONTEND_ADDRESS: frontend:80
       SPRING_DATA_REDIS_HOST: redis
       SPRING_DATA_REDIS_PORT: ${REDIS_PORT}
       SPRING_DATA_REDIS_PASSWORD: ${REDIS_PASSWORD}
       SPRING_APPLICATION_JSON: '{
         "spring.data.mongodb.authentication-database": "admin",
-
         "security.jwt.secret-key": "${JWT_SECRET_KEY}",
         "security.jwt.expiration-time": ${JWT_TOKEN_TTL},
-
-        "cache.general.expiration-time": "${REDIS_ITEMS_TTL}"
+        "cache.general.expiration-time": "${REDIS_ITEMS_TTL}",
+        "security.cors.frontend.address": "${FRONTEND_ADDRESS}"
         }'
     depends_on:
       - db
       - redis
     ports:
-      - "8080:8080"
+      - "${API_PORT}:8080"
+
 
   frontend:
     build:
       context: ./Frontend/Carbox
       dockerfile: Dockerfile
+    environment:
+      VITE_API_URL: ${VITE_API_URL}:${API_PORT}
     ports:
       - "80:5173"
-    depends_on:
-      - restapi
+
+
+  notification_handler:
+    build:
+      context: ./NotificationHandler
+      dockerfile: Dockerfile
     environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_QUEUE: notifications
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      EMAIL_ADDR: ${EMAIL_ADDR}
+      EMAIL_PASSW: ${EMAIL_PASSW}
+    depends_on:
+      - rabbitmq
+    ports:
+      - "8000:8000"
 
-      VITE_API_URL: $VITE_SPRING_SERVER_URL
-
-      API_URL: http://restapi:8080
 
