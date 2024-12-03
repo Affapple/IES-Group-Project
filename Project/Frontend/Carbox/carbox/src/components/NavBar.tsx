@@ -4,7 +4,7 @@ import { FaBell } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import UserSettingsMenu from "./User/UserSettingsMenu";
 import User from "Types/User";
-import { getUser } from 'apiClient.js';
+import { getUser } from 'apiClient';
 
 const Navbar: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);

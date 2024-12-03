@@ -104,10 +104,12 @@ export const getCarName = async (vehicleId) => {
 
 // Get Car Live Data after timestamp
 export const getCarLiveData = async (vehicleId, timestamp) => {
-  loadToken();
-  const response = await apiClient.get('/vehicles/live/' + vehicleId + '/' + timestamp);
-  return response.data;
-}
+    loadToken();
+    const response = await apiClient.get(
+        "/vehicles/live/" + vehicleId + "/" + timestamp,
+    );
+    return response.data;
+};
 
 // Get Car latest Data
 export const getCarLatestData = async (vehicleId) => {
@@ -128,7 +130,9 @@ export const getTrips = async (vehicleId, tripId) => {
     loadToken();
     if (tripId != null) {
         const response = await apiClient.get("/vehicles/trips/" + vehicleId, {
-            tripId,
+            params: {
+                tripId: tripId,
+            },
         });
         return response.data;
     }
@@ -139,6 +143,6 @@ export const getTrips = async (vehicleId, tripId) => {
 // Get last trip of Car
 export const getLastTrip = async (vehicleId) => {
     loadToken();
-    const response = await apiClient.get("/vehicles/trips/lastest/" + vehicleId);
+    const response = await apiClient.get("/vehicles/trips/latest/" + vehicleId);
     return response.data;
 };

@@ -299,7 +299,7 @@ public class CarController {
     @ApiResponse(responseCode = "404", description = "Car not found or no trips available")
     public ResponseEntity<List<TripInfo>> getCarTrips(
         @Parameter(description = "ID of the car to retrieve trips for") @PathVariable(required = true, name = "vehicleId") String vehicleId,
-        @Parameter(description = "Optional trip identifier") @RequestBody(required = false) String tripId
+        @Parameter(description = "Optional trip identifier") @RequestParam(required = false) String tripId
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName(); 

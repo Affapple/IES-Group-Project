@@ -101,5 +101,4 @@ public class Car {
         return "Car [ecuId=" + ecuId + ", brand=" + brand + ", model=" + model + ", year=" + year +
                ", licensePlate=" + licensePlate + "]";
     }
-
 }

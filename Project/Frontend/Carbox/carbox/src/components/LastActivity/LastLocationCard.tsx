@@ -1,39 +1,41 @@
+
 import React, { useEffect, useState } from 'react';
 import { getCarLatestData } from '../../apiClient';
+import LiveData from 'Types/LiveData';
 
-interface LastLocationCardProps {
-  vehicleId: string | null; // O ID do veículo selecionado, recebido como prop
+
+interface Location {
+  latitude: number,
+  longitude: number,
+  address: string,
 }
 
-interface LocationData {
-  address: string;
-  mapImageUrl: string;
-}
-
-const LastLocationCard: React.FC<LastLocationCardProps> = ({ vehicleId }) => {
-  const [locationData, setLocationData] = useState<LocationData | null>(null);
-  const [error, setError] = useState<string | null>(null);
+function LastLocationCard({ vehicleId }: { vehicleId: string }) {
+  const [locationData, setLocationData] = useState<Location>({} as Location);
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
-    if (!vehicleId) return; // Se não houver um veículo selecionado, não faz a chamada à API
+    if (!vehicleId) return; 
 
     const fetchLocationData = async () => {
       try {
-        const data = await getCarLatestData(vehicleId); // Chama a API com o vehicleId selecionado
+        const data: LiveData = await getCarLatestData(vehicleId); // Chama a API com o vehicleId selecionado
+
+        const location = data.location.split(', ');
         setLocationData({
-          address: data.address || 'Address not available',
-          mapImageUrl: data.mapImageUrl || 'https://via.placeholder.com/300', // Placeholder se não houver imagem
+          latitude: parseInt(location[0]),
+          longitude: parseInt(location[1]),
+          address: "address not available",
         });
       } catch (err) {
-        console.error("Error fetching location:", err);
-        setError("Failed to load location data.");
+        console.error('Error fetching location:', err);
+        setError('Failed to load location data.');
       }
     };
 
     fetchLocationData();
   }, [vehicleId]); // Refaz a chamada sempre que o vehicleId mudar
 
-  // Mostra mensagem de erro caso algo falhe
   if (error) {
     return (
       <div className="bg-white p-6 rounded-lg shadow-md w-full">
@@ -42,24 +44,25 @@ const LastLocationCard: React.FC<LastLocationCardProps> = ({ vehicleId }) => {
     );
   }
 
-  // Mostra um loading enquanto os dados não foram carregados
-  if (!locationData) {
+  if (!locationData || !locationData.latitude || !locationData.longitude) {
     return (
       <div className="bg-white p-6 rounded-lg shadow-md w-full">
-        <p>A carregar dados...</p>
+        <p>Loading location data...</p>
       </div>
     );
   }
 
-  // Renderiza a última localização
+  // URL do mapa estático (usando OpenStreetMap Static Map API)
+  const mapUrl = `https://static-maps.yandex.ru/1.x/?ll=${locationData.longitude},${locationData.latitude}&z=13&size=600,300&l=map&pt=${locationData.longitude},${locationData.latitude},pm2rdm`;
+
   return (
     <div className="bg-white p-6 rounded-lg shadow-md w-full">
       <h4 className="text-lg font-semibold text-gray-700 mb-4">Last location</h4>
       <p className="text-sm text-gray-500 mb-4">{locationData.address}</p>
       <img
-        src={locationData.mapImageUrl}
-        alt="Vehicle Map"
-        className="rounded-lg w-full h-40 object-cover shadow-sm"
+        src={mapUrl}
+        alt="Vehicle Location"
+        className="rounded-lg shadow w-full h-40 object-cover"
       />
     </div>
   );
