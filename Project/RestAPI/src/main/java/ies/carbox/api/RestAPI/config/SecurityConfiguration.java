@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -15,6 +14,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import ies.carbox.api.RestAPI.CONSTANTS;
+import ies.carbox.api.RestAPI.entity.Role;
 
 import java.util.List;
 
@@ -37,7 +37,6 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        System.out.println("running filter");
         http
             .cors()
             .and()
@@ -51,6 +50,7 @@ public class SecurityConfiguration {
                     "/v3/api-docs/**"
                 )
                 .permitAll()
+                // .requestMatchers(CONSTANTS.apiBase + "/admin/**").hasAuthority(Role.ADMIN.name())
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -67,8 +67,8 @@ public class SecurityConfiguration {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // TODO: Meter apenas prod frontend address
-        configuration.setAllowedOrigins(List.of(CONSTANTS.baseUrl,"http://deti-ies-09.ua.pt","http://localhost:5173", "http://localhost:80", "http://172.26.0.4:5173", "http://localhost"));
+        System.out.println("Frontend ADdress = " + frontendAddress);
+        configuration.setAllowedOrigins(List.of(CONSTANTS.baseUrl, frontendAddress));
         configuration.setAllowedMethods(List.of("GET","POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(List.of("Authorization","Content-Type"));
 

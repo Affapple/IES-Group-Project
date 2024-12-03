@@ -8,12 +8,15 @@ import ies.carbox.api.RestAPI.repository.CarRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+
+import ies.carbox.api.RestAPI.repository.UserRepository;
+
 
 /**
  * Service class for managing {@link Car} entities.
@@ -159,4 +162,23 @@ public class CarService {
         // Implementation to retrieve car statistics
         // Potentially calls another service or utility class for stats
     }
+
+//     public List<Car> getCarsByUserId(String email) {
+//     User user = UserRepository.findByEmail(email)
+//             .orElseThrow(() -> new IllegalArgumentException("User with email \"" + email + "\" does not exist!"));
+
+//     List<String> ecuIds = user.getEcuIds(); 
+
+//     return getAllUserCars(ecuIds);
+// }
+
+    /**
+     * Retrieves all cars in the system.
+     *
+     * @return a list of all {@link Car} entities
+     */
+    public List<Car> getAllCars() {
+        return carRepository.findAll(); // predefined query ainda pordia usar find all by year, etc
+    }
+
 }

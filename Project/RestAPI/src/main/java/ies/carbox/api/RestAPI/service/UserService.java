@@ -2,7 +2,6 @@ package ies.carbox.api.RestAPI.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -102,4 +101,11 @@ public class UserService implements UserDetailsService {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
+
+//     public List<User> getAllUsersWithCars() {
+//     return userRepository.findAllWithCars(); // Custom query to fetch users and their cars
+// }
+
+
+
 }
