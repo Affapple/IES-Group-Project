@@ -8,9 +8,11 @@ import java.util.List;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import jakarta.persistence.Tuple;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import org.springframework.data.annotation.Id;
 /**
@@ -32,6 +34,7 @@ import org.springframework.data.annotation.Id;
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection = "Users")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class User implements UserDetails {
 
     @Id
@@ -77,10 +80,9 @@ public class User implements UserDetails {
     @Getter @Setter
     private int phone;
 
-    /**User status */
-    @Field("admin")
+    @Field("role")
     @Getter @Setter
-    private boolean admin;
+    private Role role;
 
     /**
      * Returns a string representation of the user.
@@ -92,39 +94,35 @@ public class User implements UserDetails {
      */
     @Override
     public String toString() {
-        return "User [email=" + email + ", password=***** , username=" + username + ", carlist=" + carsList + "]";
-    }
-
-    public boolean isAdmin() {
-        return admin;
+        return "User [email=" + email + ", password=***** , username=" + username + ", carlist=" + carsList + ", role=" + role.name() + "]";
     }
 
     /**
     */
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonExpired() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonLocked() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return true;
     }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
+    
     @Override
     public int hashCode() {
         return toString().hashCode();

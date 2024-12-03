@@ -62,7 +62,7 @@ public class Car {
 
     /** Date of the last revision */
     @Field("last_revision")
-    private Date lastRevision;
+    private String lastRevision;
 
     /** Model of the tires */
     @Field("tires")
@@ -101,5 +101,4 @@ public class Car {
         return "Car [ecuId=" + ecuId + ", brand=" + brand + ", model=" + model + ", year=" + year +
                ", licensePlate=" + licensePlate + "]";
     }
-
 }

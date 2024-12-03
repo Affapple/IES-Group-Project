@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import LastLocationCard from './LastLocationCard';
 import LastTripCard from './LastTripCard';
 
 interface LastActivityProps {
-  vehicleId: string | null;
+  vehicleId: string;
 }
 
 const LastActivity: React.FC<LastActivityProps> = ({ vehicleId }) => {

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import Footer from '../components/Footer';
-import { register } from 'apiClient.js';
+import { register } from 'apiClient';
 
 const RegisterPage: React.FC = () => {
   const [username, setUsername] = useState('');

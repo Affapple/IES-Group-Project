@@ -1,21 +1,9 @@
-import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { FaBell } from 'react-icons/fa';
 import '../css/CarDetails.css';
-import Stack from '@mui/material/Stack';
-import { Gauge } from '@mui/x-charts/Gauge';
 import { LineChart } from '@mui/x-charts/LineChart';
+import LiveData from 'Types/LiveData';
 
 
-export default function Live({LiveInfo}) {
-
-    useEffect(() => {
-        console.log('LiveInfo', LiveInfo);
-    }, [LiveInfo]);
-
-    
-
-
+export default function Live({LiveInfo}: {LiveInfo: LiveData[]}) {
     
     return (
         <div className="font-sans space-y-0.5 w-100%; border-b-2 border-red-400 pb-3    ">
