@@ -1,31 +1,41 @@
-
 import React, { useEffect, useState } from 'react';
 import { getCarLatestData } from '../../apiClient';
 import LiveData from 'Types/LiveData';
-
+import { getAddressFromCoordinates } from 'geoClient';
 
 interface Location {
-  latitude: number,
-  longitude: number,
-  address: string,
+  latitude: number;
+  longitude: number;
+  address: string;
 }
 
 function LastLocationCard({ vehicleId }: { vehicleId: string }) {
-  const [locationData, setLocationData] = useState<Location>({} as Location);
+  const [locationData, setLocationData] = useState<Location | null>(null);
   const [error, setError] = useState<string>("");
 
   useEffect(() => {
-    if (!vehicleId) return; 
+    if (!vehicleId) return;
 
     const fetchLocationData = async () => {
       try {
-        const data: LiveData = await getCarLatestData(vehicleId); // Chama a API com o vehicleId selecionado
+        const data: LiveData = await getCarLatestData(vehicleId);
+        console.log('Data returned by API:', data);
 
-        const location = data.location.split(', ');
+        if (!data.location || !data.location.includes(',')) {
+          throw new Error('Invalid or missing location data.');
+        }
+
+        const [latitude, longitude] = data.location.split(',').map((value) => parseFloat(value.trim()));
+        console.log('Parsed latitude and longitude:', { latitude, longitude });
+
+        // Buscar o endereço real com geocodificação inversa
+        const address = await getAddressFromCoordinates(latitude, longitude);
+        console.log('Address fetched from coordinates:', address);
+
         setLocationData({
-          latitude: parseInt(location[0]),
-          longitude: parseInt(location[1]),
-          address: "address not available",
+          latitude,
+          longitude,
+          address,
         });
       } catch (err) {
         console.error('Error fetching location:', err);
@@ -34,7 +44,7 @@ function LastLocationCard({ vehicleId }: { vehicleId: string }) {
     };
 
     fetchLocationData();
-  }, [vehicleId]); // Refaz a chamada sempre que o vehicleId mudar
+  }, [vehicleId]);
 
   if (error) {
     return (
@@ -44,7 +54,7 @@ function LastLocationCard({ vehicleId }: { vehicleId: string }) {
     );
   }
 
-  if (!locationData || !locationData.latitude || !locationData.longitude) {
+  if (!locationData) {
     return (
       <div className="bg-white p-6 rounded-lg shadow-md w-full">
         <p>Loading location data...</p>
@@ -52,7 +62,6 @@ function LastLocationCard({ vehicleId }: { vehicleId: string }) {
     );
   }
 
-  // URL do mapa estático (usando OpenStreetMap Static Map API)
   const mapUrl = `https://static-maps.yandex.ru/1.x/?ll=${locationData.longitude},${locationData.latitude}&z=13&size=600,300&l=map&pt=${locationData.longitude},${locationData.latitude},pm2rdm`;
 
   return (
@@ -66,6 +75,6 @@ function LastLocationCard({ vehicleId }: { vehicleId: string }) {
       />
     </div>
   );
-};
+}
 
 export default LastLocationCard;

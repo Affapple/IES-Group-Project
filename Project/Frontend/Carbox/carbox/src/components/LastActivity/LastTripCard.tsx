@@ -43,7 +43,7 @@ const LastTripCard: React.FC<LastTripCardProps> = ({ vehicleId }) => {
         const distance = `${(speeds.reduce((sum, speed) => sum + speed, 0) * (durationMs / 3600000)).toFixed(2)} km`;
 
         // Calcula o consumo baseado na lógica (por exemplo, valores fixos ou derivados dos dados)
-        const consumption = `${((speeds.length * 0.5) / (speeds.length || 1)).toFixed(2)} L/100km`; // Exemplo de cálculo fictício
+        const consumption = `${((speeds.length * 0.5) / (speeds.length || 1)).toFixed(2)} L/100km`;
 
         // Atualiza o estado com os dados da viagem
         setTripData({
