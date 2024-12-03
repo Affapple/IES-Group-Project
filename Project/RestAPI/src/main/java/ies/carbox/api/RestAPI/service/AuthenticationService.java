@@ -55,12 +55,8 @@ public class AuthenticationService {
                         input.getPassword()
                 )
         );
-
-        User user = cacheService.getUser(input.getEmail());
-        if (user != null)
-            return user;
             
-        user = userRepository.findByEmail(input.getEmail())
+        User user = userRepository.findByEmail(input.getEmail())
                 .orElseThrow();
 
         cacheService.saveUser(user);
