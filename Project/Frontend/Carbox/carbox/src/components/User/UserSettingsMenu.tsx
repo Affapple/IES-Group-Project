@@ -1,7 +1,7 @@
 import { useState, useEffect, EventHandler } from "react";
 import User from "Types/User";
 import Modal from "../Modal";
-import { logout, updateUser } from 'apiClient.js'
+import { logout, updateUser } from 'apiClient'
 import { redirect, useNavigate } from "react-router-dom";
 
 function UserSettingsMenu({ open, user } : {open: boolean, user: User}) {

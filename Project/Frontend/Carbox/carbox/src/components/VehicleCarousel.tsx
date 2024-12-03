@@ -46,6 +46,7 @@ const VehicleCarousel: React.FC<VehicleCarouselProps> = ({ vehicles, selectedVeh
                   : 'bg-white text-gray-800 scale-90 shadow-md opacity-75'
               } min-w-[200px] p-6 flex flex-col items-center hover:scale-105`}
             >
+              <p>{vehicle.brand} {vehicle.model}</p>
               <p>{vehicle.licensePlate}</p>
             </div>
           ))}

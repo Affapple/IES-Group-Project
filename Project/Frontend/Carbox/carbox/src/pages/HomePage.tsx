@@ -5,12 +5,12 @@ import VehicleCarousel from '../components/VehicleCarousel';
 import LastActivity from '../components/LastActivity/LastActivity';
 import frameImage from '../assets/frameImage.png';
 import Footer from '../components/Footer';
-import {getCars} from 'apiClient.js';
-import { Vehicle } from 'Types/Vehicle';
+import { getCars } from 'apiClient';
+import Vehicle from 'Types/Vehicle';
 
 const HomePage: React.FC = () => {
   const [vehicles, setVehicles] = useState<Array<Vehicle>>([]);
-  const [selectedVehicleId, setSelectedVehicleId] = useState<string | null>(null);
+  const [selectedVehicleId, setSelectedVehicleId] = useState<string>("");
 
   // Mock temporário para dados de veículos
   useEffect(() => {

@@ -1,36 +1,31 @@
 
 import React, { useEffect, useState } from 'react';
 import { getCarLatestData } from '../../apiClient';
+import LiveData from 'Types/LiveData';
 
-interface LastLocationCardProps {
-  vehicleId: string | null; // O ID do veículo selecionado, recebido como prop
+
+interface Location {
+  latitude: number,
+  longitude: number,
+  address: string,
 }
 
-interface LocationData {
-  address: string;
-  latitude: number;
-  longitude: number;
-}
-
-const LastLocationCard: React.FC<LastLocationCardProps> = ({ vehicleId }) => {
-  const [locationData, setLocationData] = useState<LocationData | null>(null);
-  const [error, setError] = useState<string | null>(null);
+function LastLocationCard({ vehicleId }: { vehicleId: string }) {
+  const [locationData, setLocationData] = useState<Location>({} as Location);
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
     if (!vehicleId) return; 
 
     const fetchLocationData = async () => {
       try {
-        const data = await getCarLatestData(vehicleId); // Chama a API com o vehicleId selecionado
+        const data: LiveData = await getCarLatestData(vehicleId); // Chama a API com o vehicleId selecionado
 
-        if (!data.latitude || !data.longitude) {
-          throw new Error('Invalid latitude or longitude');
-        }
-
+        const location = data.location.split(', ');
         setLocationData({
-          latitude: data.latitude,
-          longitude: data.longitude,
-          address: data.address || 'Address not available',
+          latitude: parseInt(location[0]),
+          longitude: parseInt(location[1]),
+          address: "address not available",
         });
       } catch (err) {
         console.error('Error fetching location:', err);

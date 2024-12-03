@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import Footer from '../components/Footer';
-import { login } from 'apiClient.js';
+import { login } from 'apiClient';
 
 
 const Login: React.FC = () => {

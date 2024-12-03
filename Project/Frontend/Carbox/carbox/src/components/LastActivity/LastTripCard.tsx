@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getTrips } from '../../apiClient';
 
 interface LastTripCardProps {
-  vehicleId: string | null; // O ID do veículo selecionado, recebido como prop
+  vehicleId: string; // O ID do veículo selecionado, recebido como prop
 }
 
 interface Trip {
@@ -14,14 +14,14 @@ interface Trip {
 
 const LastTripCard: React.FC<LastTripCardProps> = ({ vehicleId }) => {
   const [tripData, setTripData] = useState<Trip | null>(null); // Dados da viagem selecionada
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>("");
 
   useEffect(() => {
     if (!vehicleId) return;
 
     const fetchTripData = async () => {
       try {
-        const trips = await getTrips(vehicleId); // Busca todas as viagens
+        const trips = await getTrips(vehicleId, null); // Busca todas as viagens
         console.log('Trips data from getTrips:', trips);
 
         if (!trips || trips.length === 0) {

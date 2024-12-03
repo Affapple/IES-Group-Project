@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const VITE_API_URL = import.meta.env.VITE_API_URL + "/api/v2";
+// const VITE_API_URL = import.meta.env.VITE_API_URL + "/api/v2";
+const VITE_API_URL = "http://localhost:8080/api/v2";
 console.log(VITE_API_URL)
 console.log(import.meta.env.API_URL)
 const apiClient = axios.create({
@@ -129,7 +130,9 @@ export const getTrips = async (vehicleId, tripId) => {
   loadToken();
     if(tripId!=null){
       const response = await apiClient.get('/vehicles/trips/' + vehicleId, {
-        tripId
+        params: {
+          tripId: tripId
+        }
       });
       return response.data;
     }
@@ -143,7 +146,3 @@ export const getLastTrip = async (vehicleId) => {
   const response = await apiClient.get('/vehicles/trips/latest/' + vehicleId);
   return response.data;
 }
-
-
-
-
