@@ -50,6 +50,23 @@ public class AuthenticationService {
         return userRepository.save(user);
     }
 
+    public User update(RegisterUserDto input) {
+        User user = new User();
+        user.setName(input.getUsername());
+        user.setEmail(input.getEmail());
+        user.setPassword(input.getPassword());
+        user.setPhone(input.getPhone());
+        user.setRole(Role.USER);
+        if (input.getCarsList() != null)
+            user.setCarsList(input.getCarsList());
+        else
+            user.setCarsList(new ArrayList<>());
+        System.out.println(user);
+        cacheService.saveUser(user);
+        return userRepository.save(user);
+    }
+    
+
     public User authenticate(LoginUserDto input) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
