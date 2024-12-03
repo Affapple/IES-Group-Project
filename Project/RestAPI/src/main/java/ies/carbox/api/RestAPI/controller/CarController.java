@@ -120,7 +120,7 @@ public class CarController {
             userDto.setPhone(user.getPhone());
             userDto.setPassword(user.getPassword());
             userDto.setCarsList(user.getCarsList());
-            User newUser = authenticationService.signup(userDto);
+            User newUser = authenticationService.update(userDto);
             return ResponseEntity.ok(car);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
@@ -273,7 +273,7 @@ public class CarController {
             userDto.setPhone(user.getPhone());
             userDto.setPassword(user.getPassword());
             userDto.setCarsList(user.getCarsList());
-            User newUser = authenticationService.signup(userDto);
+            User newUser = authenticationService.update(userDto);
             return ResponseEntity.ok("Car removed successfully");
 
         } catch (UsernameNotFoundException e) {

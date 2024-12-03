@@ -146,7 +146,7 @@ public class UserController {
             userDto.setPhone(updatedUser.getPhone());
             userDto.setPassword(updatedUser.getPassword());
             userDto.setCarsList(user.getCarsList());
-            User newUser = authenticationService.signup(userDto);
+            User newUser = authenticationService.update(userDto);
             return ResponseEntity.ok(newUser);
         } catch (Exception e) {
             System.out.println(e.getMessage());
