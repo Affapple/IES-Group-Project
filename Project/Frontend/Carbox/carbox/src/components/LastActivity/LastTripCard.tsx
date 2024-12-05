@@ -63,7 +63,7 @@ const LastTripCard: React.FC<LastTripCardProps> = ({ vehicleId }) => {
 
   if (error) {
     return (
-      <div className="bg-white p-6 rounded-lg shadow-md w-full">
+      <div className="bg-white p-6 rounded-lg shadow-md w-full mb-10">
         <p className="text-red-500">{error}</p>
       </div>
     );
@@ -71,14 +71,14 @@ const LastTripCard: React.FC<LastTripCardProps> = ({ vehicleId }) => {
 
   if (!tripData) {
     return (
-      <div className="bg-white p-6 rounded-lg shadow-md w-full">
+      <div className="bg-white p-6 rounded-lg shadow-md w-full mb-10">
         <p>No trip data available.</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md w-full">
+    <div className="bg-white p-6 rounded-lg shadow-md w-full mb-10">
       <h4 className="text-lg font-semibold text-gray-700 mb-4">Trip Details</h4>
       <div className="flex justify-between items-center mb-2">
         <p className="text-sm text-gray-500">Date</p>

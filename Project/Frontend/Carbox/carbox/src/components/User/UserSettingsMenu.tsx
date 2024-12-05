@@ -37,6 +37,9 @@ function UserSettingsMenu({ open, user } : {open: boolean, user: User}) {
 
   const toggleModal = () => {
     setModalShown((modalShown) => !modalShown)
+    setName(user.name);
+    setEmail(user.email);
+    setPhone(user.phoneNumber);
   }
 
   return (

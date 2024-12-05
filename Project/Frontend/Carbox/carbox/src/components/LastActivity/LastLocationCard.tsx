@@ -48,7 +48,7 @@ function LastLocationCard({ vehicleId }: { vehicleId: string }) {
 
   if (error) {
     return (
-      <div className="bg-white p-6 rounded-lg shadow-md w-full">
+      <div className="bg-white p-6 rounded-lg shadow-md w-full mb-10">
         <p className="text-red-500">{error}</p>
       </div>
     );
@@ -56,7 +56,7 @@ function LastLocationCard({ vehicleId }: { vehicleId: string }) {
 
   if (!locationData) {
     return (
-      <div className="bg-white p-6 rounded-lg shadow-md w-full">
+      <div className="bg-white p-6 rounded-lg shadow-md w-full mb-10">
         <p>Loading location data...</p>
       </div>
     );
@@ -65,7 +65,7 @@ function LastLocationCard({ vehicleId }: { vehicleId: string }) {
   const mapUrl = `https://static-maps.yandex.ru/1.x/?ll=${locationData.longitude},${locationData.latitude}&z=13&size=600,300&l=map&pt=${locationData.longitude},${locationData.latitude},pm2rdm`;
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md w-full">
+    <div className="bg-white p-6 rounded-lg shadow-md w-full mb-10">
       <h4 className="text-lg font-semibold text-gray-700 mb-4">Last location</h4>
       <p className="text-sm text-gray-500 mb-4">{locationData.address}</p>
       <img
