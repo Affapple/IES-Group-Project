@@ -24,18 +24,24 @@ users_collection = db["Users"]  # replace with your collection name
 # Retrieve the email of a user based on the car ECU ID
 def get_user_email_by_ecu_id(car_ecu_id: str) -> str:
     """Retrieve the user's email based on the car ECU ID."""
-    try:
+    emails_list = []
         # Find the user whose 'carsList' contains the car_ecu_id
-        user = users_collection.find_one({"carsList": car_ecu_id})
-        
-        if user:
-            return user.get("email")
-        else:
-            logging.error(f"No user found for car ECU ID: {car_ecu_id}")
-            return None
+    
+    try:
+        user = users_collection.find({"carsList": car_ecu_id})
+        for u in user:
+            if u:
+                emails_list.append(u.get("email"))
+            else:
+                logging.error(f"No users found for car ECU ID: {car_ecu_id}")
+                return None
     except Exception as e:
         logging.error(f"Error retrieving user email: {e}")
         return None
+            
+    return emails_list
+    
+
 
 
 # Load environment variables
@@ -100,17 +106,15 @@ def process_notification(message: dict):
     car_ecu_id = car_id  # This could be a part of the car_id or a separate field
 
     # Get the user's email by ECU ID
-    user_email = get_user_email_by_ecu_id(car_ecu_id)
-    if not user_email:
+    user_email_list = get_user_email_by_ecu_id(car_ecu_id)
+    if user_email_list == []:
         logging.error(f"No email found for car {car_id} (ECU ID: {car_ecu_id}). Skipping email.")
         return
-
-    # Construct the email subject and body
-    subject = f"Car Alert: {car_id}"
-    body = f"Errors detected in car {car_id} at {timestamp}:\n" + "\n".join(errors)
-
-    # Send the email
-    send_email(user_email, subject, body)
+    
+    for user_email in user_email_list:
+        subject = f"Car Alert: {car_id}"
+        body = f"Errors detected in car {car_id} at {timestamp}:\n" + "\n".join(errors)
+        send_email(user_email, subject, body)
 
 
 
