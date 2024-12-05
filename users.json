@@ -1,2 +1,0 @@
-{"_id":{"$oid":"674caac2c2456c109785263e"},"email":"admin@admin.com","username":"admin","password":"$2a$10$BYPsOQzU2JuMbLg0PLs6/uVcBfzYSgPu1oMb8kGJXmQAGg6qkWlma","carsList":[],"phone":312321,"role":"ADMIN","_class":"ies.carbox.api.RestAPI.entity.User"}
-{"_id":{"$oid":"674caaebb0fc7d13728aa4b9"},"email":"fba15@ua.pt","username":"fba15","password":"$2a$10$.9FicJdZLrOoebhymyZPAuEAMo4SRDRZFgeYsjyFriiqUHd9R9Kyi","carsList":[],"phone":198321938,"_class":"ies.carbox.api.RestAPI.entity.User"}
