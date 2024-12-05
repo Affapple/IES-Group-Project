@@ -292,8 +292,8 @@ def simulateLevels(ecu_id):
 
 def simulateLocationCoordinates(ecu_id):
     if LastLiveData[ecu_id]['location']=='':
-        latitude=random.uniform(-90,90)
-        longitude=random.uniform(-180,180)
+        latitude=random.uniform(40.9,43.2)
+        longitude=random.uniform(-4.5,-5.3)
         LastLiveData[ecu_id]['location']=f'{latitude},{longitude}'
     else:
         latitude=float(LastLiveData[ecu_id]['location'].split(',')[0])
@@ -378,6 +378,6 @@ def GenerateData(ecu_id):
 while True:
     for car in Cars:
         GenerateData(car['ecu_id'])
-    time.sleep(2)
+    time.sleep(5000)
 
 
