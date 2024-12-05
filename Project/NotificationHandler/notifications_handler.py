@@ -15,6 +15,7 @@ from pymongo import MongoClient
 import os
 
 
+
 client = MongoClient("mongodb://carbox:mySecretPassword@db:27017/carbox?authSource=admin")
 db = client["carbox"] 
 users_collection = db["Users"]
@@ -68,7 +69,7 @@ def send_email(to_email: str, subject: str, body: str):
         msg['To'] = to_email
         msg['Subject'] = subject
         msg.attach(MIMEText(body, 'plain'))
-
+        
         context = ssl.create_default_context()
         with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
             server.login(EMAIL_ADDRESS, EMAIL_PASSW)
@@ -143,7 +144,7 @@ async def send_notification(notification: Notification, background_tasks: Backgr
                 exchange='',
                 routing_key='carbox',
                 body=json.dumps(message)
-            )
+            ) 
 
         logging.info(f"Notification queued for car {notification.car_id}")
         return {"message": "Notification queued for processing"}
