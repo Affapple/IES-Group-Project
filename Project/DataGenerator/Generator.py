@@ -291,15 +291,14 @@ def simulateLevels(ecu_id):
                     LastLiveData[ecu_id]['tire_pressure'][i]=50
 
 def simulateLocationCoordinates(ecu_id):
-    if LastLiveData[ecu_id]['location']=='':
-        latitude=random.uniform(-90,90)
-        longitude=random.uniform(-180,180)
-        LastLiveData[ecu_id]['location']=f'{latitude},{longitude}'
-    else:
+        # Coordinates espectrum allowed
+        # latitude=random.uniform(40.35,43.24)
+        # longitude=random.uniform(-2.04,-5.07)
+        
         latitude=float(LastLiveData[ecu_id]['location'].split(',')[0])
         longitude=float(LastLiveData[ecu_id]['location'].split(',')[1])
-        latitude+=random.uniform(-0.1,0.1)
-        longitude+=random.uniform(-0.1,0.1)
+        latitude+=random.uniform(-0.005,0.005) if latitude < 43.24 and latitude > 40.35 else random.uniform(-0.005,0)
+        longitude+=random.uniform(-0.005,0.005) if longitude < -2.04 and longitude > -5.07 else random.uniform(0,-0.005)
         LastLiveData[ecu_id]['location']=f'{latitude},{longitude}'
 
 def sendToQueue(ecu_id):
@@ -332,7 +331,7 @@ def GenerateData(ecu_id):
         LastLiveData[ecu_id]['oil_level']=100
         LastLiveData[ecu_id]['battery_charge']=100
         LastLiveData[ecu_id]['gas_level']=100
-        LastLiveData[ecu_id]['location']=''
+        LastLiveData[ecu_id]['location']= '43.1,-3.43'
         LastLiveData[ecu_id]['motor_temperature']=0
         LastLiveData[ecu_id]['tire_pressure']=[30,30,30,30]
         LastLiveData[ecu_id]['errors']=[]
@@ -378,6 +377,6 @@ def GenerateData(ecu_id):
 while True:
     for car in Cars:
         GenerateData(car['ecu_id'])
-    time.sleep(2)
+    time.sleep(10)
 
 
