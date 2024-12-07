@@ -291,15 +291,19 @@ def simulateLevels(ecu_id):
                     LastLiveData[ecu_id]['tire_pressure'][i]=50
 
 def simulateLocationCoordinates(ecu_id):
-        # Coordinates espectrum allowed
-        # latitude=random.uniform(40.35,43.24)
-        # longitude=random.uniform(-2.04,-5.07)
-        
-        latitude=float(LastLiveData[ecu_id]['location'].split(',')[0])
-        longitude=float(LastLiveData[ecu_id]['location'].split(',')[1])
-        latitude+=random.uniform(-0.005,0.005) if latitude < 43.24 and latitude > 40.35 else random.uniform(-0.005,0)
-        longitude+=random.uniform(-0.005,0.005) if longitude < -2.04 and longitude > -5.07 else random.uniform(0,-0.005)
-        LastLiveData[ecu_id]['location']=f'{latitude},{longitude}'
+
+    latitude = float(LastLiveData[ecu_id]['location'].split(',')[0])
+    longitude = float(LastLiveData[ecu_id]['location'].split(',')[1])
+
+    latitude = max(40.35, min(43.24, latitude))
+    longitude = max(-5.07, min(-2.04, longitude))
+
+    latitude += random.uniform(-0.005, 0.005)
+    longitude += random.uniform(-0.005, 0.005)
+    latitude = max(40.35, min(43.24, latitude))
+    longitude = max(-5.07, min(-2.04, longitude))
+
+    LastLiveData[ecu_id]['location'] = f"{latitude},{longitude}"
 
 def sendToQueue(ecu_id):
     try:
