@@ -2,32 +2,28 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import User from "Types/User";
 import Vehicle from "Types/Vehicle";
-import Footer from '../components/Footer';
-import Navbar from '../components/NavBar';
+import Footer from "../components/Footer";
+import Navbar from "../components/NavBar";
 import "../css/AdminDashboard.css";
 
-
-
 const AdminDashboard: React.FC = () => {
-  // TODO: set correct baseUrl based on env variable
-  const baseUrl = "http://localhost:8080";
-  const apiPath = "/api/v2/";
+  const VITE_API_URL = import.meta.env.VITE_API_URL + "/api/v2";
 
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelected] = useState<User | undefined>(undefined);
   const [userVehicles, setUserVehicles] = useState<Vehicle[]>([]);
 
-  /* Fetch all users */ 
-  useEffect(() => {    
+  /* Fetch all users */
+  useEffect(() => {
     const token = localStorage.getItem("token");
 
     axios
-      .get( baseUrl + apiPath + 'admin/users', {
+      .get(VITE_API_URL + "admin/users", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
-        console.log(response)
-        return response.data ? setUsers(response.data) : []
+        console.log(response);
+        return response.data ? setUsers(response.data) : [];
       })
       .catch((error) => console.error("Error fetching admin data:", error));
   }, []);
@@ -37,22 +33,26 @@ const AdminDashboard: React.FC = () => {
     if (selectedUser == undefined) return;
 
     const token = localStorage.getItem("token");
-    axios.get("http://localhost:8080/api/v2/admin/cars", {   // ! It was vehicles, which makes more sense than cars honestly
-      headers: { Authorization: `Bearer ${token}`},
-      params: { email: selectedUser.email }
-    })
-    .then((response) => response.data ? setUserVehicles(response.data) : [])
-    .catch((error) => console.error("Error fetching user vehicles: ", error));
-  }, [selectedUser])
+    axios
+      .get(VITE_API_URL + "/admin/cars", {
+        // ! It was vehicles, which makes more sense than cars honestly
+        headers: { Authorization: `Bearer ${token}` },
+        params: { email: selectedUser.email },
+      })
+      .then((response) => (response.data ? setUserVehicles(response.data) : []))
+      .catch((error) => console.error("Error fetching user vehicles: ", error));
+  }, [selectedUser]);
 
   return (
     <div className="admin-dashboard">
       <Navbar />
       <div className="content">
-        <h1 style={{fontWeight: "bold", textAlign: "center"}}>Admin Dashboard</h1>
+        <h1 style={{ fontWeight: "bold", textAlign: "center" }}>
+          Admin Dashboard
+        </h1>
 
         {/* Users List */}
-        <h2 style={{fontWeight: "bold",}}>Users</h2>
+        <h2 style={{ fontWeight: "bold" }}>Users</h2>
         <table className="styled-table">
           <thead>
             <tr>
@@ -66,13 +66,14 @@ const AdminDashboard: React.FC = () => {
               <tr key={user.email}>
                 <td>{user.email}</td>
                 <td>
-                  <button className="link-button" onClick={() => setSelected(user)}>
+                  <button
+                    className="link-button"
+                    onClick={() => setSelected(user)}
+                  >
                     {user.name}
                   </button>
                 </td>
-                <td>
-                  {/* Add actions if needed */}
-                </td>
+                <td>{/* Add actions if needed */}</td>
               </tr>
             ))}
           </tbody>
@@ -80,9 +81,10 @@ const AdminDashboard: React.FC = () => {
 
         {/* Car List of Selected User */}
         {selectedUser && (
-
           <>
-            <h2  style={{fontWeight: "bold",}}>Vehicles of {selectedUser.name}</h2>
+            <h2 style={{ fontWeight: "bold" }}>
+              Vehicles of {selectedUser.name}
+            </h2>
             <table className="styled-table">
               <thead>
                 <tr>
@@ -93,18 +95,20 @@ const AdminDashboard: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {
-                  userVehicles.length === 0 ?
-                  <tr><td colSpan={4}>No vehicles found</td></tr>
-                  :
-                userVehicles.map((vehicle: Vehicle) => (
-                  <tr key={vehicle.ecuId}>
-                    <td>{vehicle.ecuId}</td>
-                    <td>{vehicle.brand}</td>
-                    <td>{vehicle.model}</td>
-                    <td>{vehicle.licensePlate}</td>
+                {userVehicles.length === 0 ? (
+                  <tr>
+                    <td colSpan={4}>No vehicles found</td>
                   </tr>
-                ))}
+                ) : (
+                  userVehicles.map((vehicle: Vehicle) => (
+                    <tr key={vehicle.ecuId}>
+                      <td>{vehicle.ecuId}</td>
+                      <td>{vehicle.brand}</td>
+                      <td>{vehicle.model}</td>
+                      <td>{vehicle.licensePlate}</td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </>
@@ -114,6 +118,5 @@ const AdminDashboard: React.FC = () => {
     </div>
   );
 };
-
 
 export default AdminDashboard;

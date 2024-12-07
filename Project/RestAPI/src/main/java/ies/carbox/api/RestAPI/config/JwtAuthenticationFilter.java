@@ -6,8 +6,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -48,13 +46,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String authHeader = request.getHeader("Authorization");
 
         System.out.println("Received token: " + authHeader);
-        
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             System.out.println("No Bearer Token");
             filterChain.doFilter(request, response);
             return;
         }
-        
+
         try {
             final String jwt = authHeader.substring(7);
             final String userEmail = jwtService.extractUsername(jwt);
@@ -81,6 +79,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (Exception exception) {
             System.out.println("ERROR: " + exception.getMessage());
             handlerExceptionResolver.resolveException(request, response, null, exception);
+            response.sendError(403);
         }
     }
 }
