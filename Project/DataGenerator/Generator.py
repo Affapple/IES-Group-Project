@@ -361,7 +361,7 @@ def GenerateData(ecu_id):
             simulateError(ecu_id)
             simulateLocationCoordinates(ecu_id)
             simulateLevels(ecu_id)
-            LastLiveData['timestamp'] = datetime.now().isoformat()
+            LastLiveData[ecu_id]['timestamp'] = datetime.now().isoformat()
             logging.info(f"Car {ecu_id} turned off")
         else:
             LastLiveData[ecu_id]['car_status']=True
@@ -369,7 +369,7 @@ def GenerateData(ecu_id):
             simulateError(ecu_id)
             simulateLocationCoordinates(ecu_id)
             simulateLevels(ecu_id)
-            LastLiveData['timestamp'] = datetime.now().isoformat()
+            LastLiveData[ecu_id]['timestamp'] = datetime.now().isoformat()
             logging.info(f"Data for car {ecu_id} generated")
             logging.info(f"Data: {LastLiveData[ecu_id]}")
         sendToQueue(ecu_id)
