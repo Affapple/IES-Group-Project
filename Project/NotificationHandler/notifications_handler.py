@@ -80,6 +80,59 @@ def send_email(to_email: str, subject: str, body: str):
         logging.error(f"Failed to send email: {e}")
         
 
+def handle_car_turned_on(message: dict):
+    """Handles a car being turned on and asks the user if it was them."""
+    if not message:
+        logging.error("Received an empty message. Skipping processing.")
+        return
+
+    ecu_id = message.get('car_id')
+    if not ecu_id:
+        logging.error("ECU ID is missing in the message. Skipping processing.")
+        return
+
+    car_status = message.get('car_status')
+    if car_status != "on":
+        logging.error(f"Invalid car status: {car_status}. Skipping processing.")
+        return
+
+    event_time = message.get('timestamp')
+    if not event_time:
+        logging.error(f"No timestamp found for car {ecu_id}. Skipping.")
+        return
+
+    user_email_list = get_user_email_by_ecu_id(ecu_id)
+    if not user_email_list:
+        logging.error(f"No emails found for car {ecu_id}. Skipping notification.")
+        return
+
+    subject = f"Car {ecu_id} Turned On – Was It You?"
+    body = f"""
+    <html>
+    <body>
+    <p>Hello,</p>
+    <p>We noticed that your car (ID: {ecu_id}) was turned on at {event_time}. 
+    If this wasn't you, please click the "No" button below, and we will direct you to the emergency services.</p>
+    <p>Was it you who turned on the car?</p>
+    
+    <a href="http://example.com/confirm?ecu_id={ecu_id}&response=yes">
+        <button style="padding: 10px 20px; font-size: 16px; background-color: #4CAF50; color: white; border: none; cursor: pointer;">Yes</button>
+    </a>
+    
+    <a href="https://www.112.gov.pt/">
+        <button style="padding: 10px 20px; font-size: 16px; background-color: #f44336; color: white; border: none; cursor: pointer;">No</button>
+    </a>
+
+    <p>If you did not turn on the car, please click "No" to contact emergency services.</p>
+    </body>
+    </html>
+    """
+
+    for user_email in user_email_list:
+        send_email(user_email, subject, body)
+        logging.info(f"Notification sent to {user_email} for car {ecu_id}.")
+
+
 def remind_inspection_date(ecu_id: str):
     """
     Checks if the car's inspection is due in 30 days and sends an email reminder.
