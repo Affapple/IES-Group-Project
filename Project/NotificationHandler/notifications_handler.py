@@ -79,7 +79,67 @@ def send_email(to_email: str, subject: str, body: str):
         logging.error(f"Failed to send email: {e}")
 
 
-def process_notification(message: dict):
+# For oil levels, low battery or high motor temperature
+def process_notification_others(message: dict):
+    """
+    Processes a notification by evaluating the car's data from the message
+    and triggering alerts based on threshold breaches.
+    """
+    if not message:
+        logging.error("Received an empty message. Skipping processing.")
+        return
+
+    ecu_id = message.get('car_id')
+    if not ecu_id:
+        logging.error("ECU ID is missing in the message. Skipping processing.")
+        return
+
+    # These values need to be reavaluated in the data generator
+    oil_threshold = 90
+    battery_threshold = 90
+    motor_temp_threshold = 50
+
+    alerts = []
+
+    if message.get('oil_level') < oil_threshold:
+        alerts.append({
+            "type": "low_oil",
+            "details": f"Oil level is critically low at {message['oil_level']}%."
+        })
+    if message.get('battery_charge') < battery_threshold:
+        alerts.append({
+            "type": "low_battery",
+            "details": f"Battery charge is critically low at {message['battery_charge']}%."
+        })
+    if message.get('motor_temperature') > motor_temp_threshold:
+        alerts.append({
+            "type": "high_motor_temp",
+            "details": f"Motor temperature is dangerously high at {message['motor_temperature']}°C."
+        })
+
+    for alert in alerts:
+        alert_type = alert["type"]
+        alert_details = alert["details"]
+
+        user_email_list = get_user_email_by_ecu_id(ecu_id)
+        if not user_email_list:
+            logging.error(f"No emails found for car {ecu_id}. Skipping notification for {alert_type}.")
+            continue
+
+        subject = f"Critical Alert for Car {ecu_id}"
+        body = (
+            f"Alert detected in your car (ID: {ecu_id}) at {message.get('timestamp', 'N/A')}:\n\n"
+            f"**{alert_details}**\n\n"
+            "Please take immediate action to address this issue."
+        )
+
+        for user_email in user_email_list:
+            send_email(user_email, subject, body)
+            logging.info(f"Notification sent to {user_email} for {alert_type} in car {ecu_id}.")
+
+
+
+def process_notification_errors(message: dict):
     """Processes notification messages from RabbitMQ."""
     car_id = message.get("car_id")
     errors = message.get("errors")
@@ -102,7 +162,6 @@ def process_notification(message: dict):
         send_email(user_email, subject, body)
 
 
-
 def start_rabbitmq_consumer():
     """Starts RabbitMQ consumer to listen for incoming messages."""
     try:
@@ -116,7 +175,11 @@ def start_rabbitmq_consumer():
             logging.info(f"Received message from RabbitMQ: {body}")
             try:
                 message = json.loads(body)
-                process_notification(message)
+
+                process_notification_others(message)
+
+                process_notification_errors(message)
+
             except Exception as e:
                 logging.error(f"Error processing message: {e}")
 
@@ -126,6 +189,30 @@ def start_rabbitmq_consumer():
 
     except Exception as e:
         logging.error(f"Error in RabbitMQ consumer: {e}")
+
+# def start_rabbitmq_consumer():
+#     """Starts RabbitMQ consumer to listen for incoming messages."""
+#     try:
+#         connection = pika.BlockingConnection(
+#             pika.ConnectionParameters(host='rabbitmq', credentials=credentials)
+#         )
+#         channel = connection.channel()
+#         channel.queue_declare(queue='carbox', durable=True)
+
+#         def callback(ch, method, properties, body):
+#             logging.info(f"Received message from RabbitMQ: {body}")
+#             try:
+#                 message = json.loads(body)
+#                 process_notification_errors(message)
+#             except Exception as e:
+#                 logging.error(f"Error processing message: {e}")
+
+#         channel.basic_consume(queue='carbox', on_message_callback=callback, auto_ack=True)
+#         logging.info(f"Listening for messages on RabbitMQ queue: {'carbox'}")
+#         channel.start_consuming()
+
+#     except Exception as e:
+#         logging.error(f"Error in RabbitMQ consumer: {e}")
 
 
 @app.post("/send-notification")
