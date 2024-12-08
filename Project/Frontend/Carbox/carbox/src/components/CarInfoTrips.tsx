@@ -9,9 +9,13 @@ import { Carousel } from 'primereact/carousel';
 import { Tag } from 'primereact/tag';
 import { getTrips } from 'apiClient';
 import Trip from 'Types/Trip';
+import TripInfo from './TripInfoModal';
+import { LineChart } from '@mui/x-charts/LineChart';
+import Modal from './Modal';
 
 export default function CarInfoTrips({data}) {
     const trips = data;
+    const [modalShown, setModalShown] = React.useState<boolean>(false);
 
     
     function getDuration(trip) {
@@ -22,12 +26,32 @@ export default function CarInfoTrips({data}) {
         return hours;
     }
 
+    function toggleModal() {
+        setModalShown((modalShown) => !modalShown);
+    }
+
     //* get date to yyyy-mm-dd and hh:mm:ss
     function getDate(date) {
         const d = new Date(date);
         return d.toISOString().split('T')[0] + ' ' + d.toTimeString().split(' ')[0];
     }
 
+    function getXAxis(array) {
+        if (!array || !Array.isArray(array)) {
+            console.error("Invalid array passed to getXAxis:", array);
+            return [];
+        }
+        console.log("Array:", array);
+        return array.map((_, index) => index);
+    }
+
+    function getAvg(array) {
+        if (!array || !Array.isArray(array) || array.length === 0) {
+            console.error("Invalid array passed to getAvg:", array);
+            return 0;
+        }
+        return Math.round((array.reduce((a, b) => a + b, 0) / array.length));
+    }
     
 
     const responsiveOptions = [
@@ -72,6 +96,52 @@ export default function CarInfoTrips({data}) {
                     <p className='text-lg'>Duration: {getDuration(trip)} h</p>
                     <h5 className=' text-lg'></h5>
                 </div>
+                <div className="items-end"> 
+                    <Button label="View Trip" onClick={toggleModal} className="p-button-raised p-button-rounded p-button-text bg-green-400 rounded-lg p-3" />
+                </div>
+                {modalShown && trip ? 
+                    <Modal onClose={toggleModal} >
+                    <div className="flex-cols">
+                        <button className="absolute top-2 right-2" onClick={toggleModal}>
+                            Close
+                        </button>
+                        <h1 className="text-center">
+                            <b>Trip {trip.tripId}</b>
+                        </h1>
+                        <div className="flex-cols">
+                            <h2 className="text-left">
+                                From {getDate(trip.trip_start)} to {getDate(trip.trip_end)}
+                            </h2>
+                            <h2 className="text-left">Duration: {getDuration(trip)} hours</h2>
+                        </div>
+                        {[
+                            { label: "Speeds (Km/h)", data: trip.trip_speeds, color: "#2ca02c" },
+                            { label: "RPMs", data: trip.trip_rpm, color: "#ff4500"},
+                            { label: "Torques", data: trip.trip_torque, color: "#1f77b4" },
+                            { label: "Engine Temperature (ºC)", data: trip.trip_motor_temp, color: "#ff7f0e" },
+                        ].map(({ label, data, color }, index) => (
+                            <div className="flex-cols border-b-4 border-black" key={index}>
+                                <LineChart
+                                    xAxis={[{ data: getXAxis(data) }]}
+                                    series={[
+                                        {
+                                            data: data || [],
+                                            area: true,
+                                            color,
+                                            label: `${label}`,
+                                        },
+                                    ]}
+                                    width={500}
+                                    height={300}
+                                />
+                                <h2 className="text-left">
+                                    Average {label}: {data?.length ? getAvg(data) : "N/A"}
+                                </h2>
+                            </div>
+                        ))}
+                    </div>
+                </Modal>
+                : null}
 
             </div>
         );
