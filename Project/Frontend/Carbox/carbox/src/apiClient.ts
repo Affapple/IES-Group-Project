@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const VITE_API_URL = import.meta.env.VITE_API_URL + "/api/v2";
-console.log(VITE_API_URL);
-console.log(import.meta.env.API_URL);
+//const VITE_API_URL = "http://localhost:8080" + "/api/v2";
+
 const apiClient = axios.create({
     baseURL: VITE_API_URL,
     headers: {
@@ -10,11 +10,28 @@ const apiClient = axios.create({
     },
 });
 
+apiClient.interceptors.response.use(
+    (response) => {
+        return response;
+    },
+    (error) => {
+        if (error.response && error.response.status == 403) {
+            console.error("Access Forbidden, deleting session...");
+            unloadToken();
+        }
+        return Promise.reject(error);
+    },
+);
+
 function loadToken() {
-    apiClient.defaults.headers.common["Authorization"] =
-        `Bearer ${localStorage.getItem("token")}`;
+    const token = localStorage.getItem("token");
+    if (token == null) return false;
+
+    apiClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    return true;
 }
-function unloadToken() {
+
+export function unloadToken() {
     apiClient.defaults.headers.common["Authorization"] = undefined;
     localStorage.removeItem("token");
 }
@@ -25,15 +42,11 @@ export const login = async (email, password) => {
         email,
         password,
     });
-    const token = response.data.token;
-    console.log("Token = " + token);
-    localStorage.setItem("token", token);
     return response.data;
 };
 
 // Register
 export const register = async (email, password, phone, username) => {
-    console.log(apiClient.defaults.headers.common);
     const response = await apiClient.post("/user/accountCreation", {
         email,
         password,
@@ -57,9 +70,14 @@ export const updateUser = async (email, password, phone, username) => {
 
 // Get User
 export const getUser = async () => {
-    loadToken();
+    if (!loadToken())
+        return {
+            status: 403,
+            data: {},
+        };
+
     const response = await apiClient.get("/user/account");
-    return response.data;
+    return response;
 };
 
 // Logout
