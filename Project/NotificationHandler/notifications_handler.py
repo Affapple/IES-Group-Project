@@ -13,6 +13,7 @@ import threading
 import time
 from pymongo import MongoClient
 import os
+from datetime import datetime, timedelta
 
 
 
@@ -77,6 +78,48 @@ def send_email(to_email: str, subject: str, body: str):
         logging.info(f"Notification sent to {to_email}")
     except Exception as e:
         logging.error(f"Failed to send email: {e}")
+        
+
+def remind_inspection_date(ecu_id: str):
+    """
+    Checks if the car's inspection is due in 30 days and sends an email reminder.
+    """
+    try:
+        car_data = db["Cars"].find_one({"ecu_id": ecu_id})
+
+        if not car_data:
+            logging.error(f"No data found for ECU ID: {ecu_id}.")
+            return
+
+        last_revision_date = car_data.get("last_revision") 
+
+        if not last_revision_date:
+            logging.error(f"No last_revision date found for car {ecu_id}.")
+            return
+
+        last_revision_date = datetime.strptime(last_revision_date, "%Y-%m-%d")
+        next_inspection_date = last_revision_date + timedelta(days=365)
+        days_remaining = (next_inspection_date - datetime.now()).days
+
+        if days_remaining <= 30:
+            user_email_list = get_user_email_by_ecu_id(ecu_id)
+            if not user_email_list:
+                logging.error(f"No emails found for car {ecu_id}. Skipping reminder.")
+                return
+
+            subject = f"Reminder: Car {ecu_id} Inspection Due in {days_remaining} Days"
+            body = (
+                f"Your car (ID: {ecu_id}, Model: {car_data.get('brand')} {car_data.get('model')}) "
+                f"is due for inspection on {next_inspection_date.strftime('%Y-%m-%d')}.\n\n"
+                "Please schedule your inspection soon to avoid penalties.\n\n"
+                "Thank you!"
+            )
+
+            for user_email in user_email_list:
+                send_email(user_email, subject, body)
+                logging.info(f"Inspection reminder sent to {user_email} for car {ecu_id}.")
+    except Exception as e:
+        logging.error(f"Error in remind_inspection_date for car {ecu_id}: {e}")
 
 
 # For oil levels, low battery or high motor temperature
@@ -93,11 +136,15 @@ def process_notification_others(message: dict):
     if not ecu_id:
         logging.error("ECU ID is missing in the message. Skipping processing.")
         return
+    
+    
+    # We'll do it here since this is other notifications
+    remind_inspection_date(ecu_id)
 
     # These values need to be reavaluated in the data generator
-    oil_threshold = 90
-    battery_threshold = 90
-    motor_temp_threshold = 50
+    oil_threshold = 20
+    battery_threshold = 20
+    motor_temp_threshold = 70
 
     alerts = []
 
