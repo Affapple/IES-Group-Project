@@ -376,7 +376,6 @@ def GenerateData(ecu_id):
 
         
 
-
 #Simulate the data for the cars
 while True:
     for car in Cars:
