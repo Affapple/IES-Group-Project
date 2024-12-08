@@ -8,6 +8,6 @@ export interface IUserContext {
   setCurrentUser: Dispatch<SetStateAction<IUserData>> | undefined;
 }
 export const UserContext = createContext<IUserContext>({
-  currentUser: {} as IUserData,
+  currentUser: { role: "" } as IUserData,
   setCurrentUser: undefined,
 });

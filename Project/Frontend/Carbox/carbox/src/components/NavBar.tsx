@@ -1,10 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { useState } from "react";
 import { FaBell } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import UserSettingsMenu from "./User/UserSettingsMenu";
 import User from "Types/User";
 import { getUser, logout } from "apiClient";
+import { IUserContext, UserContext } from "Context/UserContext";
 
 const Navbar: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
@@ -16,6 +17,7 @@ const Navbar: React.FC = () => {
   });
   const location = useLocation();
   const navigate = useNavigate();
+  const { currentUser } = useContext<IUserContext>(UserContext);
 
   useEffect(() => {
     getUser()
@@ -63,6 +65,11 @@ const Navbar: React.FC = () => {
         <Link to="/faqs" className={isActive("/faqs")}>
           FAQs
         </Link>
+        {currentUser.role == "ADMIN" && (
+          <Link to="/admin" className={isActive("/admin")}>
+            Admin Page
+          </Link>
+        )}
       </nav>
 
       {/* User Section */}

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
   Route,
@@ -15,11 +15,10 @@ import AdminDashboard from "./pages/AdminDashboard";
 import { UserContext, IUserData } from "Context/UserContext";
 import { getUser, unloadToken } from "apiClient";
 
-// !for now because the email is encrypted in the token we will only verify if its admin if the username is admin and password...
-
 const App: React.FC = () => {
+  const [loading, setLoading] = useState<boolean>(true);
   const [currentUser, setCurrentUser] = useState<IUserData>({
-    role: "",
+    role: "USER",
   } as IUserData);
 
   useEffect(() => {
@@ -27,15 +26,19 @@ const App: React.FC = () => {
       if (!(200 <= response.status && response.status <= 299)) {
         unloadToken();
         setCurrentUser({ role: "" }); // TODO: Set to save user data
+        setLoading(false);
         return;
       }
 
       const user = response.data;
       setCurrentUser({ role: user.role }); // TODO: Set to save user data
+      setLoading(false);
     });
   }, []);
 
-  return (
+  return loading ? (
+    <div>Loading...</div>
+  ) : (
     <Router>
       <UserContext.Provider
         value={{ currentUser: currentUser, setCurrentUser: setCurrentUser }}
