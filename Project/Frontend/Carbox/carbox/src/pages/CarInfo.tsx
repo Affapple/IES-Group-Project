@@ -92,7 +92,7 @@ const CarInfo: React.FC = (props) => {
       () => {
         getLatestLiveData();
       },
-      isLive ? 5_000 : 3_000,
+      isLive ? 5_000 : 30_000,
     );
 
     return () => {
