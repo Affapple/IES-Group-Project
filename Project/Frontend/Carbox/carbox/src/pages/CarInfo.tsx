@@ -12,7 +12,7 @@ import Advanced from "../components/Advanced";
 import Live from "../components/Live";
 import { useMatch, useNavigate } from "react-router-dom";
 import Vehicle from "Types/Vehicle";
-import { getCar, getCarLatestData, getCarLiveData, getTrips } from "apiClient";
+import { getCar, getCarLatestData, getCarLiveData, getCarName, getTrips } from "apiClient";
 import LiveData from "Types/LiveData";
 import Trip from "Types/Trip";
 
@@ -26,9 +26,10 @@ const CarInfo: React.FC = (props) => {
 
     const [carData, setCarData] = React.useState<Vehicle>();
     const [liveList, setLiveList] = React.useState<LiveData[]>([]);
-    const [tripList, setTripList] = React.useState<Trip[]>([]);
+    const [CarName, setCarName] = React.useState<string>();
+    const [tripList, setTripList] = React.useState([]);
 
-    /** Fetch car data */
+    /** Fetch car data and name */
     useEffect(() => {
         if (carId) {
             getCar(carId)
@@ -38,49 +39,57 @@ const CarInfo: React.FC = (props) => {
                 .catch((error) => {
                     console.log(error);
                 });
+            /*Car name */
+            getCarName(carId)
+                .then((response) => {
+                    setCarName(response);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            /*Trips data */
+            getTrips(carId, null)
+                .then((response) => {
+                    console.log("Trips:", response);
+                    if (response.length === 0) {
+                        console.log("No trips found");
+                    }
+                    if (response.length > 10) {
+                        setTripList(response.slice(response.length-10 , response.length));
+                        console.log("Trips:", tripList);
+                    }
+                    else {
+                        setTripList(response);
+                        console.log("Trips:", tripList);
+                    }
+    
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            /*Last live data */
+            getCarLatestData(carId)
+                .then((response) => {
+                    setLiveList([response]);
+                    console.log("Live:", response);
+                    if (response === null) {
+                        setLive(false);
+                    }
+                    if (response.carStatus)
+                        setLive(true);
+                    else
+                        setLive(false);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+                
         } else {
             navigate("/home");
         }
     }, []);
-
-    /** Fetch trips */
-    useEffect(() => {
-        getTrips(carId, null)
-            .then((response) => {
-                setTripList(response);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    }, [carData]);
-
-    useEffect(() => {
-        getCarLatestData(carId)
-            .then((response: LiveData[]) => {
-                setLiveList(response);
-                setLive(response[response.length - 1].car_status);
-                console.log("Fetched live data: ", response);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    }, [carData]);
-
-    /** Fetch latest data */
-    const getLatestLiveData = () => {
-        const latestData = liveList[liveList.length - 1];
-        getCarLiveData(carId, latestData["timestamp"].toISOString())
-            .then((response: LiveData[]) => {
-                setLiveList((prev) => [...prev, ...response]);
-
-                const newLiveStatus = response[response.length - 1].car_status;
-                if (newLiveStatus != isLive) setLive(newLiveStatus);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    };
-
+  
+    /*
     useEffect(() => {
         const interval = setInterval(
             () => {
@@ -92,7 +101,7 @@ const CarInfo: React.FC = (props) => {
         return () => {
             clearInterval(interval);
         };
-    }, [isLive]);
+    }, [isLive]); */
 
     return (
         <div className="min-h-screen bg-gray-50 font-sans ml-0">
@@ -100,7 +109,7 @@ const CarInfo: React.FC = (props) => {
             <div className="justify-between items-center p-5 bg-white ">
                 {carData ? (
                     <>
-                        <NameDisplay data={carData} />
+                        <NameDisplay data={carData} name={CarName} />
                         <div className="Main">
                             <div className="ml-10 ">
                                 <FormControlLabel
@@ -124,7 +133,6 @@ const CarInfo: React.FC = (props) => {
                         {advanced ? (
                             <div className="Main">
                                 <Specs
-                                    liveData={liveList[liveList.length - 1]}
                                     carData={carData}
                                 />
                             </div>
@@ -149,7 +157,7 @@ const CarInfo: React.FC = (props) => {
                             <CarInfoTrips data={tripList} />
                         </div>
                         <div className="Main">
-                            <CarLocation data={carData} />
+                            <CarLocation data={liveList} />
                         </div>
                     </>
                 ) : (

@@ -7,11 +7,28 @@ import { Gauge } from '@mui/x-charts/Gauge';
 import { Button } from 'primereact/button';
 import { Carousel } from 'primereact/carousel';
 import { Tag } from 'primereact/tag';
-
+import { getTrips } from 'apiClient';
+import Trip from 'Types/Trip';
 
 export default function CarInfoTrips({data}) {
+    const trips = data;
 
-    const trips= data;
+    
+    function getDuration(trip) {
+        const start = new Date(trip.trip_start);
+        const end = new Date(trip.trip_end);
+        const diff = Math.abs(end.getTime() - start.getTime());
+        const hours = Math.floor(diff / 36e5);
+        return hours;
+    }
+
+    //* get date to yyyy-mm-dd and hh:mm:ss
+    function getDate(date) {
+        const d = new Date(date);
+        return d.toISOString().split('T')[0] + ' ' + d.toTimeString().split(' ')[0];
+    }
+
+    
 
     const responsiveOptions = [
         {
@@ -41,19 +58,19 @@ export default function CarInfoTrips({data}) {
         return (
             <div className="border-4 border-black surface-border rounded-lg m-2  py-5 px-3  ">
                 <div className="">
-                    <h5 className='text-3xl'>{trip.date}</h5>
+                    <h5 className='text-lg text-green-400'> Trip {trip.tripId}</h5>
                 </div>
-                <div className="mb-3 pl-2">
-                    <p className='text-gray-400 text-lg'>consumption</p>
-                    <h5 className='text-green-500 text-lg'>{trip.consumption} L</h5>
+                <div className="">
+                    <p className='text-gray-400 text-base'>Car was up from</p>
+                    <h5 className='text-base'>{getDate(trip.trip_start)}</h5>
                 </div>
-                <div className="mb-3 pl-2" >
-                    <p className='text-gray-400 text-lg'>distance</p>
-                    <h5 className='t text-lg'>{trip.distance} Km</h5>
+                <div className="">
+                    <p className='text-gray-400 text-base'>Till</p>
+                    <h5 className='text-base'>{getDate(trip.trip_end)}</h5>
                 </div>
-                <div className="mb-3 pl-2">
-                    <p className='text-gray-400 text-lg'>duration</p>
-                    <h5 className=' text-lg'>{trip.duration} h</h5>
+                <div className="">
+                    <p className='text-lg'>Duration: {getDuration(trip)} h</p>
+                    <h5 className=' text-lg'></h5>
                 </div>
 
             </div>
