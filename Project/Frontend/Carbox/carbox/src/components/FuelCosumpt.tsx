@@ -1,19 +1,22 @@
-import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { FaBell } from 'react-icons/fa';
-import '../css/CarDetails.css';
-import Stack from '@mui/material/Stack';
-import { Gauge } from '@mui/x-charts/Gauge';
+import React, { useEffect } from "react";
+import "../css/CarDetails.css";
+import { Gauge } from "@mui/x-charts/Gauge";
+import Vehicle from "Types/Vehicle";
+import LiveData from "Types/LiveData";
 
-
-export default function FuelConsumpt({data}) {
-
-    const [autonomyLevel, setAutonomyLevel] = React.useState(true);
-    const [temperatureLevel, setTemperatureLevel] = React.useState(true);
-    const [batteryLevel, setBatteryLevel] = React.useState(true);
-    const battery = data.battery;
-    const autonomy = data.autonomy;
-    const temperature = data.temperature;
+export default function FuelConsumpt({
+  carData,
+  liveData,
+}: {
+  carData: Vehicle;
+  liveData: LiveData;
+}) {
+  const [autonomyLevel, setAutonomyLevel] = React.useState(true);
+  const [temperatureLevel, setTemperatureLevel] = React.useState(true);
+  const [batteryLevel, setBatteryLevel] = React.useState(true);
+  const battery = liveData.batteryCharge;
+  const autonomy = carData.autonomy;
+  const temperature = liveData.motorTemperature;
 
     function checkBatteryLevel() {
         if (battery <= 30) {

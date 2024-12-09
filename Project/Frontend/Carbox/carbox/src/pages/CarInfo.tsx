@@ -61,7 +61,6 @@ const CarInfo: React.FC = (props) => {
       .then((response: LiveData) => {
         setLiveData(response);
         setLive(response.carStatus);
-        console.log("Fetched live data: ", response);
       })
       .catch((error) => {
         console.log(error);
@@ -138,7 +137,7 @@ const CarInfo: React.FC = (props) => {
               </div>
             ) : null}
             <div className="Main">
-              <FuelConsumpt data={carData} />
+              <FuelConsumpt carData={carData} liveData={liveData} />
             </div>
             {advanced ? (
               <div className="Main">
@@ -146,7 +145,7 @@ const CarInfo: React.FC = (props) => {
               </div>
             ) : null}
             <div className="Main">
-              <CarInfoTrips data={tripList} />
+              <CarInfoTrips trips={tripList} />
             </div>
             <div className="Main">
               <CarLocation data={carData} />
