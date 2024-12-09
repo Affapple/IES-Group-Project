@@ -1,8 +1,7 @@
 import '../css/CarDetails.css';
 import Vehicle from 'Types/Vehicle';
 
-export default function NameDisplay({data}: {data: Vehicle}) {
-    const name= `${data.brand} ${data.model}`;
+export default function NameDisplay({data, name}: {data: Vehicle; name: string}) {
     const l_plate = data.licensePlate;
   
     return (

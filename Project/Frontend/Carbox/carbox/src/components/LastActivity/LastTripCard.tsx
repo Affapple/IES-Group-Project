@@ -43,7 +43,7 @@ const LastTripCard: React.FC<LastTripCardProps> = ({ vehicleId }) => {
         const distance = `${(speeds.reduce((sum, speed) => sum + speed, 0) * (durationMs / 3600000)).toFixed(2)} km`;
 
         // Calcula o consumo baseado na lógica (por exemplo, valores fixos ou derivados dos dados)
-        const consumption = `${((speeds.length * 0.5) / (speeds.length || 1)).toFixed(2)} L/100km`; // Exemplo de cálculo fictício
+        const consumption = `${((speeds.length * 0.5) / (speeds.length || 1)).toFixed(2)} L/100km`;
 
         // Atualiza o estado com os dados da viagem
         setTripData({
@@ -63,7 +63,7 @@ const LastTripCard: React.FC<LastTripCardProps> = ({ vehicleId }) => {
 
   if (error) {
     return (
-      <div className="bg-white p-6 rounded-lg shadow-md w-full">
+      <div className="bg-white p-6 rounded-lg shadow-md w-full mb-10">
         <p className="text-red-500">{error}</p>
       </div>
     );
@@ -71,14 +71,14 @@ const LastTripCard: React.FC<LastTripCardProps> = ({ vehicleId }) => {
 
   if (!tripData) {
     return (
-      <div className="bg-white p-6 rounded-lg shadow-md w-full">
+      <div className="bg-white p-6 rounded-lg shadow-md w-full mb-10">
         <p>No trip data available.</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md w-full">
+    <div className="bg-white p-6 rounded-lg shadow-md w-full mb-10">
       <h4 className="text-lg font-semibold text-gray-700 mb-4">Trip Details</h4>
       <div className="flex justify-between items-center mb-2">
         <p className="text-sm text-gray-500">Date</p>

@@ -39,13 +39,17 @@ function UserSettingsMenu({ open, user }: { open: boolean; user: User }) {
   };
 
   const toggleModal = () => {
-    setModalShown((modalShown) => !modalShown);
+    setModalShown((modalShown) => !modalShown)
+    setName(user.name);
+    setEmail(user.email);
+    setPhone(user.phoneNumber);
   };
+
 
   return (
     <>
       {open ? (
-        <div className="absolute z-1 px-5 py-1 bg-white w-max rounded-md shadow-lg border">
+        <div className="absolute z-9 px-5 py-1 bg-white w-max rounded-md shadow-lg border">
           <ul className="my-2">
             <li className="my-1 transition-transform duration-50 hover:scale-105">
               <i></i>
