@@ -1,23 +1,24 @@
-import { useState, useEffect, EventHandler } from "react";
+import { useState, useContext } from "react";
 import User from "Types/User";
 import Modal from "../Modal";
-import { logout, updateUser } from 'apiClient'
-import { redirect, useNavigate } from "react-router-dom";
+import { logout, updateUser } from "apiClient";
+import { useNavigate } from "react-router-dom";
+import { IUserContext, UserContext } from "Context/UserContext";
 
-function UserSettingsMenu({ open, user } : {open: boolean, user: User}) {
+function UserSettingsMenu({ open, user }: { open: boolean; user: User }) {
   const [name, setName] = useState(user.name);
   const [email, setEmail] = useState(user.email);
   const [phone, setPhone] = useState(user.phoneNumber);
   const [password, setPassword] = useState("");
   const [modalShown, setModalShown] = useState<boolean>(false);
+  const { setCurrentUser } = useContext<IUserContext>(UserContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const response = await updateUser(email, password, name, phone)
-  
-    if (response)
-      toggleModal();
+    const response = await updateUser(email, password, name, phone);
+
+    if (response) toggleModal();
   };
 
   const resetForm = (event) => {
@@ -31,16 +32,19 @@ function UserSettingsMenu({ open, user } : {open: boolean, user: User}) {
 
   const handleLogout = async () => {
     const response = await logout();
-    if (response)
-      navigate('/', { replace: true });
-  }
+    if (response) {
+      setCurrentUser({ role: "" });
+      navigate("/", { replace: true });
+    }
+  };
 
   const toggleModal = () => {
     setModalShown((modalShown) => !modalShown)
     setName(user.name);
     setEmail(user.email);
     setPhone(user.phoneNumber);
-  }
+  };
+
 
   return (
     <>

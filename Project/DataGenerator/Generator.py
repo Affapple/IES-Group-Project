@@ -291,16 +291,19 @@ def simulateLevels(ecu_id):
                     LastLiveData[ecu_id]['tire_pressure'][i]=50
 
 def simulateLocationCoordinates(ecu_id):
-    if LastLiveData[ecu_id]['location']=='':
-        latitude=random.uniform(-90,90)
-        longitude=random.uniform(-180,180)
-        LastLiveData[ecu_id]['location']=f'{latitude},{longitude}'
-    else:
-        latitude=float(LastLiveData[ecu_id]['location'].split(',')[0])
-        longitude=float(LastLiveData[ecu_id]['location'].split(',')[1])
-        latitude+=random.uniform(-0.1,0.1)
-        longitude+=random.uniform(-0.1,0.1)
-        LastLiveData[ecu_id]['location']=f'{latitude},{longitude}'
+
+    latitude = float(LastLiveData[ecu_id]['location'].split(',')[0])
+    longitude = float(LastLiveData[ecu_id]['location'].split(',')[1])
+
+    latitude = max(40.35, min(43.24, latitude))
+    longitude = max(-5.07, min(-2.04, longitude))
+
+    latitude += random.uniform(-0.005, 0.005)
+    longitude += random.uniform(-0.005, 0.005)
+    latitude = max(40.35, min(43.24, latitude))
+    longitude = max(-5.07, min(-2.04, longitude))
+
+    LastLiveData[ecu_id]['location'] = f"{latitude},{longitude}"
 
 def sendToQueue(ecu_id):
     try:
@@ -332,7 +335,7 @@ def GenerateData(ecu_id):
         LastLiveData[ecu_id]['oil_level']=100
         LastLiveData[ecu_id]['battery_charge']=100
         LastLiveData[ecu_id]['gas_level']=100
-        LastLiveData[ecu_id]['location']=''
+        LastLiveData[ecu_id]['location']= '43.1,-3.43'
         LastLiveData[ecu_id]['motor_temperature']=0
         LastLiveData[ecu_id]['tire_pressure']=[30,30,30,30]
         LastLiveData[ecu_id]['errors']=[]
@@ -358,7 +361,7 @@ def GenerateData(ecu_id):
             simulateError(ecu_id)
             simulateLocationCoordinates(ecu_id)
             simulateLevels(ecu_id)
-            LastLiveData['timestamp'] = datetime.now().isoformat()
+            LastLiveData[ecu_id]['timestamp'] = datetime.now().isoformat()
             logging.info(f"Car {ecu_id} turned off")
         else:
             LastLiveData[ecu_id]['car_status']=True
@@ -366,18 +369,17 @@ def GenerateData(ecu_id):
             simulateError(ecu_id)
             simulateLocationCoordinates(ecu_id)
             simulateLevels(ecu_id)
-            LastLiveData['timestamp'] = datetime.now().isoformat()
+            LastLiveData[ecu_id]['timestamp'] = datetime.now().isoformat()
             logging.info(f"Data for car {ecu_id} generated")
             logging.info(f"Data: {LastLiveData[ecu_id]}")
         sendToQueue(ecu_id)
 
         
 
-
 #Simulate the data for the cars
 while True:
     for car in Cars:
         GenerateData(car['ecu_id'])
-    time.sleep(2)
+    time.sleep(10)
 
 

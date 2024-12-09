@@ -1,10 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { useState } from "react";
 import { FaBell } from "react-icons/fa";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import UserSettingsMenu from "./User/UserSettingsMenu";
 import User from "Types/User";
-import { getUser } from 'apiClient';
+import { getUser, logout } from "apiClient";
+import { IUserContext, UserContext } from "Context/UserContext";
 
 const Navbar: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
@@ -15,23 +16,32 @@ const Navbar: React.FC = () => {
     password: "",
   });
   const location = useLocation();
+  const navigate = useNavigate();
+  const { currentUser } = useContext<IUserContext>(UserContext);
 
-  useEffect( () => {
-    const response = getUser().then( (response) => {
-      setUser({
-        name: response.username,
-        email: response.email,
-        phoneNumber: response.phone,
-        password: "",
+  useEffect(() => {
+    getUser()
+      .then((response) => {
+        const user = response.data;
+        setUser({
+          name: user.username,
+          email: user.email,
+          phoneNumber: user.phone,
+          password: "",
+        });
       })
-    })
-  }, [])
+      .catch((err) => {
+        if (err.response.status == 403) {
+          logout();
+          navigate("/");
+        }
+      });
+  }, []);
 
   const isActive = (path: string) =>
     location.pathname === path
       ? "text-green-500 font-semibold underline underline-offset-4"
       : "text-gray-600 hover:text-gray-800 transition-colors duration-300";
-
 
   const toggleSettings = () => {
     setOpen((open) => !open);
@@ -55,13 +65,18 @@ const Navbar: React.FC = () => {
         <Link to="/faqs" className={isActive("/faqs")}>
           FAQs
         </Link>
+        {currentUser.role == "ADMIN" && (
+          <Link to="/admin" className={isActive("/admin")}>
+            Admin Page
+          </Link>
+        )}
       </nav>
 
       {/* User Section */}
       <div className="relative">
         <div className="flex items-center space-x-4">
           <FaBell className="text-yellow-500 text-2xl hover:text-yellow-600 transition duration-300" />
-            <button
+          <button
             className="text-gray-800 font-semibold"
             onClick={toggleSettings}
           >
@@ -69,12 +84,7 @@ const Navbar: React.FC = () => {
           </button>
         </div>
         <div className="relative -bottom-1">
-          {
-            user ? 
-            <UserSettingsMenu open={open} user={user} />
-            :
-            <></>
-          }
+          {user ? <UserSettingsMenu open={open} user={user} /> : <></>}
         </div>
       </div>
     </header>
