@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { getCar } from 'apiClient';
+import React, { useEffect, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import Vehicle from 'Types/Vehicle';
@@ -7,12 +8,13 @@ interface VehicleCarouselProps {
   vehicles: Vehicle[];
   selectedVehicleId: string | null;
   onSelectVehicle: (vehicleId: string) => void;
+  names: string[];
 }
 
-const VehicleCarousel: React.FC<VehicleCarouselProps> = ({ vehicles, selectedVehicleId, onSelectVehicle }) => {
+const VehicleCarousel: React.FC<VehicleCarouselProps> = ({ vehicles, selectedVehicleId, onSelectVehicle, names }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const navigate = useNavigate();
-
+  
   const handleVehicleSelect = (index: number) => {
     setActiveIndex(index);
     onSelectVehicle(vehicles[index].ecuId); // Atualiza o veículo selecionado
@@ -46,6 +48,7 @@ const VehicleCarousel: React.FC<VehicleCarouselProps> = ({ vehicles, selectedVeh
                   : 'bg-white text-gray-800 scale-90 shadow-md opacity-75'
               } min-w-[200px] p-6 flex flex-col items-center hover:scale-105`}
             >
+              <p className="text-lg font-semibold">{names[index]}</p>
               <p>{vehicle.brand} {vehicle.model}</p>
               <p>{vehicle.licensePlate}</p>
             </div>

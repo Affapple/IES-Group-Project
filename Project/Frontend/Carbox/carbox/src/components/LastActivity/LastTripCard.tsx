@@ -36,7 +36,8 @@ const LastTripCard: React.FC<LastTripCardProps> = ({ vehicleId }) => {
         const tripStart = new Date(selectedTrip.trip_start);
         const tripEnd = new Date(selectedTrip.trip_end);
         const durationMs = tripEnd.getTime() - tripStart.getTime();
-        const duration = `${Math.floor(durationMs / 60000)} min`;
+        const diffMs = Math.floor(durationMs / 1000);
+        const duration = `${Math.round(diffMs / 60 * 100) /100} min`;
 
         // Calcula a distância com base nos dados de velocidades
         const speeds = selectedTrip.trip_speeds || [];
