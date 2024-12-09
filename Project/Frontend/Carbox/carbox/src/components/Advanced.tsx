@@ -18,11 +18,7 @@ export default function FuelConsumpt({
     const [tirePressure, setTirePressure] = React.useState(true);
 
     function checkOilLevel() {
-        if (oil <= 5) {
-            setOilLevel(false);
-        } else {
-            setOilLevel(true);
-        }
+            setOilLevel(oil <= 5);
     }
 
     function checkTirePressure() {

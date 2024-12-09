@@ -126,8 +126,8 @@ const UserVehicles: React.FC = () => {
     <div className="min-h-screen bg-gray-100">
       <Navbar />
       {/* Hero Section */}
-      <div className="relative bg-gray-200">
-        <img src={myVehicles} alt="Hero" className="w-full h-64 object-cover" />
+      <div className="relative bg-gray-200 z-0">
+        <img src={myVehicles} alt="Hero" className="w-full h-64 object-cover z-0" />
       </div>
 
       {/* Search Bar */}
