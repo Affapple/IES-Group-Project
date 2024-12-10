@@ -12,98 +12,103 @@ import Advanced from "../components/Advanced";
 import Live from "../components/Live";
 import { useMatch, useNavigate } from "react-router-dom";
 import Vehicle from "Types/Vehicle";
-import { getCar, getCarLatestData, getCarLiveData, getCarName, getTrips } from "apiClient";
+import {
+  getCar,
+  getCarLatestData,
+  getCarLiveData,
+  getCarName,
+  getTrips,
+} from "apiClient";
 import LiveData from "Types/LiveData";
 import Trip from "Types/Trip";
 
-const CarInfo: React.FC = (props) => {
+const CarInfo: React.FC = () => {
   const navigate = useNavigate();
 
   const carId: string | undefined = useMatch("/carinfo/:carId")?.params.carId;
 
-  const [isLive, setLive] = useState<boolean>(true);
+  const [isLive, setLive] = useState<boolean>(false);
   const [advanced, setAdvanced] = useState<boolean>(false);
 
   const [carData, setCarData] = useState<Vehicle>();
   const [carName, setCarName] = React.useState<string>();
 
-  const [liveData, setLiveData] = useState<LiveData>({} as LiveData);
-  const [liveDataList, setLiveDataList] = useState<LiveData[]>([]);
+  const [liveData, setLiveData] = useState<LiveData[]>([]);
   const [tripList, setTripList] = useState<Trip[]>([]);
 
-    /** Fetch car data and name */
-    useEffect(() => {
-        if (carId) {
-            getCar(carId)
-                .then((response) => {
-                    setCarData(response);
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-            /*Car name */
-            getCarName(carId)
-                .then((response) => {
-                    setCarName(response);
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-            /*Trips data */
-            getTrips(carId, null)
-                .then((response) => {
-                    console.log("Trips:", response);
-                    if (response.length === 0) {
-                        console.log("No trips found");
-                    }
-                    if (response.length > 10) {
-                        setTripList(response.slice(response.length-10 , response.length));
-                        console.log("Trips:", tripList);
-                    }
-                    else {
-                        setTripList(response);
-                        console.log("Trips:", tripList);
-                    }
-    
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-            /*Last live data */
-            getCarLatestData(carId)
-                .then((response) => {
-                    setLiveList([response]);
-                    console.log("Live:", response);
-                    if (response === null) {
-                        setLive(false);
-                    }
-                    if (response.carStatus)
-                        setLive(true);
-                    else
-                        setLive(false);
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-                
-        } else {
-            navigate("/home");
-        }
-    }, []);
-  
-    /*
-    useEffect(() => {
-        const interval = setInterval(
-            () => {
-                getLatestLiveData();
-            },
-            isLive ? 5_000 : 30_000,
-        );
+  /** Fetch car data and name */
+  useEffect(() => {
+    if (carId) {
+      getCar(carId)
+        .then((response: Vehicle) => {
+          setCarData(response);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
 
-        return () => {
-            clearInterval(interval);
-        };
-    }, [isLive]); */
+      /*Car name */
+      getCarName(carId)
+        .then((response) => {
+          setCarName(response);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      /*Trips data */
+      getTrips(carId, null)
+        .then((response) => {
+          if (response.length === 0) {
+            console.log("No trips found");
+          }
+          if (response.length > 10) {
+            setTripList(response.slice(response.length - 10, response.length));
+          } else {
+            setTripList(response);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      /*Last live data */
+      getCarLatestData(carId)
+        .then((response: LiveData) => {
+          setLiveData([response]);
+          setLive(response.carStatus ? true : false);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      navigate("/home");
+    }
+  }, []);
+
+  const updateLiveData = () => {
+    const latestLiveData = liveData[liveData.length - 1];
+    const timestamp = latestLiveData ? latestLiveData.timestamp : 0;
+
+    getCarLiveData(carId, timestamp)
+      .then((response: LiveData[]) => {
+        setLiveData((prev) => [...prev, ...response]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    const interval = setInterval(
+      () => {
+        updateLiveData();
+      },
+      isLive ? 5_000 : 30_000,
+    );
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [isLive]);
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans ml-0">
@@ -139,7 +144,7 @@ const CarInfo: React.FC = (props) => {
             ) : null}
             {isLive ? (
               <div className="Main">
-                <Live listLiveData={liveDataList} />
+                <Live liveData={liveData} />
               </div>
             ) : null}
             <div className="Main">
@@ -154,7 +159,7 @@ const CarInfo: React.FC = (props) => {
               <CarInfoTrips trips={tripList} />
             </div>
             <div className="Main">
-              <CarLocation data={carData} />
+              <CarLocation car={carData} liveData={liveData} />
             </div>
           </>
         ) : (

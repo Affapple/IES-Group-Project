@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import Navbar from '../components/NavBar';
-import ImageGallery from '../components/ImageGallery';
-import VehicleCarousel from '../components/VehicleCarousel';
-import LastActivity from '../components/LastActivity/LastActivity';
-import frameImage from '../assets/frameImage.png';
-import Footer from '../components/Footer';
-import { getCars } from 'apiClient';
-import Vehicle from 'Types/Vehicle';
+import React, { useEffect, useState } from "react";
+import Navbar from "../components/NavBar";
+import ImageGallery from "../components/ImageGallery";
+import VehicleCarousel from "../components/VehicleCarousel";
+import LastActivity from "../components/LastActivity/LastActivity";
+import frameImage from "../assets/frameImage.png";
+import Footer from "../components/Footer";
+import { getCars } from "apiClient";
+import Vehicle from "Types/Vehicle";
 
 const HomePage: React.FC = () => {
   const [vehicles, setVehicles] = useState<Array<Vehicle>>([]);
@@ -14,10 +14,8 @@ const HomePage: React.FC = () => {
 
   // Mock temporário para dados de veículos
   useEffect(() => {
-    getCars().then( (response: Array<Vehicle>) => {
-      console.log(response);
+    getCars().then((response: Array<Vehicle>) => {
       setVehicles(response);
-      console.log(vehicles);
     });
   }, []);
 
@@ -30,7 +28,6 @@ const HomePage: React.FC = () => {
       <ImageGallery images={images} />
       <h2 className="text-2xl font-semibold mb-6 px-8">My vehicles</h2>
       <VehicleCarousel
-        
         vehicles={vehicles}
         selectedVehicleId={selectedVehicleId}
         onSelectVehicle={setSelectedVehicleId}

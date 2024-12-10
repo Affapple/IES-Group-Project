@@ -3,7 +3,7 @@ export default interface LiveData {
   batteryCharge: number;
   carStatus: boolean;
   carId: string;
-  timestamp: Date;
+  timestamp: string;
   speed: number;
   rpm: number;
   oilLevel: number;
