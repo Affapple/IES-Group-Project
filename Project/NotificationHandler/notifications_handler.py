@@ -71,7 +71,8 @@ def send_email(to_email: str, subject: str, body: str):
         msg['From'] = EMAIL_ADDRESS
         msg['To'] = to_email
         msg['Subject'] = subject
-        msg.attach(MIMEText(body, 'plain'))
+        # msg.attach(MIMEText(body, 'plain'))
+        msg.attach(MIMEText(body, 'html'))
         
         context = ssl.create_default_context()
         with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
@@ -82,8 +83,16 @@ def send_email(to_email: str, subject: str, body: str):
         logging.error(f"Failed to send email: {e}")
         
 
+
+# Testing the thread here
+from threading import Lock
+
+last_notification_time = {}
+notification_lock = Lock()
+
 def handle_car_turned_on(message: dict):
     """Handles a car being turned on and asks the user if it was them."""
+
     if not message:
         logging.error("Received an empty message. Skipping processing.")
         return
@@ -94,7 +103,7 @@ def handle_car_turned_on(message: dict):
         return
 
     car_status = message.get('car_status')
-    if car_status != "on":
+    if car_status != True:
         logging.error(f"Invalid car status: {car_status}. Skipping processing.")
         return
 
@@ -103,12 +112,23 @@ def handle_car_turned_on(message: dict):
         logging.error(f"No timestamp found for car {ecu_id}. Skipping.")
         return
 
+    with notification_lock:
+        current_time = datetime.now()
+        last_time = last_notification_time.get(ecu_id)
+
+        if last_time and (current_time - last_time) < timedelta(hours=2):
+            logging.info(f"Notification for car {ecu_id} was sent recently. Skipping.")
+            return
+
+        last_notification_time[ecu_id] = current_time
+
     user_email_list = get_user_email_by_ecu_id(ecu_id)
     if not user_email_list:
         logging.error(f"No emails found for car {ecu_id}. Skipping notification.")
         return
 
-    subject = f"Car {ecu_id} Turned On – Was It You?"
+    subject = f"Car {ecu_id} Turned On. Was It You?"
+    # Ill get this body better formatted later on
     body = f"""
     <html>
     <body>
@@ -133,6 +153,7 @@ def handle_car_turned_on(message: dict):
     for user_email in user_email_list:
         send_email(user_email, subject, body)
         logging.info(f"Notification sent to {user_email} for car {ecu_id}.")
+
 
 
 def remind_inspection_date(ecu_id: str):
@@ -187,55 +208,10 @@ def remind_inspection_date(ecu_id: str):
             )
     except Exception as e:
         logging.error(f"Error in remind_inspection_date for car {ecu_id}: {e}")
-
-# def remind_inspection_date(ecu_id: str):
-#     """
-#     Checks if the car's inspection is due in 30 days and sends an email reminder.
-#     """
-    
-#     try:
-#         car_data = db["Cars"].find_one({"ecu_id": ecu_id})
-
-#         if not car_data:
-#             logging.error(f"No data found for ECU ID: {ecu_id}.")
-#             return
-
-#         last_revision_date = car_data.get("last_revision") 
-
-#         if not last_revision_date:
-#             logging.error(f"No last_revision date found for car {ecu_id}.")
-#             return
-
-#         last_revision_date = datetime.strptime(last_revision_date, "%Y-%m-%d")
-#         # Fixated data
-#         date_str = '2025-02-23'
-#         date_format = '%Y-%m-%d'
         
-#         print("HERE              ####################")
-#         next_inspection_date = datetime.strptime(date_str, date_format)
-#         days_remaining = (next_inspection_date - datetime.now()).days
-#         print("days remaining")
-#         print(days_remaining)
+def send_mechanical_info():
+    pass
 
-#         if days_remaining <= 365:
-#             user_email_list = get_user_email_by_ecu_id(ecu_id)
-#             if not user_email_list:
-#                 logging.error(f"No emails found for car {ecu_id}. Skipping reminder.")
-#                 return
-
-#             subject = f"Reminder: Car {ecu_id} Inspection Due in {days_remaining} Days"
-#             body = (
-#                 f"Your car (ID: {ecu_id}, Model: {car_data.get('brand')} {car_data.get('model')}) "
-#                 f"is due for inspection on {next_inspection_date.strftime('%Y-%m-%d')}.\n\n"
-#                 "Please schedule your inspection soon to avoid penalties.\n\n"
-#                 "Thank you!"
-#             )
-
-#             for user_email in user_email_list:
-#                 send_email(user_email, subject, body)
-#                 logging.info(f"Inspection reminder sent to {user_email} for car {ecu_id}.")
-#     except Exception as e:
-#         logging.error(f"Error in remind_inspection_date for car {ecu_id}: {e}")
 
 
 # For oil levels, low battery or high motor temperature
@@ -343,6 +319,8 @@ def start_rabbitmq_consumer():
                 process_notification_others(message)
 
                 process_notification_errors(message)
+                
+                handle_car_turned_on(message)
 
             except Exception as e:
                 logging.error(f"Error processing message: {e}")
