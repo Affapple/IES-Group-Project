@@ -21,6 +21,7 @@ client = MongoClient("mongodb://carbox:mySecretPassword@db:27017/carbox?authSour
 db = client["carbox"] 
 users_collection = db["Users"]
 
+
 def get_user_email_by_ecu_id(car_ecu_id: str) -> str:
     """Retrieve the user's email based on the car ECU ID."""
     emails_list = []
@@ -137,6 +138,7 @@ def remind_inspection_date(ecu_id: str):
     """
     Checks if the car's inspection is due in 30 days and sends an email reminder.
     """
+    
     try:
         car_data = db["Cars"].find_one({"ecu_id": ecu_id})
 
@@ -151,10 +153,15 @@ def remind_inspection_date(ecu_id: str):
             return
 
         last_revision_date = datetime.strptime(last_revision_date, "%Y-%m-%d")
-        next_inspection_date = last_revision_date + timedelta(days=365)
+        # Fixated data
+        date_str = '2025-02-23'
+        date_format = '%Y-%m-%d'
+        
+        print("HERE              ####################")
+        next_inspection_date = datetime.strptime(date_str, date_format)
         days_remaining = (next_inspection_date - datetime.now()).days
 
-        if days_remaining <= 30:
+        if days_remaining <= 365:
             user_email_list = get_user_email_by_ecu_id(ecu_id)
             if not user_email_list:
                 logging.error(f"No emails found for car {ecu_id}. Skipping reminder.")
@@ -197,7 +204,7 @@ def process_notification_others(message: dict):
     # These values need to be reavaluated in the data generator
     oil_threshold = 20
     battery_threshold = 20
-    motor_temp_threshold = 70
+    motor_temp_threshold = 50
 
     alerts = []
 
@@ -270,6 +277,7 @@ def start_rabbitmq_consumer():
         )
         channel = connection.channel()
         channel.queue_declare(queue='carbox', durable=True)
+        
 
         def callback(ch, method, properties, body):
             logging.info(f"Received message from RabbitMQ: {body}")
@@ -289,30 +297,6 @@ def start_rabbitmq_consumer():
 
     except Exception as e:
         logging.error(f"Error in RabbitMQ consumer: {e}")
-
-# def start_rabbitmq_consumer():
-#     """Starts RabbitMQ consumer to listen for incoming messages."""
-#     try:
-#         connection = pika.BlockingConnection(
-#             pika.ConnectionParameters(host='rabbitmq', credentials=credentials)
-#         )
-#         channel = connection.channel()
-#         channel.queue_declare(queue='carbox', durable=True)
-
-#         def callback(ch, method, properties, body):
-#             logging.info(f"Received message from RabbitMQ: {body}")
-#             try:
-#                 message = json.loads(body)
-#                 process_notification_errors(message)
-#             except Exception as e:
-#                 logging.error(f"Error processing message: {e}")
-
-#         channel.basic_consume(queue='carbox', on_message_callback=callback, auto_ack=True)
-#         logging.info(f"Listening for messages on RabbitMQ queue: {'carbox'}")
-#         channel.start_consuming()
-
-#     except Exception as e:
-#         logging.error(f"Error in RabbitMQ consumer: {e}")
 
 
 @app.post("/send-notification")
