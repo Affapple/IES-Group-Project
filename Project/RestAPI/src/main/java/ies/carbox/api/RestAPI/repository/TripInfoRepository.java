@@ -13,7 +13,7 @@ import ies.carbox.api.RestAPI.entity.TripInfo;
  * TripInfoRepository
  */
 @Repository
-public interface TripInfoRepository extends MongoRepository<TripInfo, Long> {
+public interface TripInfoRepository extends MongoRepository<TripInfo, String> {
     Optional<List<TripInfo>> findByCarId(String carId);
     Optional<TripInfo> findByCarIdAndTripId(String carId, String tripId);
 }

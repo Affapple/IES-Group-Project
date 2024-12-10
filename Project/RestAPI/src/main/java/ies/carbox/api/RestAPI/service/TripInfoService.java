@@ -46,16 +46,18 @@ public class TripInfoService {
     }
 
     public TripInfo getLatestTripInfo(String carId) {
-        // Put in repository findFirstByCarIdOrderByDateDesc
-        List<TripInfo> trips= cacheService.getCarTrips(carId);
-        if (trips != null) {
+        System.out.println("Fetching latest trip for carId: " + carId);
+    
+        List<TripInfo> trips = cacheService.getCarTrips(carId);
+        if (trips != null && !trips.isEmpty()) {
+            System.out.println("Trip found in cache: " + trips.get(trips.size() - 1));
             return trips.get(trips.size() - 1);
         }
+    
         trips = tripInfoRepository.findByCarId(carId)
-                .orElseThrow(
-                        () -> new IllegalArgumentException(
-                                String.format("No trips found for car %s", carId)));
-
+                .orElseThrow(() -> new IllegalArgumentException("No trips found for carId: " + carId));
+    
+        System.out.println("Trips fetched from repository: " + trips);
         cacheService.saveTrip(trips, carId);
         return trips.get(trips.size() - 1);
     }
