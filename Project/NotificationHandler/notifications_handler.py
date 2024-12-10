@@ -14,6 +14,8 @@ import time
 from pymongo import MongoClient
 import os
 from datetime import datetime, timedelta
+import math
+from typing import List, Tuple, Dict
 
 
 
@@ -84,7 +86,6 @@ def send_email(to_email: str, subject: str, body: str):
         
 
 
-# Testing the thread here
 from threading import Lock
 
 last_notification_time = {}
@@ -209,9 +210,107 @@ def remind_inspection_date(ecu_id: str):
     except Exception as e:
         logging.error(f"Error in remind_inspection_date for car {ecu_id}: {e}")
         
-def send_mechanical_info():
-    pass
 
+MECHANICS = [
+    {"name": "Lisbon Auto Repair", "location": "38.736946,-9.142685"},  # Lisbon
+    {"name": "Porto Car Service", "location": "41.157944,-8.629105"},  # Porto
+    {"name": "Faro Auto Mechanics", "location": "37.017953,-7.935175"},  # Faro
+    {"name": "Coimbra Repair Hub", "location": "40.211002,-8.429088"},  # Coimbra
+    {"name": "Braga Vehicle Experts", "location": "41.550323,-8.420052"},  # Braga
+]
+
+def haversine(coord1: Tuple[float, float], coord2: Tuple[float, float]) -> float:
+    """
+    Calculate the great-circle distance between two points on the Earth using the Haversine formula.
+    Coordinates are given as (latitude, longitude) tuples in decimal degrees.
+    Returns the distance in kilometers.
+    """
+    R = 6371 
+
+    lat1, lon1 = coord1
+    lat2, lon2 = coord2
+
+    dlat = math.radians(lat2 - lat1)
+    dlon = math.radians(lon2 - lon1)
+
+    a = math.sin(dlat / 2) ** 2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon / 2) ** 2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+    return R * c
+
+def find_closest_mechanic(car_location: str) -> Dict[str, str]:
+    """
+    Find the closest mechanic to the car's location.
+    """
+    car_lat, car_lon = map(float, car_location.split(','))
+    car_coords = (car_lat, car_lon)
+
+    closest_mechanic = None
+    min_distance = float('inf')
+
+    for mechanic in MECHANICS:
+        mech_lat, mech_lon = map(float, mechanic["location"].split(','))
+        distance = haversine(car_coords, (mech_lat, mech_lon))
+
+        if distance < min_distance:
+            min_distance = distance
+            closest_mechanic = mechanic
+
+    return {
+        "name": closest_mechanic["name"],
+        "location": closest_mechanic["location"],
+        "distance": round(min_distance, 2)
+    }
+
+def send_mechanical_info(message: dict):
+    """
+    Sends an email to notify the user of the closest mechanic if the car has errors.
+    """
+    try:
+        car_id = message.get("car_id")
+        car_location = message.get("location")
+        errors = message.get("errors", [])
+
+        if errors == []:
+            logging.info(f"No errors detected for car {car_id}. Skipping mechanic info notification.")
+            return
+
+        closest_mechanic = find_closest_mechanic(car_location)
+        mechanic_name = closest_mechanic["name"]
+        mechanic_coords = closest_mechanic["location"]
+        distance = closest_mechanic["distance"]
+
+        google_maps_url = f"https://www.google.com/maps/dir/{car_location}/{mechanic_coords}"
+
+        subject = f"Mechanical Assistance for Car {car_id}"
+        body = f"""
+        <html>
+        <body>
+            <h2>Car ID: {car_id} Requires Mechanical Assistance</h2>
+            <p>We detected the following errors in your car:</p>
+            <ul>
+                {''.join([f'<li>{error}</li>' for error in errors])}
+            </ul>
+            <p>The closest mechanic is:</p>
+            <h3>{mechanic_name}</h3>
+            <p>Location: {mechanic_coords} ({distance} km away)</p>
+            <p><a href="{google_maps_url}" style="color: #0066cc; text-decoration: none;">Click here for directions</a></p>
+            <p>Thank you for using our service.</p>
+        </body>
+        </html>
+        """
+
+        user_email_list = get_user_email_by_ecu_id(car_id)
+        if not user_email_list:
+            logging.error(f"No emails found for car {car_id}. Skipping mechanic info notification.")
+            return
+
+        for user_email in user_email_list:
+            send_email(user_email, subject, body)
+            logging.info(f"Mechanic information email sent to {user_email} for car {car_id}.")
+
+    except Exception as e:
+        logging.error(f"Error in send_mechanical_info: {e}")
 
 
 # For oil levels, low battery or high motor temperature
@@ -317,8 +416,11 @@ def start_rabbitmq_consumer():
                 message = json.loads(body)
 
                 process_notification_others(message)
-
-                process_notification_errors(message)
+                
+                # Theoretically done in send mechanical info
+                # process_notification_errors(message)
+                
+                send_mechanical_info(message)
                 
                 handle_car_turned_on(message)
 
