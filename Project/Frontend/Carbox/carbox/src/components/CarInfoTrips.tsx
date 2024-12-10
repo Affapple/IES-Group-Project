@@ -17,8 +17,7 @@ export default function CarInfoTrips({data}) {
     const trips = data;
     const [modalShown, setModalShown] = React.useState<boolean>(false);
     const [currentTrip, setCurrentTrip] = React.useState(null);
-    const [tripId, setTripId] = React.useState(null);
-    const [carId, setCarId] = React.useState(null);
+    
 
     
     function getDuration(trip) {
@@ -30,9 +29,9 @@ export default function CarInfoTrips({data}) {
         return min;
     }
 
-    async function toggleModal() {
+    async function toggleModal(tripId, carId) {
         if (!modalShown) {
-            await getTrip();
+            await getTrip(tripId, carId);
             console.log("Current Trip:", currentTrip);
             console.log("Trip ID:", tripId);
             console.log("Car ID:", carId);
@@ -64,7 +63,7 @@ export default function CarInfoTrips({data}) {
     }
     
 
-    async function getTrip() {
+    async function getTrip(tripId, carId) {
         try {
             const response = await getTrips(carId, tripId);
             setCurrentTrip(response[0]);
@@ -117,7 +116,7 @@ export default function CarInfoTrips({data}) {
                     <h5 className=' text-lg'></h5>
                 </div>
                 <div className="items-end"> 
-                    <Button label="View Trip" onClick={() => {setCarId(trip.carId);setTripId(trip.tripId);toggleModal();}}  className="p-button-raised p-button-rounded p-button-text bg-green-400 rounded-lg p-3" />
+                    <Button label="View Trip" onClick={() => {toggleModal(trip.tripId, trip.carId);}}  className="p-button-raised p-button-rounded p-button-text bg-green-400 rounded-lg p-3" />
                 </div>
                 {modalShown && currentTrip ? 
                     <Modal onClose={toggleModal} >
