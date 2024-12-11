@@ -50,7 +50,8 @@ public class SecurityConfiguration {
                     "/v3/api-docs/**"
                 )
                 .permitAll()
-                // .requestMatchers(CONSTANTS.apiBase + "/admin/**").hasAuthority(Role.ADMIN.name())
+                .requestMatchers(CONSTANTS.apiBase + "/admin/**")
+                    .hasAuthority(Role.ADMIN.name())
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -67,7 +68,6 @@ public class SecurityConfiguration {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        System.out.println("Frontend ADdress = " + frontendAddress);
         configuration.setAllowedOrigins(List.of(CONSTANTS.baseUrl, frontendAddress));
         configuration.setAllowedMethods(List.of("GET","POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(List.of("Authorization","Content-Type"));
