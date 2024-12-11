@@ -34,6 +34,10 @@ export default function Live({ liveData }: { liveData: LiveData[] }) {
 
         const torque = reducer(liveData, "torque");
         setTorque(torque.slice(torque.length - NUM_POINTS, torque.length));
+        console.log(rpm)
+        console.log(torque)
+        console.log(speed)
+        console.log(parsedTime)
     }, [liveData]);
 
     return (

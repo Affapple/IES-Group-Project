@@ -19,11 +19,11 @@ export default function Advanced({
   const [tirePressure, setTirePressure] = React.useState(true);
 
   function checkOilLevel() {
-    setOilLevel(oil <= 5);
+    setOilLevel(oil >= 5);
   }
 
   function checkTirePressure() {
-    setTirePressure(tires.some((tirePressure) => tirePressure < 20));
+    setTirePressure(tires.some((tirePressure) => tirePressure > 20));
   }
 
   useEffect(() => {
@@ -72,8 +72,8 @@ export default function Advanced({
             width={150}
             height={150}
             value={oil}
-            text={oil + "/20"}
-            valueMax={20}
+            text={oil + "/120"}
+            valueMax={120}
           />
         </div>
       </div>
