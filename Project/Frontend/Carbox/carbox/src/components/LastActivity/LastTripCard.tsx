@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { getTrips } from '../../apiClient';
+import React, { useEffect, useState } from "react";
+import { getTrips } from "../../apiClient";
 
 interface LastTripCardProps {
   vehicleId: string; // O ID do veículo selecionado, recebido como prop
@@ -22,15 +22,13 @@ const LastTripCard: React.FC<LastTripCardProps> = ({ vehicleId }) => {
     const fetchTripData = async () => {
       try {
         const trips = await getTrips(vehicleId, null); // Busca todas as viagens
-        console.log('Trips data from getTrips:', trips);
 
         if (!trips || trips.length === 0) {
-          throw new Error('No trips available.');
+          throw new Error("No trips available.");
         }
 
         // Seleciona a primeira viagem da lista
         const selectedTrip = trips[0];
-        console.log('Selected Trip:', selectedTrip);
 
         // Calcula a duração
         const tripStart = new Date(selectedTrip.trip_start);
@@ -48,14 +46,14 @@ const LastTripCard: React.FC<LastTripCardProps> = ({ vehicleId }) => {
 
         // Atualiza o estado com os dados da viagem
         setTripData({
-          date: tripStart.toISOString().split('T')[0],
-          duration: duration || 'Duration not available',
-          distance: distance || 'Distance not available',
-          consumption: consumption || 'Consumption not available',
+          date: tripStart.toISOString().split("T")[0],
+          duration: duration || "Duration not available",
+          distance: distance || "Distance not available",
+          consumption: consumption || "Consumption not available",
         });
       } catch (err) {
-        console.error('Error fetching trips:', err);
-        setError('Failed to load trip data.');
+        console.error("Error fetching trips:", err);
+        setError("Failed to load trip data.");
       }
     };
 
@@ -95,7 +93,9 @@ const LastTripCard: React.FC<LastTripCardProps> = ({ vehicleId }) => {
       </div>
       <div className="flex justify-between items-center">
         <p className="text-sm text-gray-500">Consumption</p>
-        <p className="text-sm font-medium text-green-500">{tripData.consumption}</p>
+        <p className="text-sm font-medium text-green-500">
+          {tripData.consumption}
+        </p>
       </div>
     </div>
   );

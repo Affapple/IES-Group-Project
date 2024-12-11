@@ -1,24 +1,28 @@
-import React, { useState, useEffect, useRef } from 'react';
-import Navbar from '../components/NavBar';
-import VehicleCard from '../components/VehicleCard';
-import Footer from '../components/Footer';
-import AddVehicleModal from '../components/AddVehicleModal';
-import myVehicles from '../assets/myVehicles.png';
-import filter from '../assets/filter.png';
-import { getCars, getCarLatestData, associateCar, deleteCar, getCarName } from 'apiClient.js';
-
+import React, { useState, useEffect, useRef } from "react";
+import Navbar from "../components/NavBar";
+import VehicleCard from "../components/VehicleCard";
+import Footer from "../components/Footer";
+import AddVehicleModal from "../components/AddVehicleModal";
+import myVehicles from "../assets/myVehicles.png";
+import filter from "../assets/filter.png";
+import {
+  getCars,
+  getCarLatestData,
+  associateCar,
+  deleteCar,
+  getCarName,
+} from "apiClient.js";
 
 const UserVehicles: React.FC = () => {
   const [vehicles, setVehicles] = useState([]);
   const [filteredVehicles, setFilteredVehicles] = useState([]);
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const hasFetched = useRef(false);
 
   // Carregar veículos do usuário e seus dados ao vivo
   useEffect(() => {
-    
     if (hasFetched.current) return; // Prevent duplicate execution
     hasFetched.current = true;
 
@@ -27,61 +31,62 @@ const UserVehicles: React.FC = () => {
       try {
         // Buscar os dados do utilizador (inclui a carsList)
         const userAccount = await getCars(); // getCars chama o endpoint /user/account
-        console.log('User Account:', userAccount);
-  
+
         // Processar a carsList e mapear para objetos de veículos com live data
         const vehiclesWithLiveData = await Promise.all(
           userAccount.map(async (car) => {
             const name = await getCarName(car.ecuId);
-            console.log('Car Name:', name);
             // Buscar dados ao vivo para cada veículo
             const liveData = await getCarLatestData(car.ecuId);
-            console.log('Live Data:', liveData);
             return {
               id: car.ecuId,
               name: name,
               range: liveData.gasLevel || 0, // Autonomia
-              battery: liveData.batteryCharge || 'Unknown', // Bateria
+              battery: liveData.batteryCharge || "Unknown", // Bateria
               live: liveData.carStatus || false, // Estado ao vivo
             };
-          })
+          }),
         );
-  
+
         // Atualizar o estado com os veículos processados
         setVehicles(vehiclesWithLiveData);
         setFilteredVehicles(vehiclesWithLiveData);
       } catch (error) {
-        console.error('Erro ao buscar veículos:', error);
+        console.error("Erro ao buscar veículos:", error);
       } finally {
         setLoading(false);
       }
     };
-  
+
     fetchVehicles();
   }, []);
-  
+
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
     const filtered = vehicles.filter((vehicle) =>
-      vehicle.name.toLowerCase().includes(query)
+      vehicle.name.toLowerCase().includes(query),
     );
     setFilteredVehicles(filtered);
   };
 
   const handleShowAllVehicles = () => {
     setFilteredVehicles(vehicles);
-    setSearchQuery('');
+    setSearchQuery("");
   };
 
-  const handleAddVehicle = async (newVehicle: { licensePlate: string; name: string; ecuId: string }) => {
+  const handleAddVehicle = async (newVehicle: {
+    licensePlate: string;
+    name: string;
+    ecuId: string;
+  }) => {
     try {
       // Associar o novo veículo ao usuário
       await associateCar(newVehicle.ecuId, newVehicle.name);
-  
+
       // Buscar dados ao vivo do novo veículo
       const liveData = await getCarLatestData(newVehicle.ecuId);
-  
+
       // Atualizar o estado com o novo veículo, incluindo os dados ao vivo
       const updatedVehicles = [
         ...vehicles,
@@ -89,14 +94,14 @@ const UserVehicles: React.FC = () => {
           id: newVehicle.ecuId,
           name: newVehicle.name,
           range: liveData.autonomy || 0, // Garantir que autonomia seja exibida
-          battery: liveData.battery || 'Unknown', // Garantir que a bateria seja exibida
+          battery: liveData.battery || "Unknown", // Garantir que a bateria seja exibida
           live: liveData.live || false,
         },
       ];
       setVehicles(updatedVehicles);
       setFilteredVehicles(updatedVehicles);
     } catch (error) {
-      console.error('Erro ao adicionar veículo:', error);
+      console.error("Erro ao adicionar veículo:", error);
     }
   };
 
@@ -110,7 +115,7 @@ const UserVehicles: React.FC = () => {
       setVehicles(updatedVehicles);
       setFilteredVehicles(updatedVehicles);
     } catch (error) {
-      console.error('Erro ao remover veículo:', error);
+      console.error("Erro ao remover veículo:", error);
     }
   };
 
@@ -127,7 +132,11 @@ const UserVehicles: React.FC = () => {
       <Navbar />
       {/* Hero Section */}
       <div className="relative bg-gray-200 z-0">
-        <img src={myVehicles} alt="Hero" className="w-full h-64 object-cover z-0" />
+        <img
+          src={myVehicles}
+          alt="Hero"
+          className="w-full h-64 object-cover z-0"
+        />
       </div>
 
       {/* Search Bar */}

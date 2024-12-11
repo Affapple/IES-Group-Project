@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import Navbar from '../components/NavBar';
 import ImageGallery from '../components/ImageGallery';
@@ -15,9 +16,9 @@ const HomePage: React.FC = () => {
 
   // Mock temporário para dados de veículos
   useEffect(() => {
-    getCars().then( (response: Array<Vehicle>) => {
-      console.log(response);
+    getCars().then((response: Array<Vehicle>) => {
       setVehicles(response);
+
       console.log(vehicles);
       for (let i = 0; i < response.length; i++) {
         getCarName(response[i].ecuId).then((response: string) => {
@@ -25,6 +26,7 @@ const HomePage: React.FC = () => {
         }
         );
       }
+
     });
     
     
@@ -39,7 +41,6 @@ const HomePage: React.FC = () => {
       <ImageGallery images={images} />
       <h2 className="text-2xl font-semibold mb-6 px-8">My vehicles</h2>
       <VehicleCarousel
-        
         vehicles={vehicles}
         selectedVehicleId={selectedVehicleId}
         onSelectVehicle={setSelectedVehicleId}
