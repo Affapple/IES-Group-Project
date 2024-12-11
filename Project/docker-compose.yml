@@ -10,6 +10,7 @@ services:
     volumes:
       - ./Database/mongo-init:/docker-entrypoint-initdb.d
 
+
   redis:
     image: redis
     ports:
@@ -19,6 +20,7 @@ services:
       - ./Cache/redis.conf:/usr/local/etc/redis/redis.conf
     environment:
       - REDIS_ARGS="--requirepass ${REDIS_PASSWORD} --save ${REDIS_SNAPSHOT_PERIOD} ${REDIS_SNAPSHOT_MIN_CHANGE} --appendonly yes"
+
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -30,6 +32,7 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
 
+
   database_adapter:
     build:
       context: ./Database
@@ -38,6 +41,7 @@ services:
       - rabbitmq
       - db
 
+
   data_generator:
     build:
       context: ./DataGenerator
@@ -45,6 +49,7 @@ services:
     depends_on:
       - rabbitmq
       - database_adapter
+
 
   restapi:
     build:
@@ -68,6 +73,7 @@ services:
     ports:
       - "${API_PORT}:8080"
 
+
   frontend:
     build:
       context: ./Frontend/Carbox
@@ -75,7 +81,8 @@ services:
     environment:
       VITE_API_URL: ${VITE_API_URL}:${API_PORT}
     ports:
-      - "80:80"
+      - "80:5173"
+
 
   notification_handler:
     build:
@@ -92,3 +99,5 @@ services:
       - rabbitmq
     ports:
       - "8000:8000"
+
+

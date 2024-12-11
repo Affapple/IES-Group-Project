@@ -120,8 +120,7 @@ public class CarController {
             userDto.setPhone(user.getPhone());
             userDto.setPassword(user.getPassword());
             userDto.setCarsList(user.getCarsList());
-            userDto.setRole(user.getRole());
-            authenticationService.update(userDto);
+            User newUser = authenticationService.update(userDto);
             return ResponseEntity.ok(car);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
