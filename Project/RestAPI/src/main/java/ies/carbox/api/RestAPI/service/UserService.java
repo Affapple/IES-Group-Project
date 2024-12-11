@@ -79,6 +79,7 @@ public class UserService implements UserDetailsService {
         user.setCarsList(carList);
         
         // Update cache
+        userRepository.save(user);
         cacheService.saveUser(user);
         return user;
     }
@@ -96,6 +97,7 @@ public class UserService implements UserDetailsService {
         user.setCarsList(carList);
 
         // Update cache
+        userRepository.save(user);
         cacheService.saveUser(user);
         return user;
     }
