@@ -1,22 +1,35 @@
-import React, { useEffect, useState } from "react";
-import Navbar from "../components/NavBar";
-import ImageGallery from "../components/ImageGallery";
-import VehicleCarousel from "../components/VehicleCarousel";
-import LastActivity from "../components/LastActivity/LastActivity";
-import frameImage from "../assets/frameImage.png";
-import Footer from "../components/Footer";
-import { getCars } from "apiClient";
-import Vehicle from "Types/Vehicle";
+
+import React, { useEffect, useState } from 'react';
+import Navbar from '../components/NavBar';
+import ImageGallery from '../components/ImageGallery';
+import VehicleCarousel from '../components/VehicleCarousel';
+import LastActivity from '../components/LastActivity/LastActivity';
+import frameImage from '../assets/frameImage.png';
+import Footer from '../components/Footer';
+import { getCarName, getCars } from 'apiClient';
+import Vehicle from 'Types/Vehicle';
 
 const HomePage: React.FC = () => {
   const [vehicles, setVehicles] = useState<Array<Vehicle>>([]);
   const [selectedVehicleId, setSelectedVehicleId] = useState<string>("");
+  const [names, setNames] = useState<Array<string>>([]);
 
   // Mock temporário para dados de veículos
   useEffect(() => {
     getCars().then((response: Array<Vehicle>) => {
       setVehicles(response);
+
+      console.log(vehicles);
+      for (let i = 0; i < response.length; i++) {
+        getCarName(response[i].ecuId).then((response: string) => {
+          setNames((prev) => [...prev, response]);
+        }
+        );
+      }
+
     });
+    
+    
   }, []);
 
   const images = [frameImage];
@@ -31,6 +44,7 @@ const HomePage: React.FC = () => {
         vehicles={vehicles}
         selectedVehicleId={selectedVehicleId}
         onSelectVehicle={setSelectedVehicleId}
+        names={names}
       />
       {/* Passa o vehicleId selecionado para os componentes de atividade */}
       <LastActivity vehicleId={selectedVehicleId} />
