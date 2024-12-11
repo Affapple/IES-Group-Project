@@ -139,7 +139,7 @@ const CarInfo: React.FC = () => {
             </div>
             {advanced ? (
               <div className="Main">
-                <Specs liveData={liveData} carData={carData} />
+                <Specs carData={carData} />
               </div>
             ) : null}
             {isLive ? (

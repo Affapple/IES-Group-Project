@@ -6,6 +6,7 @@ import { Button } from "primereact/button";
 import Modal from "./Modal";
 import { LineChart } from "@mui/x-charts/LineChart";
 import "../css/CarDetails.css";
+import { getTrips } from "apiClient";
 
 export default function CarInfoTrips({ trips }: { trips: Trip[] }) {
     const [modalShown, setModalShown] = React.useState<boolean>(false);
@@ -146,48 +147,14 @@ export default function CarInfoTrips({ trips }: { trips: Trip[] }) {
                                     height={300}
                                 />
                                 <h2 className="text-left">
-                                    From {getDate(trip.trip_start)} to {getDate(trip.trip_end)}
+                                    Average {label}: {data?.length ? getAvg(data) : "N/A"}
                                 </h2>
-                                <h2 className="text-left">
-                                    Duration: {getDuration(trip)} hours
-                                </h2>
+                                
                             </div>
-                            {[
-                                {
-                                    label: "Speeds (Km/h)",
-                                    data: trip.trip_speeds,
-                                    color: "#2ca02c",
-                                },
-                                { label: "RPMs", data: trip.trip_rpm, color: "#ff4500" },
-                                { label: "Torques", data: trip.trip_torque, color: "#1f77b4" },
-                                {
-                                    label: "Engine Temperature (ºC)",
-                                    data: trip.trip_motor_temp,
-                                    color: "#ff7f0e",
-                                },
-                            ].map(({ label, data, color }, index) => (
-                                <div className="flex-cols border-b-4 border-black" key={index}>
-                                    <LineChart
-                                        xAxis={[{ data: getXAxis(data) }]}
-                                        series={[
-                                            {
-                                                data: data || [],
-                                                area: true,
-                                                color,
-                                                label: `${label}`,
-                                            },
-                                        ]}
-                                        width={500}
-                                        height={300}
-                                    />
-                                    <h2 className="text-left">
-                                        Average {label}: {data?.length ? getAvg(data) : "N/A"}
-                                    </h2>
-                                </div>
-                            ))}
-                        </div>
-                    </Modal>
-                ) : null}
+                        ))}
+                    </div>
+                </Modal>
+                : null}
             </div>
         );
     };

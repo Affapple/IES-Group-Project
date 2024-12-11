@@ -11,6 +11,7 @@ interface Location {
   address: string;
 }
 
+
 export default function CarLocation({
   liveData,
   car,
@@ -20,6 +21,7 @@ export default function CarLocation({
 }) {
   const [locationData, setLocationData] = useState<Location>({} as Location);
   const [locationAPI, setLocationAPI] = useState<string>("");
+  const [lastTime, setLastTime] = useState<string>("");
 
   const fetchLocationData = async (data: LiveData | Vehicle) => {
     try {
@@ -39,9 +41,15 @@ export default function CarLocation({
     }
   };
 
+  function getDate(date: string) {
+    const d = new Date(date);
+    return d.toISOString().split("T")[0] + " " + d.toTimeString().split(" ")[0];
+}
+
   useEffect(() => {
     if (liveData && liveData.length != 0) {
       const latestLiveData = liveData[liveData.length - 1];
+      setLastTime(getDate(latestLiveData.timestamp))
       fetchLocationData(latestLiveData);
     } else if (car && car.location != null) {
       fetchLocationData(car);
@@ -57,8 +65,9 @@ export default function CarLocation({
   return locationData ? (
     <div className="font-sans space-y-0.5 w-100%; border-b-2 border-black pb-3  ">
       <div>
-        <h1 className="text-3xl ml-10">Last Location</h1>
+        <h1 className="text-3xl ml-10 mb-4">Last Location</h1>
         <p className="text-base text-gray-500 mb-4">{locationData.address}</p>
+        <p className="text-base text-gray-500 mb-4">{lastTime}</p>
         <img
           src={locationAPI}
           alt="Vehicle Location"

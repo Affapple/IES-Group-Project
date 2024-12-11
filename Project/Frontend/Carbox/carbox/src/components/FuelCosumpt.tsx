@@ -16,17 +16,19 @@ export default function FuelConsumpt({
   const [autonomyLevel, setAutonomyLevel] = React.useState(true);
   const [temperatureLevel, setTemperatureLevel] = React.useState(true);
   const [batteryLevel, setBatteryLevel] = React.useState(true);
-  const autonomy = carData.autonomy;
+  const maxAutonomy= carData.autonomy;
 
   let battery = -1;
   let temperature = -1;
+  let autonomy= -1;
   if (latestLiveData != undefined) {
     battery = latestLiveData.batteryCharge;
     temperature = latestLiveData.motorTemperature;
+    autonomy= ( latestLiveData.gasLevel * maxAutonomy)/100;
   }
 
   function checkBatteryLevel() {
-    setBatteryLevel(battery <= 30);
+    setBatteryLevel(battery >= 30);
   }
 
   useEffect(() => {
@@ -34,11 +36,11 @@ export default function FuelConsumpt({
   }, [batteryLevel]);
 
   function checkAutonomyLevel() {
-    setAutonomyLevel(autonomy <= 50);
+    setAutonomyLevel(autonomy >= (maxAutonomy*0.25));
   }
 
   function checkTemperatureLevel() {
-    setTemperatureLevel(temperature >= 105);
+    setTemperatureLevel(temperature <= 105);
   }
 
   useEffect(() => {
@@ -62,8 +64,8 @@ export default function FuelConsumpt({
             width={150}
             height={150}
             value={autonomy}
-            text={autonomy + "/600"}
-            valueMax={600}
+            text={autonomy + "/"+maxAutonomy}
+            valueMax={maxAutonomy}
           />
         </div>
       </div>
