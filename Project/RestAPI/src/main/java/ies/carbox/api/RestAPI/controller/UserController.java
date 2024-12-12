@@ -134,21 +134,23 @@ public class UserController {
         }
     )
     public ResponseEntity<User> updateAccount(
-            @Parameter(description = "Updated User object with new details") @RequestBody User updatedUser) {
+            @Parameter(description = "Updated User object with new details") 
+            @RequestBody User updatedUser) {
 
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             User currentUser = (User) authentication.getPrincipal();
             User user = userService.loadUserByUsername(currentUser.getEmail());
-            userService.delUser(user);
-            RegisterUserDto userDto = new RegisterUserDto();
-            userDto.setEmail(updatedUser.getEmail());
-            userDto.setUsername(updatedUser.getName());
-            userDto.setPhone(updatedUser.getPhone());
-            userDto.setPassword(updatedUser.getPassword());
-            userDto.setCarsList(user.getCarsList());
-            User newUser = authenticationService.update(userDto);
-            return ResponseEntity.ok(newUser);
+
+            // Atualizar apenas os campos não nulos
+            if (updatedUser.getName() != null) user.setName(updatedUser.getName());
+            if (updatedUser.getPhone() != 0) user.setPhone(updatedUser.getPhone());
+            if (updatedUser.getPassword() != null) user.setPassword(updatedUser.getPassword());
+            if (updatedUser.getUsername() != null) user.setUsername(updatedUser.getUsername());
+
+            userService.updateUser(user);
+
+            return ResponseEntity.ok(user);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return ResponseEntity.badRequest().body(null);

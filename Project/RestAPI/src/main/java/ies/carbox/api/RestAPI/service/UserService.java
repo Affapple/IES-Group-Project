@@ -35,6 +35,23 @@ public class UserService implements UserDetailsService {
 
     }
 
+    public void saveUserToCache(User user) {
+        cacheService.saveUser(user);
+    }
+
+    public User getUserFromCache(String email) {
+        return cacheService.getUser(email);
+    }
+
+    public void deleteUserFromCache(String email) {
+        cacheService.deleteUser(email);
+    }
+
+    public void updateUser(User user) {
+        userRepository.save(user);
+        cacheService.saveUser(user);
+    }
+
     // ! Maybe correct this later to be email and not username
     // May not be necessary this method
     @Override
