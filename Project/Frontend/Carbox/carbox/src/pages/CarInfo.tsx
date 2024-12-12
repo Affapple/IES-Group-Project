@@ -90,7 +90,9 @@ const CarInfo: React.FC = () => {
 
     getCarLiveData(carId, timestamp)
       .then((response: LiveData[]) => {
+        console.log("New data:", response)
         setLiveData((prev) => [...prev, ...response]);
+        console.log("Total live:", liveData)
       })
       .catch((err) => {
         console.log(err);
@@ -101,6 +103,15 @@ const CarInfo: React.FC = () => {
     const interval = setInterval(
       () => {
         updateLiveData();
+        getCarLatestData(carId)
+        .then((response: LiveData) => {
+          setLive(response.carStatus ? true : false);
+          setLiveData((prev) => [...prev, response]);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+        
       },
       isLive ? 5_000 : 30_000,
     );

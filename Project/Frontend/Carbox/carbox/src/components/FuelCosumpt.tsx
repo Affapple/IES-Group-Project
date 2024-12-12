@@ -46,7 +46,8 @@ export default function FuelConsumpt({
   useEffect(() => {
     checkAutonomyLevel();
     checkTemperatureLevel();
-  }, [autonomy, temperature]);
+    checkBatteryLevel()
+  }, [autonomy, battery, temperature]);
 
   return (
     <div className="font-sans space-y-0.5 w-100%; border-b-2 border-black pb-3 flex  justify-between items-center   ">
