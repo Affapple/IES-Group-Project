@@ -4,6 +4,7 @@ import {
   Route,
   Routes,
   Navigate,
+  useNavigate,
 } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
@@ -17,23 +18,23 @@ import { getUser, unloadToken } from "apiClient";
 
 const App: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
+
   const [currentUser, setCurrentUser] = useState<IUserData>({
-    role: "USER",
+    role: "",
   } as IUserData);
 
   useEffect(() => {
-    getUser().then((response) => {
-      if (!(200 <= response.status && response.status <= 299)) {
-        unloadToken();
-        setCurrentUser({ role: "" }); // TODO: Set to save user data
+    getUser()
+      .then((response) => {
+        const user = response.data;
+        setCurrentUser({ role: user.role }); // TODO: Set to save user data
         setLoading(false);
-        return;
-      }
-
-      const user = response.data;
-      setCurrentUser({ role: user.role }); // TODO: Set to save user data
-      setLoading(false);
-    });
+      })
+      .catch((err) => {
+        unloadToken();
+        setCurrentUser({ role: "" });
+        setLoading(false);
+      });
   }, []);
 
   return loading ? (
