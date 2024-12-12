@@ -9,9 +9,26 @@ import Vehicle from 'Types/Vehicle';
 
 export default function  CarDetails({data}: {data: Vehicle}) {
     const [revisionUp, setRevisionUp] = React.useState(false);
+    const [alertMessage, setAlert] = React.useState("(EXPIRING SOON)")
 
     function checkRevision() {
         //To implement the logic for the revision date
+        const lastRevision= new Date(data.lastRevision);
+        const expires = new Date(lastRevision.getFullYear()+1, lastRevision.getMonth(), lastRevision.getDay());
+        const current = Date.now();
+        if(expires.getDate()- current <= 30*86400000){
+            setRevisionUp(true);
+            if(expires.getDate()-current <=0){
+                setAlert("(EXPIRED)");
+            }
+            else{
+                setAlert("(EXPIRING SOON)");
+            }
+        }
+        else{
+            setRevisionUp(false);
+        }
+
     };
 
     useEffect(() => {
@@ -26,7 +43,7 @@ export default function  CarDetails({data}: {data: Vehicle}) {
                 <p className="info">Year: <span className='info2'> {data.year}</span></p>
                 <p className="info">License Plate: <span className='info2'> {data.licensePlate}</span></p>
                 {revisionUp ? 
-                    <p className="info2Alert">Last Revision: <span className='info2Alert'> {data.lastRevision} EXPIRING SOON</span></p> 
+                    <p className="infoAlert">Last Revision: <span className='info2'> {data.lastRevision} <span className="info2Alert">{alertMessage}</span></span></p> 
                     : 
                     <p className="info">Last Revision: <span className='info2'> {data.lastRevision}</span></p>
                 }

@@ -86,7 +86,7 @@ const CarInfo: React.FC = () => {
 
   const updateLiveData = () => {
     const latestLiveData = liveData[liveData.length - 1];
-    const timestamp = latestLiveData ? latestLiveData.timestamp : 0;
+    const timestamp = latestLiveData ? latestLiveData.timestamp : "2000-12-12T09:39:58.896";
 
     getCarLiveData(carId, timestamp)
       .then((response: LiveData[]) => {

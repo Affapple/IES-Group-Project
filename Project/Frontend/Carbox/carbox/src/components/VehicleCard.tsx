@@ -68,9 +68,9 @@ const VehicleCard: React.FC<VehicleCardProps> = ({ vehicleId, name, autonomy, ba
         <p className="text-gray-600 font-dm-sans">Battery:</p>
         <span
           className={`ml-1 ${
-            battery === 'Optimal'
+            battery >=60
               ? 'text-green-500'
-              : battery === 'Be careful'
+              : battery <60 && battery>=30
               ? 'text-yellow-500'
               : 'text-red-500'
           } font-poppins font-semibold`}
