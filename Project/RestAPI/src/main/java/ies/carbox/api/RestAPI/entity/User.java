@@ -51,6 +51,13 @@ public class User implements UserDetails {
      */
     public String getUsername(){ return email; }
 
+    /**
+     * Sets email
+     * @param username 
+     */
+    public void setUsername(String email) { username = email; }
+
+
     /** Username of the user, which must be unique. */
     @Field("username")
     private String username;
@@ -75,10 +82,12 @@ public class User implements UserDetails {
     @Getter @Setter
     private List<List<String>> carsList;
 
-    /**Phone number of user */
+    /** Phone number of the user */
     @Field("phone")
     @Getter @Setter
     private int phone;
+
+    /** User status */
 
     @Field("role")
     @Getter @Setter
