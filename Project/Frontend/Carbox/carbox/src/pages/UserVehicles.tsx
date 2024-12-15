@@ -39,6 +39,8 @@ const UserVehicles: React.FC = () => {
             const name = await getCarName(car.ecuId);
             // Buscar dados ao vivo para cada veículo
             const liveData = await getCarLatestData(car.ecuId);
+            console.log("live:" , liveData)
+            console.log(liveData.location)
             return {
               id: car.ecuId,
               name: name,
@@ -46,6 +48,7 @@ const UserVehicles: React.FC = () => {
               battery: liveData.batteryCharge || "Unknown", // Bateria
               live: liveData.carStatus || false, // Estado ao vivo
               range: car.autonomy,
+              location: liveData.location
             };
           }),
         );
@@ -101,6 +104,7 @@ const UserVehicles: React.FC = () => {
           battery: liveData.battery || "Unknown", // Garantir que a bateria seja exibida
           live: liveData.live || false,
           range: car.autonomy,
+          location: liveData.location
 
         },
       ];
@@ -182,6 +186,7 @@ const UserVehicles: React.FC = () => {
               autonomy={`${(vehicle.fuel*vehicle.range)/100} km`}
               battery={vehicle.battery}
               live={vehicle.live}
+              location={vehicle.location}
               onRemove={() => handleRemoveVehicle(vehicle.id)}
             />
           ))}

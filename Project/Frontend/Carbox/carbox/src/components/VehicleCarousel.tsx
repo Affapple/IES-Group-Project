@@ -44,7 +44,7 @@ const VehicleCarousel: React.FC<VehicleCarouselProps> = ({ vehicles, selectedVeh
               onDoubleClick={() => handleVehicleDoubleClick(vehicle.ecuId)} // Clique duplo para navegar
               className={`cursor-pointer transition-transform duration-300 rounded-lg border ${
                 vehicle.ecuId === selectedVehicleId
-                  ? 'bg-gray-500 text-white scale-102 shadow-2xl z-10'
+                  ? 'bg-gray-500 text-white scale-102 shadow-2xl'
                   : 'bg-white text-gray-800 scale-90 shadow-md opacity-75'
               } min-w-[200px] p-6 flex flex-col items-center hover:scale-102`}
             >

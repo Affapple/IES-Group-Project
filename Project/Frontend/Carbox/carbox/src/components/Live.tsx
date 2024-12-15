@@ -35,6 +35,7 @@ export default function Live({ liveData }: { liveData: LiveData[] }) {
             }
             
         }
+        
         console.log("data new:" , data);
         const time = reducer(data, "timestamp");
         const parsedTime = time.map((ts) => new Date(ts));
