@@ -6,5 +6,6 @@ export default defineConfig({
     plugins: [react(), tsconfigPaths()],
     server: {
         hmr: true,
+        port: 80,
     },
 });

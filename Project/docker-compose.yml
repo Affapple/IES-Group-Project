@@ -81,7 +81,7 @@ services:
     environment:
       VITE_API_URL: ${VITE_API_URL}:${API_PORT}
     ports:
-      - "80:5173"
+      - "80:80"
 
 
   notification_handler:

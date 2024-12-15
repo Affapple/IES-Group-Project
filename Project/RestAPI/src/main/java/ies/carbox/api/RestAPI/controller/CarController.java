@@ -114,13 +114,6 @@ public class CarController {
         try {
             Car car = carService.getCarById(ecuId);
             User user = userService.addUserCar(userEmail, ecuId, vehicleName);
-            RegisterUserDto userDto = new RegisterUserDto();
-            userDto.setEmail(user.getEmail());
-            userDto.setUsername(user.getName());
-            userDto.setPhone(user.getPhone());
-            userDto.setPassword(user.getPassword());
-            userDto.setCarsList(user.getCarsList());
-            User newUser = authenticationService.update(userDto);
             return ResponseEntity.ok(car);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
@@ -267,13 +260,6 @@ public class CarController {
             }
 
             User user = userService.removeUserCar(userEmail, vehicleId);
-            RegisterUserDto userDto = new RegisterUserDto();
-            userDto.setEmail(user.getEmail());
-            userDto.setUsername(user.getName());
-            userDto.setPhone(user.getPhone());
-            userDto.setPassword(user.getPassword());
-            userDto.setCarsList(user.getCarsList());
-            User newUser = authenticationService.update(userDto);
             return ResponseEntity.ok("Car removed successfully");
 
         } catch (UsernameNotFoundException e) {

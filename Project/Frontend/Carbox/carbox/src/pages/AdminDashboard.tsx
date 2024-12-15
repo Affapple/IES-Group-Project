@@ -8,7 +8,7 @@ import "../css/AdminDashboard.css";
 
 const AdminDashboard: React.FC = () => {
   const VITE_API_URL = import.meta.env.VITE_API_URL + "/api/v2";
-  //const VITE_API_URL = "http:://localhost:8080" + "/api/v2";
+  //const VITE_API_URL = "http://localhost:8080" + "/api/v2";
 
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelected] = useState<User | undefined>(undefined);
@@ -19,7 +19,7 @@ const AdminDashboard: React.FC = () => {
     const token = localStorage.getItem("token");
 
     axios
-      .get(VITE_API_URL + "admin/users", {
+      .get(VITE_API_URL + "/admin/users", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
