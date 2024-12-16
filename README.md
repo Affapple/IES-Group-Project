@@ -20,3 +20,4 @@ This project aims to create a Car Management App that uses information retrieved
 
 # Bookmarks
 -Project Specification Editable: [Project](https://uapt33090-my.sharepoint.com/:w:/g/personal/joaopmgaspar_ua_pt/EfWeM20E1c1Pvg1NwL19GX4B_ldsUfoE5xQnrV-avwj9vw?e=kwRUw9)
+-Project PowerPoint Presentation: [Presentation](https://uapt33090-my.sharepoint.com/:p:/g/personal/guilherme_a_ua_pt/EQqFhkfIncxMmo4v72U2DQAB3ANhdYZDxRINqFihVAaSog?rtime=9AZylBUe3Ug)
