@@ -119,7 +119,7 @@ export default function CarInfoTrips({ trips }: { trips: Trip[] }) {
                         </h1>
                         <div className="flex-cols">
                             <h2 className="text-left">
-                                From {getDate(currentTrip.trip_start)} to {getDate(currentTrip.trip_end)}
+                                From {getDate(currentTrip.tripStart)} to {getDate(currentTrip.tripEnd)}
                             </h2>
                             <h2 className="text-left">Duration: {getDuration(currentTrip)} min</h2>
                         </div>

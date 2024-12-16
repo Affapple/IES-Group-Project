@@ -22,7 +22,7 @@ const HomePage: React.FC = () => {
       .then((response: Array<Vehicle>) => {
         setVehicles(response);
 
-        console.log(vehicles);
+
         for (let i = 0; i < response.length; i++) {
           getCarName(response[i].ecuId).then((response: string) => {
             setNames((prev) => [...prev, response]);
