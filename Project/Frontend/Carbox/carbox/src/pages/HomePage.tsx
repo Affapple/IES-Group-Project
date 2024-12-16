@@ -1,35 +1,41 @@
-
-import React, { useEffect, useState } from 'react';
-import Navbar from '../components/NavBar';
-import ImageGallery from '../components/ImageGallery';
-import VehicleCarousel from '../components/VehicleCarousel';
-import LastActivity from '../components/LastActivity/LastActivity';
-import frameImage from '../assets/frameImage.png';
-import Footer from '../components/Footer';
-import { getCarName, getCars } from 'apiClient';
-import Vehicle from 'Types/Vehicle';
+import React, { useContext, useEffect, useState } from "react";
+import Navbar from "../components/NavBar";
+import ImageGallery from "../components/ImageGallery";
+import VehicleCarousel from "../components/VehicleCarousel";
+import LastActivity from "../components/LastActivity/LastActivity";
+import frameImage from "../assets/frameImage.png";
+import Footer from "../components/Footer";
+import { getCarName, getCars } from "apiClient";
+import Vehicle from "Types/Vehicle";
+import { IUserContext, UserContext } from "Context/UserContext";
+import { useNavigate } from "react-router-dom";
 
 const HomePage: React.FC = () => {
   const [vehicles, setVehicles] = useState<Array<Vehicle>>([]);
   const [selectedVehicleId, setSelectedVehicleId] = useState<string>("");
   const [names, setNames] = useState<Array<string>>([]);
+  const { setCurrentUser } = useContext<IUserContext>(UserContext);
+  const navigate = useNavigate();
 
-  // Mock temporário para dados de veículos
   useEffect(() => {
-    getCars().then((response: Array<Vehicle>) => {
-      setVehicles(response);
+    getCars()
+      .then((response: Array<Vehicle>) => {
+        setVehicles(response);
 
-      console.log(vehicles);
-      for (let i = 0; i < response.length; i++) {
-        getCarName(response[i].ecuId).then((response: string) => {
-          setNames((prev) => [...prev, response]);
+        console.log(vehicles);
+        for (let i = 0; i < response.length; i++) {
+          getCarName(response[i].ecuId).then((response: string) => {
+            setNames((prev) => [...prev, response]);
+          });
         }
-        );
-      }
-
-    });
-    
-    
+      })
+      .catch((err) => {
+        console.error(err);
+        if (err.response.status === 403) {
+          setCurrentUser({ role: "" });
+          navigate("/");
+        }
+      });
   }, []);
 
   const images = [frameImage];

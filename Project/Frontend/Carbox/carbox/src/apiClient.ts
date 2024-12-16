@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const VITE_API_URL = import.meta.env.VITE_API_URL + "/api/v2";
-// const VITE_API_URL = "http://localhost:8080" + "/api/v2";
+//const VITE_API_URL = "http://localhost:8080" + "/api/v2";
 
 const apiClient = axios.create({
   baseURL: VITE_API_URL,
@@ -15,6 +15,7 @@ apiClient.interceptors.response.use(
     return response;
   },
   (error) => {
+    console.log(error);
     if (error.response && error.response.status == 403) {
       console.error("Access Forbidden, deleting previous invalid session...");
       unloadToken();

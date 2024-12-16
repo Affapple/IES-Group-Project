@@ -4,7 +4,6 @@ import {
   Route,
   Routes,
   Navigate,
-  useNavigate,
 } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
@@ -49,7 +48,7 @@ const App: React.FC = () => {
           <Route path="/" element={<LandingPage />} />
 
           {/* If user is not authenticated */}
-          {currentUser.role == "" && (
+          {(currentUser.role == "" || currentUser.role == undefined) && (
             <>
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<RegisterPage />} />
