@@ -15,7 +15,7 @@ Cars.append({
     'model': 'Corolla',
     'year': 2015,
     'license_plate': 'ABC123',
-    'last_revision': '2020-01-01',
+    'last_revision': '2024-01-01',
     'tires': 'Michelin',
     'motor': 'DSL',
     'tank': 'petrol',
@@ -30,7 +30,7 @@ Cars.append({
     'model': 'Civic',
     'year': 2018,
     'license_plate': 'XYZ456',
-    'last_revision': '2021-05-10',
+    'last_revision': '2023-05-10',
     'tires': 'Bridgestone',
     'motor': 'ESS',
     'tank': 'petrol',
@@ -45,7 +45,7 @@ Cars.append({
     'model': 'Focus',
     'year': 2017,
     'license_plate': 'LMN789',
-    'last_revision': '2022-03-15',
+    'last_revision': '2024-03-15',
     'tires': 'Goodyear',
     'motor': 'DSL',
     'tank': 'diesel',
@@ -60,7 +60,7 @@ Cars.append({
     'model': 'Malibu',
     'year': 2016,
     'license_plate': 'JKL012',
-    'last_revision': '2019-11-20',
+    'last_revision': '2024-11-20',
     'tires': 'Pirelli',
     'motor': 'ESS',
     'tank': 'petrol',
@@ -75,7 +75,7 @@ Cars.append({
     'model': '3 Series',
     'year': 2020,
     'license_plate': 'DEF345',
-    'last_revision': '2023-06-01',
+    'last_revision': '2024-06-01',
     'tires': 'Continental',
     'motor': 'HEV',
     'tank': 'petrol',
@@ -90,7 +90,7 @@ Cars.append({
     'model': 'C-Class',
     'year': 2019,
     'license_plate': 'UVW678',
-    'last_revision': '2022-12-15',
+    'last_revision': '2024-12-15',
     'tires': 'Dunlop',
     'motor': 'HEV',
     'tank': 'diesel',
@@ -105,7 +105,7 @@ Cars.append({
     'model': 'A4',
     'year': 2021,
     'license_plate': 'GHI910',
-    'last_revision': '2023-09-01',
+    'last_revision': '2024-09-01',
     'tires': 'Hankook',
     'motor': 'MHEV',
     'tank': 'petrol',
@@ -120,7 +120,7 @@ Cars.append({
     'model': 'Model 3',
     'year': 2022,
     'license_plate': 'XYZ321',
-    'last_revision': '2023-10-05',
+    'last_revision': '2024-10-05',
     'tires': 'Michelin',
     'motor': 'Electric',
     'tank': 'electric',
@@ -135,7 +135,7 @@ Cars.append({
     'model': 'Passat',
     'year': 2014,
     'license_plate': 'QRS654',
-    'last_revision': '2021-04-11',
+    'last_revision': '2024-04-11',
     'tires': 'Nokian',
     'motor': 'LPG',
     'tank': 'diesel',
@@ -220,9 +220,9 @@ def simulateStats(ecu_id):
         LastLiveData[ecu_id]['speed']+=amount
         if LastLiveData[ecu_id]['speed']>max_speed:
             LastLiveData[ecu_id]['speed']=max_speed
-        LastLiveData[ecu_id]['rpm']+=amount
-        LastLiveData[ecu_id]['torque']+=amount
-        LastLiveData[ecu_id]['motor_temperature']+=amount/2
+        LastLiveData[ecu_id]['rpm']+=amount*40
+        LastLiveData[ecu_id]['torque']+=amount*15
+        LastLiveData[ecu_id]['motor_temperature']+=amount*1.5
     else:
         LastLiveData[ecu_id]['speed']-=amount
         if LastLiveData[ecu_id]['speed']<0:
@@ -231,13 +231,13 @@ def simulateStats(ecu_id):
             LastLiveData[ecu_id]['rpm']=0
             LastLiveData[ecu_id]['torque']=0
             LastLiveData[ecu_id]['motor_temperature']=0
-        LastLiveData[ecu_id]['rpm']-=amount
+        LastLiveData[ecu_id]['rpm']-=amount*1.5
         if LastLiveData[ecu_id]['rpm']<0:
             LastLiveData[ecu_id]['rpm']=0
-        LastLiveData[ecu_id]['torque']-=amount
+        LastLiveData[ecu_id]['torque']-=amount*1.5
         if LastLiveData[ecu_id]['torque']<0:
             LastLiveData[ecu_id]['torque']=0
-        LastLiveData[ecu_id]['motor_temperature']-=amount/2
+        LastLiveData[ecu_id]['motor_temperature']-=amount
         if LastLiveData[ecu_id]['motor_temperature']<20:
             LastLiveData[ecu_id]['motor_temperature']=20
 
@@ -246,7 +246,7 @@ def simulateLevels(ecu_id):
     change=random.randint(1,2)
     amount=random.randint(1,5)
     chance=random.randint(1,100)
-    if chance == 100:
+    if chance >= 90:
         LastLiveData[ecu_id]['oil_level']=100
         LastLiveData[ecu_id]['battery_charge']=100
         LastLiveData[ecu_id]['gas_level']=100
@@ -276,31 +276,28 @@ def simulateLevels(ecu_id):
                     LastLiveData[ecu_id]['errors'].append('Tire puncture')
                     logging.info(f"Error Tire puncture simulated in car {ecu_id}")
         else:
-            LastLiveData[ecu_id]['oil_level']+=amount
-            if LastLiveData[ecu_id]['oil_level']>100:
-                LastLiveData[ecu_id]['oil_level']=100
             LastLiveData[ecu_id]['battery_charge']+=amount
             if LastLiveData[ecu_id]['battery_charge']>100:
                 LastLiveData[ecu_id]['battery_charge']=100
-            LastLiveData[ecu_id]['gas_level']+=amount
-            if LastLiveData[ecu_id]['gas_level']>100:
-                LastLiveData[ecu_id]['gas_level']=100
             for i in range(4):
                 LastLiveData[ecu_id]['tire_pressure'][i]+=amount
                 if LastLiveData[ecu_id]['tire_pressure'][i]>50:
                     LastLiveData[ecu_id]['tire_pressure'][i]=50
 
 def simulateLocationCoordinates(ecu_id):
-    if LastLiveData[ecu_id]['location']=='':
-        latitude=random.uniform(-90,90)
-        longitude=random.uniform(-180,180)
-        LastLiveData[ecu_id]['location']=f'{latitude},{longitude}'
-    else:
-        latitude=float(LastLiveData[ecu_id]['location'].split(',')[0])
-        longitude=float(LastLiveData[ecu_id]['location'].split(',')[1])
-        latitude+=random.uniform(-0.1,0.1)
-        longitude+=random.uniform(-0.1,0.1)
-        LastLiveData[ecu_id]['location']=f'{latitude},{longitude}'
+
+    latitude = float(LastLiveData[ecu_id]['location'].split(',')[0])
+    longitude = float(LastLiveData[ecu_id]['location'].split(',')[1])
+
+    latitude = max(40.35, min(43.24, latitude))
+    longitude = max(-5.07, min(-2.04, longitude))
+
+    latitude += random.uniform(-0.005, 0.005)
+    longitude += random.uniform(-0.005, 0.005)
+    latitude = max(40.35, min(43.24, latitude))
+    longitude = max(-5.07, min(-2.04, longitude))
+
+    LastLiveData[ecu_id]['location'] = f"{latitude},{longitude}"
 
 def sendToQueue(ecu_id):
     try:
@@ -332,7 +329,7 @@ def GenerateData(ecu_id):
         LastLiveData[ecu_id]['oil_level']=100
         LastLiveData[ecu_id]['battery_charge']=100
         LastLiveData[ecu_id]['gas_level']=100
-        LastLiveData[ecu_id]['location']=''
+        LastLiveData[ecu_id]['location']= '43.1,-3.43'
         LastLiveData[ecu_id]['motor_temperature']=0
         LastLiveData[ecu_id]['tire_pressure']=[30,30,30,30]
         LastLiveData[ecu_id]['errors']=[]
@@ -358,7 +355,7 @@ def GenerateData(ecu_id):
             simulateError(ecu_id)
             simulateLocationCoordinates(ecu_id)
             simulateLevels(ecu_id)
-            LastLiveData['timestamp'] = datetime.now().isoformat()
+            LastLiveData[ecu_id]['timestamp'] = datetime.now().isoformat()
             logging.info(f"Car {ecu_id} turned off")
         else:
             LastLiveData[ecu_id]['car_status']=True
@@ -366,18 +363,17 @@ def GenerateData(ecu_id):
             simulateError(ecu_id)
             simulateLocationCoordinates(ecu_id)
             simulateLevels(ecu_id)
-            LastLiveData['timestamp'] = datetime.now().isoformat()
+            LastLiveData[ecu_id]['timestamp'] = datetime.now().isoformat()
             logging.info(f"Data for car {ecu_id} generated")
             logging.info(f"Data: {LastLiveData[ecu_id]}")
         sendToQueue(ecu_id)
 
         
 
-
 #Simulate the data for the cars
 while True:
     for car in Cars:
         GenerateData(car['ecu_id'])
-    time.sleep(2)
+    time.sleep(10)
 
 

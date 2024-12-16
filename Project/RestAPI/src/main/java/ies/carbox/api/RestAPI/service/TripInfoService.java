@@ -46,17 +46,36 @@ public class TripInfoService {
     }
 
     public TripInfo getLatestTripInfo(String carId) {
-        // Put in repository findFirstByCarIdOrderByDateDesc
-        List<TripInfo> trips= cacheService.getCarTrips(carId);
-        if (trips != null) {
-            return trips.get(trips.size() - 1);
+    
+        // First, try cache.
+        List<TripInfo> trips = cacheService.getCarTrips(carId);
+        if (trips != null && !trips.isEmpty()) {
+            System.out.println("Trips found in cache: " + trips);
+    
+            List<TripInfo> completedTrips = trips.stream()
+                    .filter(trip -> trip.getTripEnd() != null)
+                    .toList();
+    
+            if (!completedTrips.isEmpty()) {
+                System.out.println("Returning last completed trip from cache: " + completedTrips.get(completedTrips.size() - 1));
+                return completedTrips.get(completedTrips.size() - 1);
+            }
         }
+    
+        // If not in cache, fetch from repository.
         trips = tripInfoRepository.findByCarId(carId)
-                .orElseThrow(
-                        () -> new IllegalArgumentException(
-                                String.format("No trips found for car %s", carId)));
+                .orElseThrow(() -> new IllegalArgumentException("No trips found for carId: " + carId));
+        
+        List<TripInfo> completedTrips = trips.stream()
+                .filter(trip -> trip.getTripEnd() != null)
+                .toList();
+    
+        if (completedTrips.isEmpty()) {
+            throw new IllegalArgumentException("No completed trips found for carId: " + carId);
+        }
+    
 
         cacheService.saveTrip(trips, carId);
-        return trips.get(trips.size() - 1);
+        return completedTrips.get(completedTrips.size() - 1);
     }
 }

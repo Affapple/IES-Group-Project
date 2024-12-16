@@ -25,7 +25,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * UserController provides endpoints for managing user accounts, including registration, login, 
+ * UserController provides endpoints for managing user accounts, including registration, login,
  * updating account details, retrieving user information, and logout.
  */
 @CrossOrigin(maxAge = 3600)
@@ -53,12 +53,12 @@ public class UserController {
      */
     @PostMapping("/accountCreation")
     @Operation(
-        summary = "Register a new user account", 
+        summary = "Register a new user account",
         description = "Create a new user account with the provided user details",
         responses = {
             @ApiResponse(
-                responseCode = "201", 
-                description = "User created successfully", 
+                responseCode = "201",
+                description = "User created successfully",
                 content = @Content(schema = @Schema(implementation = User.class))
             ),
             @ApiResponse(responseCode = "400", description = "Invalid user details or creation failed")
@@ -88,7 +88,7 @@ public class UserController {
      */
     @PostMapping("/login")
     @Operation(
-        summary = "Authenticate user and generate token", 
+        summary = "Authenticate user and generate token",
         description = "Authenticate the user and generate an authentication token",
         responses = {
             @ApiResponse(responseCode = "200", description = "User authenticated successfully"),
@@ -104,6 +104,7 @@ public class UserController {
 
             AuthToken authToken = new AuthToken();
             authToken.setToken(jwtToken);
+            authToken.setRole(authenticatedUser.getAuthorities().iterator().next().toString());
             authToken.setExpiresIn(jwtService.getExpirationTime());
 
             return ResponseEntity.ok(authToken);
@@ -121,12 +122,12 @@ public class UserController {
      */
     @PutMapping("/account")
     @Operation(
-        summary = "Update user account information", 
+        summary = "Update user account information",
         description = "Update the user account with the provided details",
         responses = {
             @ApiResponse(
-                responseCode = "200", 
-                description = "User account updated successfully", 
+                responseCode = "200",
+                description = "User account updated successfully",
                 content = @Content(schema = @Schema(implementation = User.class))
             ),
             @ApiResponse(responseCode = "400", description = "Invalid data or update failed")
@@ -134,26 +135,18 @@ public class UserController {
     )
     public ResponseEntity<User> updateAccount(
             @Parameter(description = "Updated User object with new details") @RequestBody User updatedUser) {
-        
+
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             User currentUser = (User) authentication.getPrincipal();
-            User user = userService.loadUserByUsername(currentUser.getEmail());
-            userService.delUser(user);
-            RegisterUserDto userDto = new RegisterUserDto();
-            userDto.setEmail(updatedUser.getEmail());
-            userDto.setUsername(updatedUser.getName());
-            userDto.setPhone(updatedUser.getPhone());
-            userDto.setPassword(updatedUser.getPassword());
-            userDto.setCarsList(user.getCarsList());
-            User newUser = authenticationService.update(userDto);
-            return ResponseEntity.ok(newUser);
+
+            User updated = userService.updateUserDetails(currentUser.getEmail(), updatedUser);
+            return ResponseEntity.ok(updated);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.badRequest().body(null);
         }
     }
-
     /**
      * Retrieves account details for a specific user.
      *
@@ -162,12 +155,12 @@ public class UserController {
      */
     @GetMapping("/account")
     @Operation(
-        summary = "Retrieve user account details by user ID", 
+        summary = "Retrieve user account details by user ID",
         description = "Retrieve the details of a user account based on user ID",
         responses = {
             @ApiResponse(
-                responseCode = "200", 
-                description = "User found and returned successfully", 
+                responseCode = "200",
+                description = "User found and returned successfully",
                 content = @Content(schema = @Schema(implementation = User.class))
             ),
             @ApiResponse(responseCode = "404", description = "User not found")
@@ -181,7 +174,7 @@ public class UserController {
             User user = userService.loadUserByUsername(email);
             System.out.println(user);
             return ResponseEntity.status(200).body(user);
-            
+
         } catch (UsernameNotFoundException e) {
             System.out.println("INFO: User \"" + email + "\" not found");
             ResponseEntity.notFound().build();
@@ -197,7 +190,7 @@ public class UserController {
      */
     @PostMapping("/logout")
     @Operation(
-        summary = "Logout user", 
+        summary = "Logout user",
         description = "Logs out the current user",
         responses = {
             @ApiResponse(responseCode = "200", description = "User logged out successfully")
@@ -207,34 +200,4 @@ public class UserController {
         SecurityContextHolder.clearContext();
         return ResponseEntity.ok("Logged out successfully");
     }
-
-
-
-
-    /**
-     * Gets a list of all cars and their associated users. For admin purposes only.
-     * 
-     */
-    // @GetMapping("/all")
-    // @Operation(
-    //     summary = "Get all users and their cars", 
-    //     description = "Get a list of all users and their cars",
-    //     responses = {
-    //         @ApiResponse(
-    //             responseCode = "200", 
-    //             description = "List of all users and their cars", 
-    //             content = @Content(schema = @Schema(implementation = User.class))
-    //         ),
-    //         @ApiResponse(responseCode = "403", description = "Unauthorized access")
-    //     }
-    // )
-    // public ResponseEntity<List<User>> getAllUsers() {
-    //     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    //     User currentUser = (User) authentication.getPrincipal();
-    //     if (!currentUser.isAdmin()) {
-    //         return ResponseEntity.status(403).body(null);
-    //     }
-    //     List<User> users = userService.getAllUsers();
-    //     return ResponseEntity.ok(users);
-    // }
 }

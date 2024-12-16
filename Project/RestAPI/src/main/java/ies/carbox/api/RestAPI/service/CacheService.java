@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,14 +27,18 @@ public class CacheService {
     @Autowired
     RedisTemplate<String, String> redisTemplate;
 
+    private static ObjectMapper mapper = JsonMapper.builder()
+                                            .addModule(new JavaTimeModule())
+                                            .build();
+
     @Value("${cache.general.expiration-time}")
     private long ttl;
 
     private static String tripKey = "_trips";
     private static String liveDataKey = "_livedata";
-    
+
+
     public void saveTrip(TripInfo trip, String carId) {
-        ObjectMapper mapper = new ObjectMapper();
         String key = carId + tripKey;
         boolean setExpire = !redisTemplate.hasKey(key);
 
@@ -40,7 +46,7 @@ public class CacheService {
             var json = mapper.writeValueAsString(trip);
             System.out.println("INFO: Saving trip from car \"" + carId + "\": " + json);
             redisTemplate.opsForList().rightPush(key, json);
-            
+
             if (setExpire)
                 redisTemplate.expire(key, ttl, TimeUnit.MILLISECONDS);
 
@@ -53,7 +59,6 @@ public class CacheService {
         trips.forEach((trip) -> saveTrip(trip, carId));
     }
     public List<TripInfo> getCarTrips(String carId) {
-        ObjectMapper mapper = new ObjectMapper();
         String key = carId + tripKey;
 
         try {
@@ -82,7 +87,6 @@ public class CacheService {
     }
 
     public void saveUser(User user) {
-        ObjectMapper mapper = new ObjectMapper();
         String key = user.getEmail();
 
         try {
@@ -97,7 +101,6 @@ public class CacheService {
         }
     }
     public User getUser(String email) {
-        ObjectMapper mapper = new ObjectMapper();
         String key = email;
 
         try {
@@ -112,7 +115,7 @@ public class CacheService {
             User user = mapper.readValue(userJson, User.class);
             System.out.println("INFO: Fetched user from cache using key \"" + key + "\": " + user);
             return user;
-        } catch (Exception e) {  
+        } catch (Exception e) {
             System.out.println("ERROR: Error fetching user from cache");
             e.printStackTrace();
         }
@@ -124,7 +127,6 @@ public class CacheService {
     }
 
     public void saveLiveData(CarLiveInfo live_data, String email) {
-        ObjectMapper mapper = new ObjectMapper();
         String key = email + liveDataKey;
         boolean setExpire = !redisTemplate.hasKey(key);
 
@@ -144,7 +146,6 @@ public class CacheService {
         live_datas.forEach((live_data) -> saveLiveData(live_data, email));
     }
     public List<CarLiveInfo> getLiveData(String ecuId) {
-        ObjectMapper mapper = new ObjectMapper();
         String key = ecuId + liveDataKey;
 
         try {
@@ -172,12 +173,11 @@ public class CacheService {
         }
         return null;
     }
-    
-    
+
+
     public void saveCar(Car car) {
-        ObjectMapper mapper = new ObjectMapper();
         String key = car.getEcuId();
-        
+
         try {
             var json = mapper.writeValueAsString(car);
             System.out.println("INFO: Saving Car:" + json);
@@ -189,7 +189,6 @@ public class CacheService {
         }
     }
     public Car getCar(String ecuId) {
-        ObjectMapper mapper = new ObjectMapper();
         String key = ecuId;
 
         try {
@@ -199,7 +198,7 @@ public class CacheService {
                 return null;
             }
             Car car = mapper.readValue(carJson, Car.class);
-            
+
             System.out.println("INFO: Fetched car from cache using key \"" + key + "\": " + car);
             return car;
         } catch (JsonProcessingException e) {
@@ -208,7 +207,7 @@ public class CacheService {
             System.out.println("ERROR: Error fetching car from cache");
             e.printStackTrace();
         }
-        
+
         return null;
     }
 }

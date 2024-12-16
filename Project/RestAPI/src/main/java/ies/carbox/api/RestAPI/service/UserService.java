@@ -79,6 +79,7 @@ public class UserService implements UserDetailsService {
         user.setCarsList(carList);
         
         // Update cache
+        userRepository.save(user);
         cacheService.saveUser(user);
         return user;
     }
@@ -96,6 +97,7 @@ public class UserService implements UserDetailsService {
         user.setCarsList(carList);
 
         // Update cache
+        userRepository.save(user);
         cacheService.saveUser(user);
         return user;
     }
@@ -110,10 +112,34 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll();
     }
 
+    public User updateUserDetails(String email, User updatedUser) {
+        try {
+            User existingUser = loadUserByUsername(email);
+            if (existingUser == null) {
+                throw new UsernameNotFoundException("User not found: " + email);
+            }
+
+            updatedUser.set_id(existingUser.get_id());
+    
+            // Update only the necessary fields
+            if (updatedUser.getName() != null) existingUser.setName(updatedUser.getName());
+            if (updatedUser.getPhone() != 0) existingUser.setPhone(updatedUser.getPhone());
+            if (updatedUser.getPassword() != null) existingUser.setPassword(updatedUser.getPassword());
+            if (updatedUser.getCarsList() != null) existingUser.setCarsList(updatedUser.getCarsList());
+    
+            userRepository.save(existingUser);
+    
+            cacheService.saveUser(existingUser);
+    
+            return existingUser;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error updating user details");
+        }
+    }
+
 //     public List<User> getAllUsersWithCars() {
 //     return userRepository.findAllWithCars(); // Custom query to fetch users and their cars
 // }
-
-
 
 }

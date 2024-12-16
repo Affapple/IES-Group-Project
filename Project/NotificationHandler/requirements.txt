@@ -5,3 +5,4 @@ pydantic
 apscheduler
 pika
 pymongo
+apscheduler
