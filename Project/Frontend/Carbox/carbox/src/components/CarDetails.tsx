@@ -19,7 +19,7 @@ export default function  CarDetails({data}: {data: Vehicle}) {
         if(expires.getDate()- current <= 30*86400000){
             setRevisionUp(true);
             if(expires.getDate()-current <=0){
-                setAlert("(EXPIRED)");
+                setAlert("(EXPIRING SOON)");
             }
             else{
                 setAlert("(EXPIRING SOON)");

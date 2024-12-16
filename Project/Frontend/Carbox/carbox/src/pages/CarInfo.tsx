@@ -90,9 +90,7 @@ const CarInfo: React.FC = () => {
 
     getCarLiveData(carId, timestamp)
       .then((response: LiveData[]) => {
-        console.log("New data:", response)
         setLiveData((prev) => [...prev, ...response]);
-        console.log("Total live:", liveData)
       })
       .catch((err) => {
         console.log(err);

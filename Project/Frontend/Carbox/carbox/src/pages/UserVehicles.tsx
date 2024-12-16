@@ -39,8 +39,6 @@ const UserVehicles: React.FC = () => {
             const name = await getCarName(car.ecuId);
             // Buscar dados ao vivo para cada veículo
             const liveData = await getCarLatestData(car.ecuId);
-            console.log("live:" , liveData)
-            console.log(liveData.location)
             return {
               id: car.ecuId,
               name: name,
