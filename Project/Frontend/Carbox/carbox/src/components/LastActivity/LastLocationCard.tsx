@@ -19,18 +19,16 @@ function LastLocationCard({ vehicleId }: { vehicleId: string }) {
     const fetchLocationData = async () => {
       try {
         const data: LiveData = await getCarLatestData(vehicleId);
-        console.log('Data returned by API:', data);
+
 
         if (!data.location || !data.location.includes(',')) {
           throw new Error('Invalid or missing location data.');
         }
 
         const [latitude, longitude] = data.location.split(',').map((value) => parseFloat(value.trim()));
-        console.log('Parsed latitude and longitude:', { latitude, longitude });
 
         // Buscar o endereço real com geocodificação inversa
         const address = await getAddressFromCoordinates(latitude, longitude);
-        console.log('Address fetched from coordinates:', address);
 
         setLocationData({
           latitude,

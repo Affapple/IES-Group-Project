@@ -15,8 +15,8 @@ export default function CarInfoTrips({ trips }: { trips: Trip[] }) {
 
     
     function getDuration(trip) {
-        const start = new Date(getDate(trip.trip_start));
-        const end = new Date(getDate(trip.trip_end));
+        const start = new Date(getDate(trip.tripStart));
+        const end = new Date(getDate(trip.tripEnd));
         const diff = Math.abs(end.getTime() - start.getTime());
         const diffMs = Math.floor(diff /1000);
         const min= Math.round(diffMs / 60 * 100) /100;
@@ -26,9 +26,6 @@ export default function CarInfoTrips({ trips }: { trips: Trip[] }) {
     async function toggleModal(tripId, carId) {
         if (!modalShown) {
             await getTrip(tripId, carId);
-            console.log("Current Trip:", currentTrip);
-            console.log("Trip ID:", tripId);
-            console.log("Car ID:", carId);
         }
         setModalShown(!modalShown);
     }
@@ -61,7 +58,7 @@ export default function CarInfoTrips({ trips }: { trips: Trip[] }) {
         try {
             const response = await getTrips(carId, tripId);
             setCurrentTrip(response[0]);
-            console.log("Response: ",response);
+            
         } catch (error) {
             console.error("Failed to fetch trip:", error);
         }
@@ -98,11 +95,11 @@ export default function CarInfoTrips({ trips }: { trips: Trip[] }) {
                 </div>
                 <div className="">
                     <p className="text-gray-400 text-base">Car was up from</p>
-                    <h5 className="text-base">{getDate(trip.trip_start)}</h5>
+                    <h5 className="text-base">{getDate(trip.tripStart)}</h5>
                 </div>
                 <div className="">
                     <p className="text-gray-400 text-base">Till</p>
-                    <h5 className="text-base">{getDate(trip.trip_end)}</h5>
+                    <h5 className="text-base">{getDate(trip.tripEnd)}</h5>
                 </div>
                 <div className="">
                     <p className='text-lg'>Duration: {getDuration(trip)} min</p>
@@ -127,10 +124,10 @@ export default function CarInfoTrips({ trips }: { trips: Trip[] }) {
                             <h2 className="text-left">Duration: {getDuration(currentTrip)} min</h2>
                         </div>
                         {[
-                            { label: "Speeds (Km/h)", data: currentTrip.trip_speeds, color: "#2ca02c" },
-                            { label: "RPMs", data: currentTrip.trip_rpm, color: "#ff4500"},
-                            { label: "Torque", data: currentTrip.trip_torque, color: "#1f77b4" },
-                            { label: "Engine Temperature (ºC)", data: currentTrip.trip_motor_temp, color: "#ff7f0e" },
+                            { label: "Speeds (Km/h)", data: currentTrip.tripSpeeds, color: "#2ca02c" },
+                            { label: "RPMs", data: currentTrip.tripRpm, color: "#ff4500"},
+                            { label: "Torque", data: currentTrip.tripTorque, color: "#1f77b4" },
+                            { label: "Engine Temperature (ºC)", data: currentTrip.tripMotorTemp, color: "#ff7f0e" },
                         ].map(({ label, data, color }, index) => (
                             <div className="flex-cols border-b-4 border-black con" key={index}>
                                 <LineChart
