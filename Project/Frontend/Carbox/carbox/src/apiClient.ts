@@ -16,7 +16,7 @@ apiClient.interceptors.response.use(
   },
   (error) => {
     if (error.response && error.response.status == 403) {
-      console.error("Access Forbidden, deleting session...");
+      console.error("Access Forbidden, deleting previous invalid session...");
       unloadToken();
     }
     return Promise.reject(error);
