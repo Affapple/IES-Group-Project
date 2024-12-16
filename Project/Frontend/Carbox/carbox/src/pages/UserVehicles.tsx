@@ -11,6 +11,7 @@ import {
   associateCar,
   deleteCar,
   getCarName,
+  getCar,
 } from "apiClient.js";
 
 const UserVehicles: React.FC = () => {
@@ -38,12 +39,16 @@ const UserVehicles: React.FC = () => {
             const name = await getCarName(car.ecuId);
             // Buscar dados ao vivo para cada veículo
             const liveData = await getCarLatestData(car.ecuId);
+            console.log("live:" , liveData)
+            console.log(liveData.location)
             return {
               id: car.ecuId,
               name: name,
-              range: liveData.gasLevel || 0, // Autonomia
+              fuel: liveData.gasLevel || 0, // Autonomia
               battery: liveData.batteryCharge || "Unknown", // Bateria
               live: liveData.carStatus || false, // Estado ao vivo
+              range: car.autonomy,
+              location: liveData.location
             };
           }),
         );
@@ -83,6 +88,8 @@ const UserVehicles: React.FC = () => {
     try {
       // Associar o novo veículo ao usuário
       await associateCar(newVehicle.ecuId, newVehicle.name);
+      const car = await getCar(newVehicle.ecuId)
+      console.log(car)
 
       // Buscar dados ao vivo do novo veículo
       const liveData = await getCarLatestData(newVehicle.ecuId);
@@ -93,9 +100,12 @@ const UserVehicles: React.FC = () => {
         {
           id: newVehicle.ecuId,
           name: newVehicle.name,
-          range: liveData.autonomy || 0, // Garantir que autonomia seja exibida
+          fuel: liveData.autonomy || 0, // Garantir que autonomia seja exibida
           battery: liveData.battery || "Unknown", // Garantir que a bateria seja exibida
           live: liveData.live || false,
+          range: car.autonomy,
+          location: liveData.location
+
         },
       ];
       setVehicles(updatedVehicles);
@@ -173,9 +183,10 @@ const UserVehicles: React.FC = () => {
               key={vehicle.id}
               vehicleId={vehicle.id}
               name={vehicle.name}
-              autonomy={`${vehicle.range} km`}
+              autonomy={`${(vehicle.fuel*vehicle.range)/100} km`}
               battery={vehicle.battery}
               live={vehicle.live}
+              location={vehicle.location}
               onRemove={() => handleRemoveVehicle(vehicle.id)}
             />
           ))}

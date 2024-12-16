@@ -25,7 +25,7 @@ const VehicleCarousel: React.FC<VehicleCarouselProps> = ({ vehicles, selectedVeh
   };
 
   return (
-    <div className="relative flex flex-col items-center space-y-6 py-10">
+    <div className="relative flex flex-col items-center space-y-6 py-5">
       <div className="flex items-center space-x-4 w-full max-w-3xl justify-center relative">
         {/* Botão para ir ao veículo anterior */}
         <button
@@ -44,9 +44,9 @@ const VehicleCarousel: React.FC<VehicleCarouselProps> = ({ vehicles, selectedVeh
               onDoubleClick={() => handleVehicleDoubleClick(vehicle.ecuId)} // Clique duplo para navegar
               className={`cursor-pointer transition-transform duration-300 rounded-lg border ${
                 vehicle.ecuId === selectedVehicleId
-                  ? 'bg-gray-500 text-white scale-125 shadow-2xl z-10'
+                  ? 'bg-gray-500 text-white scale-102 shadow-2xl'
                   : 'bg-white text-gray-800 scale-90 shadow-md opacity-75'
-              } min-w-[200px] p-6 flex flex-col items-center hover:scale-105`}
+              } min-w-[200px] p-6 flex flex-col items-center hover:scale-102`}
             >
               <p className="text-lg font-semibold">{names[index]}</p>
               <p>{vehicle.brand} {vehicle.model}</p>

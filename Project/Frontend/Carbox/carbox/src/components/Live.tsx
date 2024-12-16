@@ -21,18 +21,33 @@ export default function Live({ liveData }: { liveData: LiveData[] }) {
 
     useEffect(() => {
         const NUM_POINTS = 50;
-
-        const time = reducer(liveData, "timestamp");
+        console.log(liveData)
+        const times=[];
+        const data=[];
+        for(var i=0;i<liveData.length; i++) {
+            if (times.includes(liveData[i].timestamp)){
+                console.log("was here");
+                continue;
+            }
+            else{
+                times.push(liveData[i].timestamp);
+                data.push(liveData[i]);
+            }
+            
+        }
+        
+        console.log("data new:" , data);
+        const time = reducer(data, "timestamp");
         const parsedTime = time.map((ts) => new Date(ts));
         setTime(parsedTime.slice(time.length - NUM_POINTS, time.length));
 
-        const speed = reducer(liveData, "speed");
+        const speed = reducer(data, "speed");
         setSpeed(speed.slice(speed.length - NUM_POINTS, speed.length));
 
-        const rpm = reducer(liveData, "rpm");
+        const rpm = reducer(data, "rpm");
         setRpm(rpm.slice(rpm.length - NUM_POINTS, rpm.length));
 
-        const torque = reducer(liveData, "torque");
+        const torque = reducer(data, "torque");
         setTorque(torque.slice(torque.length - NUM_POINTS, torque.length));
         console.log(rpm)
         console.log(torque)
@@ -56,7 +71,7 @@ export default function Live({ liveData }: { liveData: LiveData[] }) {
                                     second: "2-digit",
                                 }).format(new Date(value));
                             },
-                            label: "data",
+                            label: "time",
                         },
                     ]}
                     series={[
@@ -81,7 +96,7 @@ export default function Live({ liveData }: { liveData: LiveData[] }) {
                                     second: "2-digit",
                                 }).format(new Date(value));
                             },
-                            label: "data",
+                            label: "time",
                         },
                     ]}
                     series={[
@@ -106,7 +121,7 @@ export default function Live({ liveData }: { liveData: LiveData[] }) {
                                     second: "2-digit",
                                 }).format(new Date(value));
                             },
-                            label: "data",
+                            label: "time",
                         },
                     ]}
                     series={[

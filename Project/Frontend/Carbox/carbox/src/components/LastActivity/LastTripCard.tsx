@@ -77,23 +77,23 @@ const LastTripCard: React.FC<LastTripCardProps> = ({ vehicleId }) => {
   }
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md w-full mb-10">
-      <h4 className="text-lg font-semibold text-gray-700 mb-4">Trip Details</h4>
+    <div className="bg-white p-6 rounded-lg shadow-md w-full mb-10 p-20">
+      <h2 className="text-lg font-semibold text-gray-700 mb-4">Trip Details</h2>
       <div className="flex justify-between items-center mb-2">
-        <p className="text-sm text-gray-500">Date</p>
-        <p className="text-sm font-medium text-gray-800">{tripData.date}</p>
+        <p className="text-lg text-gray-500">Date</p>
+        <p className="text-lg font-medium text-gray-800">{tripData.date}</p>
       </div>
       <div className="flex justify-between items-center mb-2">
-        <p className="text-sm text-gray-500">Duration</p>
-        <p className="text-sm font-medium text-gray-800">{tripData.duration}</p>
+        <p className="text-lg text-gray-500">Duration</p>
+        <p className="text-lg font-medium text-gray-800">{tripData.duration}</p>
       </div>
       <div className="flex justify-between items-center mb-2">
-        <p className="text-sm text-gray-500">Distance</p>
-        <p className="text-sm font-medium text-gray-800">{tripData.distance}</p>
+        <p className="text-lg text-gray-500">Distance</p>
+        <p className="text-lg font-medium text-gray-800">{tripData.distance}</p>
       </div>
       <div className="flex justify-between items-center">
-        <p className="text-sm text-gray-500">Consumption</p>
-        <p className="text-sm font-medium text-green-500">
+        <p className="text-lg text-gray-500">Consumption</p>
+        <p className="text-lg font-medium text-green-500">
           {tripData.consumption}
         </p>
       </div>

@@ -10,7 +10,19 @@
     font-size: 20px;
     margin-bottom: 0;
     padding-bottom: 0;
+}
 
+.infoAlert {
+    display: flex;
+    justify-content: left;
+    margin: 10px 0;
+    margin-top: 0;
+    text-align: left;
+    text-decoration: red;
+    font-weight: bold;
+    font-size: 20px;
+    margin-bottom: 0;
+    padding-bottom: 0;
 }
 
 .bigInfo {
@@ -78,6 +90,18 @@
     justify-content: left;
     margin-left: 10px;
     font-weight: normal;
+    padding-bottom: 0;
+    margin-bottom: 0;
+    font-size: 20px;
+}
+
+.info2Alert{
+    display: flex;
+    justify-content: left;
+    margin-left: 10px;
+    font-weight: normal;
+    text-decoration: red;
+    color: red;
     padding-bottom: 0;
     margin-bottom: 0;
     font-size: 20px;
