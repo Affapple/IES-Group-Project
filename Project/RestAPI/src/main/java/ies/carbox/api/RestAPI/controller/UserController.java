@@ -139,22 +139,14 @@ public class UserController {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             User currentUser = (User) authentication.getPrincipal();
-            User user = userService.loadUserByUsername(currentUser.getEmail());
-            userService.delUser(user);
-            RegisterUserDto userDto = new RegisterUserDto();
-            userDto.setEmail(updatedUser.getEmail());
-            userDto.setUsername(updatedUser.getName());
-            userDto.setPhone(updatedUser.getPhone());
-            userDto.setPassword(updatedUser.getPassword());
-            userDto.setCarsList(user.getCarsList());
-            User newUser = authenticationService.update(userDto);
-            return ResponseEntity.ok(newUser);
+
+            User updated = userService.updateUserDetails(currentUser.getEmail(), updatedUser);
+            return ResponseEntity.ok(updated);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.badRequest().body(null);
         }
     }
-
     /**
      * Retrieves account details for a specific user.
      *

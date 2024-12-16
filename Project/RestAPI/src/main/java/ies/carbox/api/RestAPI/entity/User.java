@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 /**
  * Represents a user entity in the system.
@@ -40,7 +41,7 @@ public class User implements UserDetails {
     @Id
     @Field("_id")
     @Getter @Setter
-    private String _id;
+    private ObjectId _id;
 
     /** Unique identifier for the user. */
     @Field("email")
