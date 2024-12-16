@@ -31,8 +31,8 @@ const LastTripCard: React.FC<LastTripCardProps> = ({ vehicleId }) => {
         const selectedTrip = trips[0];
 
         // Calcula a duração
-        const tripStart = new Date(selectedTrip.trip_start);
-        const tripEnd = new Date(selectedTrip.trip_end);
+        const tripStart = new Date(selectedTrip.tripStart);
+        const tripEnd = new Date(selectedTrip.tripEnd);
         const durationMs = tripEnd.getTime() - tripStart.getTime();
         const diffMs = Math.floor(durationMs / 1000);
         const duration = `${Math.round(diffMs / 60 * 100) /100} min`;
