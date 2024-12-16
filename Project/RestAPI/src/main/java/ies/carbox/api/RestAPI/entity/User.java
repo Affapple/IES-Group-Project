@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 /**
  * Represents a user entity in the system.
@@ -40,7 +41,7 @@ public class User implements UserDetails {
     @Id
     @Field("_id")
     @Getter @Setter
-    private String _id;
+    private ObjectId _id;
 
     /** Unique identifier for the user. */
     @Field("email")
@@ -50,13 +51,6 @@ public class User implements UserDetails {
      * @return email (must be like this because of JWT authentication)
      */
     public String getUsername(){ return email; }
-
-    /**
-     * Sets email
-     * @param username 
-     */
-    public void setUsername(String email) { username = email; }
-
 
     /** Username of the user, which must be unique. */
     @Field("username")
@@ -82,12 +76,10 @@ public class User implements UserDetails {
     @Getter @Setter
     private List<List<String>> carsList;
 
-    /** Phone number of the user */
+    /**Phone number of user */
     @Field("phone")
     @Getter @Setter
     private int phone;
-
-    /** User status */
 
     @Field("role")
     @Getter @Setter
