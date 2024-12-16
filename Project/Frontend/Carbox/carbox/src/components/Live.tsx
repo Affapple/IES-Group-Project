@@ -26,7 +26,6 @@ export default function Live({ liveData }: { liveData: LiveData[] }) {
         const data=[];
         for(var i=0;i<liveData.length; i++) {
             if (times.includes(liveData[i].timestamp)){
-                console.log("was here");
                 continue;
             }
             else{
@@ -49,10 +48,6 @@ export default function Live({ liveData }: { liveData: LiveData[] }) {
 
         const torque = reducer(data, "torque");
         setTorque(torque.slice(torque.length - NUM_POINTS, torque.length));
-        console.log(rpm)
-        console.log(torque)
-        console.log(speed)
-        console.log(parsedTime)
     }, [liveData]);
 
     return (
