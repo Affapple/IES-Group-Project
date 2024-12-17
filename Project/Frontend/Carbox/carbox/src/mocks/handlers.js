@@ -1,7 +1,7 @@
 import { rest } from 'msw';
 
 export const handlers = [
-  rest.get('http://localhost:8080/api/v2/vehicles', (req, res, ctx) => {
+  rest.get('http://deti-ies-09.ua.pt/api/v2/vehicles', (req, res, ctx) => {
     return res(
       ctx.status(200),
       ctx.json([
