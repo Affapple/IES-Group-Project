@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "../css/CarDetails.css";
 import { Gauge } from "@mui/x-charts/Gauge";
 import LiveData from "Types/LiveData";
@@ -11,70 +11,64 @@ export default function Advanced({
   carData: Vehicle;
   liveData: LiveData[];
 }) {
-  const latestLiveData = liveData[liveData.length - 1];
-  const tires = latestLiveData ? latestLiveData.tirePressure : [-1, -1, -1, -1];
-  const oil = latestLiveData ? latestLiveData.oilLevel : -1;
-
-  const [oilLevel, setOilLevel] = React.useState(true);
-  const [tirePressure, setTirePressure] = React.useState(true);
-
-  function checkOilLevel() {
-    setOilLevel(oil >= 5);
-  }
-
-  function checkTirePressure() {
-    setTirePressure(tires.some((tirePressure) => tirePressure > 20));
-  }
+  const [tiresPressure, setTiresPressure] = useState<number[]>([]);
+  const [oilLevel, setOilLevel] = useState<number>(-1);
+  const tireName = ["Front Left", "Front Right", "Back Left", "Back Right"];
 
   useEffect(() => {
-    checkTirePressure();
-    checkOilLevel();
-  }, []);
+    if (liveData.length == 0) return;
+    const latestLiveData = liveData[liveData.length - 1];
+    setOilLevel(latestLiveData.oilLevel);
+    setTiresPressure(latestLiveData.tirePressure);
+  }, [liveData]);
+
+  function checkOilLevel() {
+    return oilLevel >= 5;
+  }
+  function checkTirePressure(tirePressure: number) {
+    return tirePressure > 20;
+  }
 
   return (
     <div className="font-sans space-y-0.5 w-100%; border-b-2 border-black pb-3 flex  justify-between items-center   ">
       <div className="flex justify-between items-center ml-10">
         <div className="">
           <p className="bigInfo">Tire Pressure (PSI) </p>
-          {tirePressure ? (
-            <span className="bigInfo2">Front Left: {tires[0]}</span>
+          {tiresPressure.length > 0 ? (
+            tiresPressure.map((pressure, index) => (
+              <span
+                key={`${index}_${Date.now()}`}
+                className={
+                  checkTirePressure(pressure) ? "bigInfo2" : "bigInfo2Alert"
+                }
+              >
+                {tireName[index]}: {pressure}
+              </span>
+            ))
           ) : (
-            <span className="bigInfo2Alert">Front Left: {tires[0]} </span>
-          )}
-          {tirePressure ? (
-            <span className="bigInfo2">Front Right: {tires[1]}</span>
-          ) : (
-            <span className="bigInfo2Alert">Front Right: {tires[1]} </span>
-          )}
-          {tirePressure ? (
-            <span className="bigInfo2">Back Left: {tires[2]}</span>
-          ) : (
-            <span className="bigInfo2Alert">Back Left: {tires[2]} </span>
-          )}
-          {tirePressure ? (
-            <span className="bigInfo2">Back Right: {tires[3]}</span>
-          ) : (
-            <span className="bigInfo2Alert">Back Right: {tires[3]} </span>
+            <span className="bigInfo2Alert">No data!</span>
           )}
         </div>
       </div>
       <div className="flex justify-between items-center ml-10 mr-10">
         <div className="">
           <p className="bigInfo">Oil Level </p>
-          {oilLevel ? (
-            <span className="bigInfo2">{oil} L</span>
-          ) : (
-            <span className="bigInfo2Alert">{oil} L </span>
-          )}
+          <span className={checkOilLevel() ? "bigInfo2" : "bigInfo2Alert"}>
+            {oilLevel >= 0 ? oilLevel + " L" : "No Data!"}
+          </span>
         </div>
         <div className="pt-6">
-          <Gauge
-            width={150}
-            height={150}
-            value={oil}
-            text={oil + "/120"}
-            valueMax={120}
-          />
+          {oilLevel >= 0 ? (
+            <Gauge
+              width={150}
+              height={150}
+              value={oilLevel}
+              text={oilLevel + "/120"}
+              valueMax={120}
+            />
+          ) : (
+            <></>
+          )}
         </div>
       </div>
     </div>
