@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 // import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +23,13 @@ import ies.carbox.api.RestAPI.repository.UserRepository;
 public class UserService implements UserDetailsService {
     UserRepository userRepository;
     CacheService cacheService;
+    PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, CacheService cacheService) {
+    public UserService(UserRepository userRepository, CacheService cacheService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.cacheService = cacheService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public Boolean belongsToUser(String ecuId, String userEmail) {
@@ -120,11 +123,10 @@ public class UserService implements UserDetailsService {
             }
 
             updatedUser.set_id(existingUser.get_id());
-    
             // Update only the necessary fields
             if (updatedUser.getName() != null) existingUser.setName(updatedUser.getName());
             if (updatedUser.getPhone() != 0) existingUser.setPhone(updatedUser.getPhone());
-            if (updatedUser.getPassword() != null) existingUser.setPassword(updatedUser.getPassword());
+            if (updatedUser.getPassword() != null) existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
             if (updatedUser.getCarsList() != null) existingUser.setCarsList(updatedUser.getCarsList());
     
             userRepository.save(existingUser);

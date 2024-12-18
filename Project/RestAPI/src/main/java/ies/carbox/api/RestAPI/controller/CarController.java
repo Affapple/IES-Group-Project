@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import jakarta.persistence.Tuple;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,12 +20,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.Parameter;
 import ies.carbox.api.RestAPI.CONSTANTS;
-import ies.carbox.api.RestAPI.dtos.RegisterUserDto;
 import ies.carbox.api.RestAPI.service.AuthenticationService;
 import ies.carbox.api.RestAPI.service.CacheService;
 
 import org.springframework.security.core.Authentication;
-import java.util.Date;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
@@ -298,7 +295,7 @@ public class CarController {
                 return ResponseEntity.ok(List.of(trip));
             }
             List<TripInfo> trips = tripInfoService.getTripInfoByCarId(vehicleId);
-            return ResponseEntity.ok(trips);
+            return ResponseEntity.ok(trips.stream().filter(trip -> trip.getTripEnd() != null).toList());
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
