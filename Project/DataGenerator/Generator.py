@@ -374,6 +374,6 @@ def GenerateData(ecu_id):
 while True:
     for car in Cars:
         GenerateData(car['ecu_id'])
-    time.sleep(10)
+    time.sleep(1)
 
 
