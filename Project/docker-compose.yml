@@ -31,12 +31,27 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_QUEUE: notifications
+      EMAIL_ADDR: ${EMAIL_ADDR}
+      EMAIL_PASSW: ${EMAIL_PASSW}
+      MONGO_DATABASE: ${MONGO_INITDB_DATABASE}
 
 
   database_adapter:
     build:
       context: ./Database
       dockerfile: Dockerfile
+    environment:
+      MONGO_DATABASE: ${MONGO_INITDB_DATABASE}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_QUEUE: notifications
+      EMAIL_ADDR: ${EMAIL_ADDR}
+      EMAIL_PASSW: ${EMAIL_PASSW}
+
+
     depends_on:
       - rabbitmq
       - db
@@ -46,6 +61,14 @@ services:
     build:
       context: ./DataGenerator
       dockerfile: Dockerfile
+    environment:
+      MONGO_DATABASE: ${MONGO_INITDB_DATABASE}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_QUEUE: notifications
+      EMAIL_ADDR: ${EMAIL_ADDR}
+      EMAIL_PASSW: ${EMAIL_PASSW}
     depends_on:
       - rabbitmq
       - database_adapter
@@ -95,6 +118,7 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       EMAIL_ADDR: ${EMAIL_ADDR}
       EMAIL_PASSW: ${EMAIL_PASSW}
+      MONGO_DATABASE: ${MONGO_INITDB_DATABASE}
     depends_on:
       - rabbitmq
     ports:
