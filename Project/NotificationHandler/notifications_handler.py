@@ -28,9 +28,12 @@ users_collection = db["Users"]
 def get_user_email_by_ecu_id(car_ecu_id: str) -> str:
     """Retrieve the user's email based on the car ECU ID."""
     emails_list = []
-    
     try:
-        user = users_collection.find({"carsList": car_ecu_id})
+        user = users_collection.find({
+            "carsList": {
+                "$elemMatch": { "0": car_ecu_id }
+            }
+        })
         for u in user:
             if u:
                 emails_list.append(u.get("email"))
