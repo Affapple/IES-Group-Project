@@ -142,7 +142,7 @@ def handle_car_turned_on(message: dict):
         <button style="padding: 10px 20px; font-size: 16px; background-color: #4CAF50; color: white; border: none; cursor: pointer;">Yes</button>
     </a>
     
-    <a href="http://www.milliondollarhomepage.com/">
+    <a href="https://www.policiajudiciaria.pt/">
         <button style="padding: 10px 20px; font-size: 16px; background-color: #f44336; color: white; border: none; cursor: pointer;">No</button>
     </a>
 
