@@ -124,6 +124,7 @@ public class UserService implements UserDetailsService {
 
             updatedUser.set_id(existingUser.get_id());
             // Update only the necessary fields
+            if (updatedUser.getEmail() != null) existingUser.setEmail(updatedUser.getEmail());
             if (updatedUser.getName() != null) existingUser.setName(updatedUser.getName());
             if (updatedUser.getPhone() != 0) existingUser.setPhone(updatedUser.getPhone());
             if (updatedUser.getPassword() != null) existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));

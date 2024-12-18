@@ -30,7 +30,7 @@ export default function Advanced({
   }
 
   return (
-    <div className="font-sans space-y-0.5 w-100%; border-b-2 border-black pb-3 flex  justify-between items-center   ">
+    <div className="font-sans space-y-0.5 w-100%; border-b-2 border-black pb-3 flex flex-wrap  justify-between items-center   ">
       <div className="flex justify-between items-center ml-10">
         <div className="">
           <p className="bigInfo">Tire Pressure (PSI) </p>

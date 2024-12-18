@@ -16,9 +16,16 @@ function UserSettingsMenu({ open, user }: { open: boolean; user: User }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const response = await updateUser(email, password, name, phone);
-
+    const pass = password;
+    let response;
+    if (password === "") {
+      response = await updateUser(email, null, name, phone);
+    }
+    else {
+      response = await updateUser(email, pass, name, phone);
+    }
     if (response) toggleModal();
+    
   };
 
   const resetForm = (event) => {
