@@ -24,7 +24,7 @@ const Navbar: React.FC = () => {
       .then((response) => {
         const user = response.data;
         setUser({
-          name: user.username,
+          name: user.name,
           email: user.email,
           phoneNumber: user.phone,
           password: "",

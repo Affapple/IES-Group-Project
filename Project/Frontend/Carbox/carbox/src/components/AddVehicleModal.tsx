@@ -3,23 +3,22 @@ import React, { useState } from 'react';
 interface AddVehicleModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddVehicle: (vehicle: { licensePlate: string; name: string; ecuId: string }) => void;
+  onAddVehicle: (vehicle: {name: string; ecuId: string }) => void;
 }
 
 const AddVehicleModal: React.FC<AddVehicleModalProps> = ({ isOpen, onClose, onAddVehicle }) => {
   const [newVehicle, setNewVehicle] = useState({
-    licensePlate: '',
     name: '',
     ecuId: '',
   });
 
   const handleAddVehicle = () => {
-    if (!newVehicle.licensePlate || !newVehicle.name || !newVehicle.ecuId) {
+    if (!newVehicle.name || !newVehicle.ecuId) {
       alert('Please fill in all fields');
       return;
     }
     onAddVehicle(newVehicle);
-    setNewVehicle({ licensePlate: '', name: '', ecuId: '' });
+    setNewVehicle({name: '', ecuId: '' });
     onClose();
   };
 
@@ -41,15 +40,6 @@ const AddVehicleModal: React.FC<AddVehicleModalProps> = ({ isOpen, onClose, onAd
         <p className="text-gray-500 mb-6 text-center">Make sure your car is running</p>
 
         {/* License Plate Input */}
-        <div className="mb-4">
-          <label className="block text-gray-600 mb-2">Insert car license plate number:</label>
-          <input
-            type="text"
-            value={newVehicle.licensePlate}
-            onChange={(e) => setNewVehicle({ ...newVehicle, licensePlate: e.target.value })}
-            className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-          />
-        </div>
 
         {/* Car Name Input */}
         <div className="mb-4">
