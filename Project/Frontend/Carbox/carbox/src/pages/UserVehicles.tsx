@@ -79,7 +79,6 @@ const UserVehicles: React.FC = () => {
   };
 
   const handleAddVehicle = async (newVehicle: {
-    licensePlate: string;
     name: string;
     ecuId: string;
   }) => {

@@ -58,13 +58,13 @@ export const register = async (email, password, phone, username) => {
 };
 
 // Update User
-export const updateUser = async (email, password, phone, username) => {
+export const updateUser = async (email, password, username, phone) => {
   loadToken();
   const response = await apiClient.put("/user/account", {
-    email,
-    password,
-    phone,
     username,
+    email,
+    phone,
+    password
   });
   return response.data;
 };

@@ -14,15 +14,17 @@ export default function  CarDetails({data}: {data: Vehicle}) {
     function checkRevision() {
         //To implement the logic for the revision date
         const lastRevision= new Date(data.lastRevision);
-        const expires = new Date(lastRevision.getFullYear()+1, lastRevision.getMonth(), lastRevision.getDay());
+        const expires = new Date(lastRevision);
+        expires.setFullYear(expires.getFullYear()+1);
         const current = Date.now();
-        if(expires.getDate()- current <= 30*86400000){
+        if(expires-current <= 30*86400000){
             setRevisionUp(true);
-            if(expires.getDate()-current <=0){
-                setAlert("(EXPIRING SOON)");
+            if(expires-current <=0){
+                setAlert("(EXPIRED)");
             }
             else{
-                setAlert("(EXPIRING SOON)");
+                const missingDays = Math.floor((expires-current)/86400000);
+                setAlert("(EXPIRING SOON, "+missingDays+" days left)");
             }
         }
         else{

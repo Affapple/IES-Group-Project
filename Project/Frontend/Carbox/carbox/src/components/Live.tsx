@@ -49,7 +49,7 @@ export default function Live({ liveData }: { liveData: LiveData[] }) {
   return (
     <div className="font-sans space-y-0.5 w-100%; border-b-2 border-red-400 pb-3    ">
       <h1 className="text-3xl font-bold text-red-500 ml-10">Live Data</h1>
-      <div className="flex justify-between items-center ml-10">
+      <div className="flex justify-between items-center ml-10 flex-wrap">
         <LineChart
           xAxis={[
             {
