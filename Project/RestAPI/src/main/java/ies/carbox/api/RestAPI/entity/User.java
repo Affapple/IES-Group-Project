@@ -41,6 +41,7 @@ public class User implements UserDetails {
     @Id
     @Field("_id")
     @Getter @Setter
+    @JsonIgnore
     private ObjectId _id;
 
     /** Unique identifier for the user. */
