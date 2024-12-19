@@ -1,16 +1,18 @@
-import React, { useState } from 'react';
-import { FaEllipsisV } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { FaEllipsisV } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import { getAddressFromCoordinates } from "geoClient";
 import Vehicle from "Types/Vehicle";
 import LiveData from "Types/LiveData";
 import { useEffect } from "react";
 
 interface VehicleCardProps {
+  vehicleId: number | string;
   name: string;
   autonomy: string;
   battery: string;
   live: boolean;
+  location: string;
   onRemove: () => void; // Adiciona a prop para remover
 }
 
@@ -20,7 +22,15 @@ interface Location {
   address: string;
 }
 
-const VehicleCard: React.FC<VehicleCardProps> = ({ vehicleId, name, autonomy, battery, live, onRemove, location }) => {
+const VehicleCard: React.FC<VehicleCardProps> = ({
+  vehicleId,
+  name,
+  autonomy,
+  battery,
+  live,
+  onRemove,
+  location,
+}) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [locationData, setLocationData] = useState<Location>({} as Location);
   const [locationAPI, setLocationAPI] = useState<string>("");
@@ -33,13 +43,12 @@ const VehicleCard: React.FC<VehicleCardProps> = ({ vehicleId, name, autonomy, ba
   };
 
   useEffect(() => {
+    if (location == "" || location == undefined) return;
     fetchLocationData(location);
-    console.log(location)
   }, [location]);
 
-  const fetchLocationData = async (loc : string) => {
+  const fetchLocationData = async (loc: string) => {
     try {
-      console.log(location)
       const [latitude, longitude] = loc
         .split(",")
         .map((value) => parseFloat(value.trim()));
@@ -66,7 +75,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({ vehicleId, name, autonomy, ba
     <div className="bg-white shadow-md rounded-lg p-4 flex flex-col space-y-4 relative w-[260px]">
       {/* Map Section */}
       <div className="relative">
-       <img
+        <img
           src={locationAPI}
           alt="Vehicle Location"
           className="rounded-lg shadow w-full h-40 object-cover"
@@ -105,25 +114,29 @@ const VehicleCard: React.FC<VehicleCardProps> = ({ vehicleId, name, autonomy, ba
       {/* Autonomy and Battery */}
       <div className="flex justify-between">
         <p className="text-gray-600 font-dm-sans">Autonomy:</p>
-        <span className="font-bold text-black">{autonomy.split(' ')[0]} km</span>
+        <span className="font-bold text-black">
+          {autonomy.split(" ")[0]} km
+        </span>
       </div>
       <div className="flex justify-between">
         <p className="text-gray-600 font-dm-sans">Battery:</p>
         <span
-          className={`ml-1 ${
-            battery >=60
-              ? 'text-green-500'
-              : battery <60 && battery>=30
-              ? 'text-yellow-500'
-              : 'text-red-500'
-          } font-poppins font-semibold`}
+          className={`ml-1 ${battery >= 60
+              ? "text-green-500"
+              : battery < 60 && battery >= 30
+                ? "text-yellow-500"
+                : "text-red-500"
+            } font-poppins font-semibold`}
         >
           {battery}
         </span>
       </div>
 
       {/* More Info Button */}
-      <button className="mt-auto bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-900 font-dm-sans" onClick={() => handleClick(vehicleId)}>
+      <button
+        className="mt-auto bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-900 font-dm-sans"
+        onClick={() => handleClick(vehicleId)}
+      >
         More info →
       </button>
     </div>
