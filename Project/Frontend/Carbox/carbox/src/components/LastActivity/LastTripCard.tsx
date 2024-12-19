@@ -38,7 +38,7 @@ const LastTripCard: React.FC<LastTripCardProps> = ({ vehicleId }) => {
         const duration = `${Math.round(diffMs / 60 * 100) /100} min`;
 
         // Calcula a distância com base nos dados de velocidades
-        const speeds = selectedTrip.trip_speeds || [];
+        const speeds = selectedTrip.tripSpeeds || [];
         const distance = `${(speeds.reduce((sum, speed) => sum + speed, 0) * (durationMs / 3600000)).toFixed(2)} km`;
 
         // Calcula o consumo baseado na lógica (por exemplo, valores fixos ou derivados dos dados)

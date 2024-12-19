@@ -28,9 +28,12 @@ users_collection = db["Users"]
 def get_user_email_by_ecu_id(car_ecu_id: str) -> str:
     """Retrieve the user's email based on the car ECU ID."""
     emails_list = []
-    
     try:
-        user = users_collection.find({"carsList": car_ecu_id})
+        user = users_collection.find({
+            "carsList": {
+                "$elemMatch": { "0": car_ecu_id }
+            }
+        })
         for u in user:
             if u:
                 emails_list.append(u.get("email"))
@@ -138,11 +141,11 @@ def handle_car_turned_on(message: dict):
     If this wasn't you, please click the "No" button below, and we will direct you to the emergency services.</p>
     <p>Was it you who turned on the car?</p>
     
-    <a href="http://example.com/confirm?ecu_id={ecu_id}&response=yes">
+    <a href="http://deti-ies-09.ua.pt">
         <button style="padding: 10px 20px; font-size: 16px; background-color: #4CAF50; color: white; border: none; cursor: pointer;">Yes</button>
     </a>
     
-    <a href="https://www.112.gov.pt/">
+    <a href="https://www.policiajudiciaria.pt/">
         <button style="padding: 10px 20px; font-size: 16px; background-color: #f44336; color: white; border: none; cursor: pointer;">No</button>
     </a>
 
